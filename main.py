@@ -587,7 +587,7 @@ def command_line():
     init_global_vars(base=2, mode=0, gen_type="DuckDB", yanna=False)
     base = globalVar.get_value('BASE')
     mode = globalVar.get_value('MODE')
-    '''
+    
     # NOTE: auto-rewrite keeps here
     arguments = docopt(__doc__)
     globalVar.set_value('BASE_PATH', arguments['<query>'] + '/')
@@ -609,7 +609,7 @@ def command_line():
         globalVar.set_value('GEN_TYPE', 'PG')
     else:
         globalVar.set_value('GEN_TYPE', 'DuckDB')
-    '''
+    
     BASE_PATH = globalVar.get_value('BASE_PATH')
     OUT_NAME = globalVar.get_value('OUT_NAME')
     OUT_YA_NAME = globalVar.get_value('OUT_YA_NAME')
@@ -673,24 +673,26 @@ def command_line():
             computationList.reset()
             if IRmode == IRType.Report:
                 if globalVar.get_value('YANNA'):
-                    semiUp, semiDown, lastUp, finalResult = yaGenerateIR(jt, comp, outputVariables, computationList)
-                    codeGenYa(semiUp, semiDown, lastUp, finalResult, BASE_PATH + outYaName, genType=type, isAgg=False)
+                    semiUp, semiDown, lastUp, finalResult, planFinalResult = yaGenerateIR(jt, comp, outputVariables, computationList)
+                    codeGenYa(semiUp, semiDown, lastUp, finalResult, BASE_PATH + outYaName, genType=type, isAgg=False, planFinalResult=planFinalResult)
                 else:
-                    reduceList, enumerateList, finalResult = generateIR(jt, comp, outputVariables, computationList)
-                    codeGen(reduceList, enumerateList, finalResult, BASE_PATH + outName, isFull=jt.isFull, genType=type)
+                    reduceList, enumerateList, finalResult, planFinalResult = generateIR(jt, comp, outputVariables, computationList)
+                    codeGen(reduceList, enumerateList, finalResult, BASE_PATH + outName, isFull=jt.isFull, genType=type, planFinalResult=planFinalResult)
             elif IRmode == IRType.Aggregation:
                 Agg.initDoneFlag()
                 if globalVar.get_value('YANNA'):
-                    semiUp, semiDown, lastUp, finalResult = yaGenerateIR(jt, comp, outputVariables, computationList, isAgg=True, Agg=Agg)
-                    codeGenYa(semiUp, semiDown, lastUp, finalResult, BASE_PATH + outYaName, genType=type, isAgg=True)
+                    semiUp, semiDown, lastUp, finalResult, planFinalResult = yaGenerateIR(jt, comp, outputVariables, computationList, isAgg=True, Agg=Agg)
+                    codeGenYa(semiUp, semiDown, lastUp, finalResult, BASE_PATH + outYaName, genType=type, isAgg=True, planFinalResult=planFinalResult)
                 else:
-                    aggList, reduceList, enumerateList, finalResult = generateAggIR(jt, comp, outputVariables, computationList, Agg)
-                    codeGen(reduceList, enumerateList, finalResult, BASE_PATH + outName, aggList=aggList, isFreeConnex=jt.isFreeConnex, Agg=Agg, isFull=jt.isFull, genType=type)
+                    aggList, reduceList, enumerateList, finalResult, planFinalResult = generateAggIR(jt, comp, outputVariables, computationList, Agg)
+                    codeGen(reduceList, enumerateList, finalResult, BASE_PATH + outName, aggList=aggList, isFreeConnex=jt.isFreeConnex, Agg=Agg, isFull=jt.isFull, genType=type, planFinalResult=planFinalResult)
             # NOTE: No comparison for TopK yet
             elif IRmode == IRType.Level_K:
+                print("PLAN: LEVEL_K")
                 reduceList, enumerateList, finalResult = generateTopKIR(jt, outputVariables, computationList, IRmode=IRType.Level_K, base=topK.base, DESC=topK.DESC, limit=topK.limit)
                 codeGenTopK(reduceList, enumerateList, finalResult, BASE_PATH + outName, IRmode=IRType.Level_K, genType=topK.genType)
             elif IRmode == IRType.Product_K:
+                print("PLAN: PRODUCT_K")
                 reduceList, enumerateList, finalResult = generateTopKIR(jt, outputVariables, computationList, IRmode=IRType.Product_K, base=topK.base, DESC=topK.DESC, limit=topK.limit)
                 codeGenTopK(reduceList, enumerateList, finalResult, BASE_PATH + outName, IRmode=IRType.Product_K, genType=topK.genType)
         except Exception as e:
@@ -702,6 +704,7 @@ def command_line():
             write.writerows(all_res)
             write.writerow(best_res_nonfix)
             write.writerow(best_res_fix)
+        print("plan " + str(index) + " done" + "\n")
 
     end2 = time.time()
     with open(BASE_PATH + REWRITE_TIME, 'a+') as f:

@@ -30,11 +30,12 @@ class CreateAuxView(Action):
 '''fromTable: tableScan, joinKeyList: a set of using()'''
 '''Only matching selectAttrs is not '' need alias trans '''
 class CreateTableAggView(Action):
-    def __init__(self, viewName: str, selectAttrs: list[str], selectAttrAlias: list[str], fromTable: str, joinTableList: list[str], whereCondList: list[str]) -> None:
+    def __init__(self, viewName: str, selectAttrs: list[str], selectAttrAlias: list[str], fromTable: str, joinTableList: list[str], whereCondList: list[str], joinTableListPlanline: list[dict] = []) -> None:
         super().__init__(viewName, selectAttrs, selectAttrAlias, fromTable)
         self.joinTableList = joinTableList 
         # self.joinKeyList = joinKeyList  # used for internal aggNode join
         self.whereCondList = whereCondList
+        self.joinTableListPlanline = joinTableListPlanline
         self.reduceType = ReduceType.CreateTableAggView
         
     def __repr__(self) -> str:

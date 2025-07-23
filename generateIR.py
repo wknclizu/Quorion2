@@ -109,13 +109,16 @@ def buildPrepareView(JT: JoinTree, childNode: TreeNode, Agg: Aggregation = None,
     prepareView = []
     joinTableList, whereCondList = [], []
     extractAttr, extractAlias = [], []
+    joinTableListPlanline = [] # for plan
     
     if childNode.relationType == RelationType.BagRelation:
         for index, id in enumerate(childNode.insideId):
             inNode = JT.getNode(id)
             if inNode.relationType == RelationType.TableScanRelation: # still need source alias
+                print("tableScan joinTableList: ", inNode.source + ' as ' + inNode.alias)
                 joinTableList.append(inNode.source + ' as ' + inNode.alias) 
             else:
+                print("aux joinTableList: ", inNode.alias)
                 # FIXME: Should not be aux node
                 prepareView.extend(buildPrepareView(JT, inNode))
                 joinTableList.append(inNode.alias)
@@ -216,7 +219,21 @@ def buildPrepareView(JT: JoinTree, childNode: TreeNode, Agg: Aggregation = None,
             # use whereCond to join 
             aggNode = JT.getNode(aggId)
             tableName = '(SELECT ' + aggNode.col2vars[1][0] + ', ' + aggNode.col2vars[1][1] + ' AS ' + aggNode.cols[1] + ' FROM ' + aggNode.source + ' GROUP BY ' + aggNode.col2vars[1][0] + ')' + ' AS ' + aggNode.alias
+            # print("tableAgg joinTableList: ", tableName)
             joinTableList.append(tableName)
+            # for plan
+            planLine = {
+                "operator": "GroupBy",
+                "properties": {
+                    "viewName": aggNode.alias,
+                    "columns": [aggNode.col2vars[1][0], aggNode.col2vars[1][1]],
+                    "columnAliases": [aggNode.col2vars[1][0], aggNode.cols[1]],
+                    "inputView": aggNode.source,
+                    "conditions": [],
+                    "groupBy": [aggNode.col2vars[1][0]]
+                }
+            }
+            joinTableListPlanline.append(copy.deepcopy(planLine))
             aggJoinVars = aggNode.cols[:-1]
             if len(aggJoinVars) > 1:
                 raise NotImplementedError("More than 2 values in group by")
@@ -262,7 +279,7 @@ def buildPrepareView(JT: JoinTree, childNode: TreeNode, Agg: Aggregation = None,
         if len(aggFuncList):
             aggAttr, aggAlias = makeSubsetAgg(aggFuncList, childNode, Agg)
 
-        prepareView.append(CreateTableAggView(childNode.alias, originalVars + extractAttr + aggAttr, childNode.cols + extractAlias + aggAlias, fromTable, joinTableList, whereCondList))
+        prepareView.append(CreateTableAggView(childNode.alias, originalVars + extractAttr + aggAttr, childNode.cols + extractAlias + aggAlias, fromTable, joinTableList, whereCondList, joinTableListPlanline))
     
     childNode.createViewAlready = True # only apply for tableAgg & bag relation
     return prepareView
@@ -365,6 +382,7 @@ def buildBagAuxReducePhase(reduceRel: Edge, JT: JoinTree, incidentComp: list[Com
             joinKey = []
             # Add join table
             if inNode.relationType != RelationType.TableScanRelation:
+                print("aux joinTableList: ", inNode.alias)
                 joinTableList.append(inNode.alias)
                 inSelectAlias = inNode.JoinResView.selectAttrAlias
                 for alias in inSelectAlias:
@@ -1223,6 +1241,7 @@ def generateIR(JT: JoinTree, COMP: dict[int, Comparison], outputVariables: list[
     remainRelations = jointree.getRelations().values()
     comparisons = list(COMP.values())
     selfComparisons = [comp for comp in comparisons if comp.getPredType == predType.Self]     
+    planFinalResult = []
     
     global outVars, compKeySet
     outVars = outputVariables
@@ -1524,8 +1543,20 @@ def generateIR(JT: JoinTree, COMP: dict[int, Comparison], outputVariables: list[
                     finalResult += 'select sum(' + '+'.join(selectName) +') from res;\n'
             else:
                 finalResult = 'select ' + ('distinct ' if not JT.isFull else '') + ', '.join(selectName) +' from ' + fromTable + ';\n'
+            selectPlan = {
+                "operator": "Select",
+                "properties": {
+                    "viewName": "finalResult",
+                    "columns": selectName,
+                    "columnAliases": selectName,
+                    "inputView": fromTable,
+                    "conditions": [],
+                    "distinct": not JT.isFull
+                }
+            }
+            planFinalResult.append(selectPlan)
         _, reduceList, _ = columnPrune(JT, [], reduceList, [], finalResult, set(outputVariables), None, list(COMP.values()))
-        return reduceList, [], finalResult
+        return reduceList, [], finalResult, planFinalResult
     
     def getCompChildExtract(relation: Edge) -> list[Comp]:
         childCols = set(relation.dst.cols)
@@ -1581,6 +1612,18 @@ def generateIR(JT: JoinTree, COMP: dict[int, Comparison], outputVariables: list[
                 finalResult += 'select sum(' + '+'.join(selectName) +') from res;\n'
         else:
             finalResult = 'select ' + ('distinct ' if not JT.isFull else '') + ', '.join(selectName) +' from ' + fromTable + ';\n'
+        selectPlan = {
+            "operator": "Select",
+            "properties": {
+                "viewName": "finalResult",
+                "columns": selectName,
+                "columnAliases": selectName,
+                "inputView": fromTable,
+                "conditions": [],
+                "distinct": not JT.isFull
+            }
+        }
+        planFinalResult.append(selectPlan)
 
     _, reduceList, enumerateList = columnPrune(JT, [], reduceList, enumerateList, finalResult, set(outputVariables), Agg=Agg, COMP=list(COMP.values()))
-    return reduceList, enumerateList, finalResult
+    return reduceList, enumerateList, finalResult, planFinalResult

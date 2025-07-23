@@ -1,0 +1,230 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "g3",
+        "columns": [
+          "Graph.src",
+          "Graph.dst",
+          ""
+        ],
+        "columnAliases": [
+          "v4",
+          "v6",
+          "v10"
+        ],
+        "inputView": "Graph",
+        "joinTables": [
+          "(SELECT src, COUNT(*) AS v10 FROM Graph GROUP BY src) AS c2"
+        ],
+        "conditions": [
+          "Graph.dst = c2.src"
+        ]
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiUp4741380821574572116",
+        "columns": [
+          "src",
+          "dst"
+        ],
+        "columnAliases": [
+          "v2",
+          "v4"
+        ],
+        "probeTable": "Graph AS g2",
+        "buildTable": "g3",
+        "probeKeys": [
+          "dst"
+        ],
+        "buildKeys": [
+          "v4"
+        ],
+        "innerConditions": [],
+        "outerConditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "g1",
+        "columns": [
+          "Graph.src",
+          "Graph.dst",
+          ""
+        ],
+        "columnAliases": [
+          "v7",
+          "v2",
+          "v8"
+        ],
+        "inputView": "Graph",
+        "joinTables": [
+          "(SELECT src, COUNT(*) AS v8 FROM Graph GROUP BY src) AS c1"
+        ],
+        "conditions": [
+          "Graph.src = c1.src",
+          "v8<2"
+        ]
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiUp9200670548360790279",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v7",
+          "v2",
+          "v8"
+        ],
+        "probeTable": "g1",
+        "buildTable": "semiUp4741380821574572116",
+        "probeKeys": [
+          "v2"
+        ],
+        "buildKeys": [
+          "v2"
+        ],
+        "innerConditions": [],
+        "outerConditions": []
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiDown8954558507783478533",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v2",
+          "v4"
+        ],
+        "probeTable": "semiUp4741380821574572116",
+        "buildTable": "semiUp9200670548360790279",
+        "probeKeys": [
+          "v2"
+        ],
+        "buildKeys": [
+          "v2"
+        ],
+        "innerConditions": [],
+        "outerConditions": []
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiDown8101523025170315304",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v4",
+          "v6",
+          "v10"
+        ],
+        "probeTable": "g3",
+        "buildTable": "semiDown8954558507783478533",
+        "probeKeys": [
+          "v4"
+        ],
+        "buildKeys": [
+          "v4"
+        ],
+        "innerConditions": [],
+        "outerConditions": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "joinView4205075384691516384",
+        "columns": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v2",
+          "v4",
+          "v6",
+          "v10"
+        ],
+        "probeTable": "semiDown8954558507783478533",
+        "buildTable": "semiDown8101523025170315304",
+        "joinKeys": [
+          "v4"
+        ],
+        "joinCondition": "",
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "joinView7577770425865165035",
+        "columns": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v7",
+          "v2",
+          "v8",
+          "v4",
+          "v6",
+          "v10"
+        ],
+        "probeTable": "semiUp9200670548360790279",
+        "buildTable": "joinView4205075384691516384",
+        "joinKeys": [
+          "v2"
+        ],
+        "joinCondition": "",
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "v7",
+          "v2",
+          "v4",
+          "v6",
+          "v8",
+          "v10"
+        ],
+        "columnAliases": [
+          "v7",
+          "v2",
+          "v4",
+          "v6",
+          "v8",
+          "v10"
+        ],
+        "inputView": "joinView7577770425865165035",
+        "conditions": [],
+        "distinct": false
+      }
+    }
+  ]
+}
