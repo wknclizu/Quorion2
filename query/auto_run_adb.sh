@@ -46,13 +46,13 @@ do
 
                 echo "Start ADB Task at ${QUERY}"
                 current_task=1
-                while [[ ${current_task} -le 10 ]]
+                while [[ ${current_task} -le 3 ]]
                 do
                     echo "Current Task: ${current_task}"
                     OUT_FILE="${CUR_PATH}/output.txt"
                     rm -f $OUT_FILE
                     touch $OUT_FILE
-                    timeout -s SIGKILL 5m ${adb} ${adb_config} < "${QUERY}" | grep "row in set" >> $OUT_FILE
+                    timeout -s SIGKILL 2h ${adb} ${adb_config} < "${QUERY}" | grep "row in set" >> $OUT_FILE
                     status_code=$?
                     if [[ ${status_code} -eq 137 ]]; then
                         echo "ADB task timed out." >> $LOG_FILE
