@@ -1322,7 +1322,7 @@ def generateAggIR(JT: JoinTree, COMP: dict[int, Comparison], outputVariables: li
                 if 'as' in alias:
                     selectName[id] = alias.split(' as ')[1]
             finalResult += 'select sum(' + '+'.join(selectName) + ') from res;' 
-        return aggReduceList, [], [], finalResult
+        return aggReduceList, [], [], finalResult, planFinalResult
         
     # The left undone aggregation is done: 1. [subset > 1] -> final enumeration * annot 2. [subset = 1], done in root
     if len(reduceList):

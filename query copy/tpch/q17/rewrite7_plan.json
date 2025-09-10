@@ -1,0 +1,108 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView1348476339416158918",
+        "columns": [
+          "v1_partkey",
+          "v1_quantity_avg"
+        ],
+        "columnAliases": [
+          "v17",
+          "v27"
+        ],
+        "inputView": "q17_inner as q17_inner",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin4181592219517985450",
+        "columns": [
+          "p_partkey",
+          "p_brand",
+          "p_container",
+          ""
+        ],
+        "columnAliases": [
+          "v17",
+          "v20",
+          "v23",
+          "v27"
+        ],
+        "probeTable": "part as part",
+        "buildTable": "aggView1348476339416158918",
+        "joinKeys": [],
+        "conditions": [
+          "part.p_partkey=aggView1348476339416158918.v17",
+          "(p_brand = 'Brand#23')",
+          "(p_container = 'MED BOX')"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView4586058808876723487",
+        "columns": [
+          "",
+          "COUNT(*)",
+          ""
+        ],
+        "columnAliases": [
+          "v17",
+          "annot",
+          "v27"
+        ],
+        "inputView": "aggJoin4181592219517985450",
+        "conditions": [],
+        "groupBy": [
+          "v17",
+          "v27"
+        ]
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin2708738560229779953",
+        "columns": [
+          "l_quantity",
+          "l_extendedprice",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v5",
+          "v6",
+          "v27",
+          "annot"
+        ],
+        "probeTable": "lineitem as lineitem",
+        "buildTable": "aggView4586058808876723487",
+        "joinKeys": [],
+        "conditions": [
+          "lineitem.l_partkey=aggView4586058808876723487.v17",
+          "l_quantity>v27"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "(SUM((v6)* annot) / 7.0)"
+        ],
+        "columnAliases": [
+          "v29"
+        ],
+        "inputView": "aggJoin2708738560229779953",
+        "conditions": []
+      }
+    }
+  ]
+}

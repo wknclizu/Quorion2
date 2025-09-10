@@ -1,0 +1,218 @@
+{
+  "plan": [
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "c1",
+        "columns": [
+          "src",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "src",
+          "v8"
+        ],
+        "inputView": "Graph",
+        "conditions": [],
+        "groupBy": [
+          "src"
+        ]
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "g1",
+        "columns": [
+          "Graph.src",
+          "Graph.dst",
+          ""
+        ],
+        "columnAliases": [
+          "v7",
+          "v2",
+          "v8"
+        ],
+        "probeTable": "Graph",
+        "buildTable": "c1",
+        "conditions": [
+          "Graph.src = c1.src",
+          "v8<2"
+        ]
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiJoinView9062224839730538193",
+        "columns": [
+          "src",
+          "dst"
+        ],
+        "columnAliases": [
+          "v2",
+          "v4"
+        ],
+        "probeTable": "Graph AS g2",
+        "buildTable": "g1",
+        "probeKeys": [
+          "src"
+        ],
+        "buildKeys": [
+          "v2"
+        ],
+        "innerConditions": [],
+        "outerConditions": [],
+        "distinct": false
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "c2",
+        "columns": [
+          "src",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "src",
+          "v10"
+        ],
+        "inputView": "Graph",
+        "conditions": [],
+        "groupBy": [
+          "src"
+        ]
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "g3",
+        "columns": [
+          "Graph.src",
+          "Graph.dst",
+          ""
+        ],
+        "columnAliases": [
+          "v4",
+          "v6",
+          "v10"
+        ],
+        "probeTable": "Graph",
+        "buildTable": "c2",
+        "conditions": [
+          "Graph.dst = c2.src"
+        ]
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiJoinView4335375713989912330",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v4",
+          "v6",
+          "v10"
+        ],
+        "probeTable": "g3",
+        "buildTable": "semiJoinView9062224839730538193",
+        "probeKeys": [
+          "v4"
+        ],
+        "buildKeys": [
+          "v4"
+        ],
+        "innerConditions": [],
+        "outerConditions": [],
+        "distinct": false
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "semiEnum1503752060230464577",
+        "columns": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v4",
+          "v6",
+          "v10",
+          "v2"
+        ],
+        "probeTable": "semiJoinView4335375713989912330",
+        "buildTable": "semiJoinView9062224839730538193",
+        "joinKeys": [
+          "v4"
+        ],
+        "conditions": [],
+        "distinct": false,
+        "joinType": "INNER"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "semiEnum6599280966329177926",
+        "columns": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v6",
+          "v4",
+          "v8",
+          "v2",
+          "v7",
+          "v10"
+        ],
+        "probeTable": "semiEnum1503752060230464577",
+        "buildTable": "g1",
+        "joinKeys": [
+          "v2"
+        ],
+        "conditions": [],
+        "distinct": false,
+        "joinType": "INNER"
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "v7",
+          "v2",
+          "v4",
+          "v6",
+          "v8",
+          "v10"
+        ],
+        "columnAliases": [
+          "v7",
+          "v2",
+          "v4",
+          "v6",
+          "v8",
+          "v10"
+        ],
+        "inputView": "semiEnum6599280966329177926",
+        "conditions": [],
+        "distinct": false
+      }
+    }
+  ]
+}
