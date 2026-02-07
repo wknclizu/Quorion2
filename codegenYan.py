@@ -1,3 +1,4 @@
+import json
 from enumerate import *
 from reduce import *
 from aggregation import *
@@ -10,20 +11,58 @@ import globalVar
 BEGIN = 'create or replace TEMP view '
 END = ';\n'
 
-def codeGenYa(semiUp: list[SemiUpPhase], semiDown: list[SemiJoin], lastUp: Union[list[AggReducePhase], list[Join2tables]], finalResult: str, outPath: str, genType: GenType = GenType.DuckDB, isAgg: bool = False):
+def codeGenYa(semiUp: list[SemiUpPhase], semiDown: list[SemiJoin], lastUp: Union[list[AggReducePhase], list[Join2tables]], finalResult: str, outPath: str, genType: GenType = GenType.DuckDB, isAgg: bool = False, planFinalResult: list[dict[str, any]] = []):
     outFile = open(outPath, 'w')
     queries = ""
+    planOutFile = open(outPath.replace('.sql', '_plan.json'), 'w+')
+    plan = []
 
     for semi in semiUp:
         for prepare in semi.prepareView:
             if prepare.reduceType == ReduceType.CreateBagView:
                 line = BEGIN + prepare.viewName + ' as select ' + transSelectData(prepare.selectAttrs, prepare.selectAttrAlias) + ' from ' + ', '.join(prepare.joinTableList) + ((' where ' + ' and '.join(prepare.whereCondList)) if len(prepare.whereCondList) else '') + END
+                planLine = {
+                    "operator": "Select",
+                    "properties": {
+                        "viewName": prepare.viewName,
+                        "columns": prepare.selectAttrs,
+                        "columnAliases": prepare.selectAttrAlias,
+                        "inputView": prepare.joinTableList,
+                        "conditions": prepare.whereCondList if len(prepare.whereCondList) else []
+                    }
+                }
+                plan.append(copy.deepcopy(planLine))
             elif prepare.reduceType == ReduceType.CreateAuxView:
                 line = BEGIN + prepare.viewName + ' as select ' + transSelectData(prepare.selectAttrs, prepare.selectAttrAlias) + ' from ' + prepare.fromTable
                 line += ' where ' if len(prepare.whereCondList) else ''
                 line += ' and '.join(prepare.whereCondList) + END
+                
+                planLine = {
+                    "operator": "Select",
+                    "properties": {
+                        "viewName": prepare.viewName,
+                        "columns": prepare.selectAttrs,
+                        "columnAliases": prepare.selectAttrAlias,
+                        "inputView": prepare.fromTable,
+                        "conditions": prepare.whereCondList if len(prepare.whereCondList) else []
+                    }
+                }
+                plan.append(copy.deepcopy(planLine))
             else:   # TableAgg
                 line = BEGIN + prepare.viewName + ' as select ' + transSelectData(prepare.selectAttrs, prepare.selectAttrAlias) + ' from ' + prepare.fromTable + ', ' + ', '.join(prepare.joinTableList) + ' where ' + ' and '.join(prepare.whereCondList) + END
+                
+                planLine = {
+                    "operator": "Select",
+                    "properties": {
+                        "viewName": prepare.viewName,
+                        "columns": prepare.selectAttrs,
+                        "columnAliases": prepare.selectAttrAlias,
+                        "inputView": prepare.fromTable,
+                        "joinTables": prepare.joinTableList,
+                        "conditions": prepare.whereCondList
+                    }
+                }
+                plan.append(copy.deepcopy(planLine))
             queries += line
             outFile.write(line)
 
@@ -46,6 +85,22 @@ def codeGenYa(semiUp: list[SemiUpPhase], semiDown: list[SemiJoin], lastUp: Union
             line += ' and '.join(semi.semiView.outerWhereCondList) + END
             queries += line
             outFile.write(line)
+            
+            planLine = {
+                "operator": "SemiJoin",
+                "properties": {
+                    "viewName": semi.semiView.viewName,
+                    "columns": semi.semiView.selectAttrs if semi.semiView.selectAttrs else [""] * len(semi.semiView.selectAttrAlias),
+                    "columnAliases": semi.semiView.selectAttrAlias,
+                    "probeTable": semi.semiView.fromTable,
+                    "buildTable": semi.semiView.joinTable,
+                    "probeKeys": semi.semiView.inLeft,
+                    "buildKeys": semi.semiView.inRight,
+                    "innerConditions": semi.semiView.whereCondList if len(semi.semiView.whereCondList) else [],
+                    "outerConditions": semi.semiView.outerWhereCondList if len(semi.semiView.outerWhereCondList) else []
+                }
+            }
+            plan.append(copy.deepcopy(planLine))
 
     for semi in semiDown:
         # outFile.write('# +. SemiJoin\n')
@@ -66,6 +121,22 @@ def codeGenYa(semiUp: list[SemiUpPhase], semiDown: list[SemiJoin], lastUp: Union
         line += ' and '.join(semi.outerWhereCondList) + END
         queries += line
         outFile.write(line)
+        
+        planLine = {
+            "operator": "SemiJoin",
+            "properties": {
+                "viewName": semi.viewName,
+                "columns": semi.selectAttrs if semi.selectAttrs else [""] * len(semi.selectAttrAlias),
+                "columnAliases": semi.selectAttrAlias,
+                "probeTable": semi.fromTable,
+                "buildTable": semi.joinTable,
+                "probeKeys": semi.inLeft,
+                "buildKeys": semi.inRight,
+                "innerConditions": semi.whereCondList if len(semi.whereCondList) else [],
+                "outerConditions": semi.outerWhereCondList if len(semi.outerWhereCondList) else []
+            }
+        }
+        plan.append(copy.deepcopy(planLine))
 
     for last in lastUp:
         if isAgg:
@@ -76,6 +147,20 @@ def codeGenYa(semiUp: list[SemiUpPhase], semiDown: list[SemiJoin], lastUp: Union
             line += END
             queries += line
             outFile.write(line)
+            
+            planLine = {
+                "operator": "Select" if len(last.aggView.groupBy) == 0 else "GroupBy",
+                "properties": {
+                    "viewName": last.aggView.viewName,
+                    "columns": last.aggView.selectAttrs,
+                    "columnAliases": last.aggView.selectAttrAlias,
+                    "inputView": last.aggView.fromTable,
+                    "conditions": last.aggView.selfComp if len(last.aggView.selfComp) else [],
+                    "groupBy": last.aggView.groupBy if len(last.aggView.groupBy) else []
+                }
+            }
+            plan.append(copy.deepcopy(planLine))
+            
             if 'Join' in last.aggJoin.viewName:
                 line = BEGIN + last.aggJoin.viewName + ' as select ' + transSelectData(last.aggJoin.selectAttrs, last.aggJoin.selectAttrAlias) + ' from '
                 if last.aggJoin.fromTable != '':
@@ -91,6 +176,32 @@ def codeGenYa(semiUp: list[SemiUpPhase], semiDown: list[SemiJoin], lastUp: Union
                 line += ' and '.join(last.aggJoin.whereCondList) + END
                 queries += line
                 outFile.write(line)
+                
+                if last.aggJoin.fromTable != '':
+                    planLine = {
+                        "operator": "Join",
+                        "properties": {
+                            "viewName": last.aggJoin.viewName,
+                            "columns": last.aggJoin.selectAttrs if last.aggJoin.selectAttrs else [""] * len(last.aggJoin.selectAttrAlias),
+                            "columnAliases": last.aggJoin.selectAttrAlias,
+                            "probeTable": last.aggJoin.fromTable,
+                            "buildTable": last.aggJoin.joinTable,
+                            "joinKeys": last.aggJoin.alterJoinKey,
+                            "conditions": last.aggJoin.whereCondList
+                        }
+                    }
+                else:
+                    planLine = {
+                        "operator": "Select",
+                        "properties": {
+                            "viewName": last.aggJoin.viewName,
+                            "columns": last.aggJoin.selectAttrs if last.aggJoin.selectAttrs else [""] * len(last.aggJoin.selectAttrAlias),
+                            "columnAliases": last.aggJoin.selectAttrAlias,
+                            "inputView": last.aggJoin.joinTable,
+                            "conditions": last.aggJoin.whereCondList
+                        }
+                    }
+                plan.append(copy.deepcopy(planLine))
         else:
             line = BEGIN + last.viewName + ' as select ' + transSelectData(last.selectAttrs, last.selectAttrAlias) + ' from '
             joinSentence = last.fromTable
@@ -102,8 +213,29 @@ def codeGenYa(semiUp: list[SemiUpPhase], semiDown: list[SemiJoin], lastUp: Union
             line += joinSentence + ((' where ' + whereSentence) if whereSentence != '' else '') + END
             queries += line
             outFile.write(line)
+            
+            planLine = {
+                "operator": "Join",
+                "properties": {
+                    "viewName": last.viewName,
+                    "columns": last.selectAttrs if last.selectAttrs else [""] * len(last.selectAttrAlias),
+                    "columnAliases": last.selectAttrAlias,
+                    "probeTable": last.fromTable,
+                    "buildTable": last.joinTable,
+                    "joinKeys": last.alterJoinKey,
+                    "joinCondition": last.joinCond,
+                    "conditions": last.whereCondList
+                }
+            }
+            plan.append(copy.deepcopy(planLine))
 
     queries += finalResult
     outFile.write(finalResult)
     outFile.close()
+    
+    for planLine in planFinalResult:
+        plan.append(planLine)
+    planOutFile.write(json.dumps({"plan": plan}, indent=2))
+    planOutFile.close()
+    
     return queries

@@ -623,6 +623,7 @@ def yaGenerateIR(JT: JoinTree, COMP: dict[int, Comparison], outputVariables: lis
     remainRelations = jointree.getRelations().values()
     comparisons = list(COMP.values())
     selfComparisons = [comp for comp in comparisons if comp.getPredType == predType.Self]     
+    planFinalResult = []
     
     global outVars, compKeySet
     outVars = outputVariables
@@ -1039,6 +1040,32 @@ def yaGenerateIR(JT: JoinTree, COMP: dict[int, Comparison], outputVariables: lis
             finalResult += 'select sum(' + '+'.join(selectName) +') from res;\n'
         else:
             finalResult = 'select ' + ','.join(selectName) + ' from ' + fromTable + (' group by ' + ', '.join(Agg.groupByVars) if not JT.isFreeConnex and len(Agg.groupByVars) else '') + ';\n'
+        if not JT.isFreeConnex and len(Agg.groupByVars):
+            # Group by operation
+            groupByPlan = {
+                "operator": "GroupBy",
+                "properties": {
+                    "viewName": "finalResult",
+                    "columns": [s.split(" as ")[0] if " as " in s else s for s in selectName],
+                    "columnAliases": [s.split(" as ")[1] if " as " in s else s for s in selectName],
+                    "inputView": fromTable,
+                    "groupBy": Agg.groupByVars
+                }
+            }
+            planFinalResult.append(groupByPlan)
+        else:
+            # Select operation
+            selectPlan = {
+                "operator": "Select",
+                "properties": {
+                    "viewName": "finalResult",
+                    "columns": [s.split(" as ")[0] if " as " in s else s for s in selectName],
+                    "columnAliases": [s.split(" as ")[1] if " as " in s else s for s in selectName],
+                    "inputView": fromTable,
+                    "conditions": []
+                }
+            }
+            planFinalResult.append(selectPlan)
     else:
         fromTable = lastUp[-1].viewName
         totalName = lastUp[-1].selectAttrAlias
@@ -1062,7 +1089,19 @@ def yaGenerateIR(JT: JoinTree, COMP: dict[int, Comparison], outputVariables: lis
                 finalResult += 'select sum(' + '+'.join(selectName) +') from res;\n'
         else:
             finalResult = 'select ' + ('distinct ' if not JT.isFull else '') + ', '.join(selectName) +' from ' + fromTable + ';\n'
+        selectPlan = {
+            "operator": "Select",
+            "properties": {
+                "viewName": "finalResult",
+                "columns": selectName,
+                "columnAliases": selectName,
+                "inputView": fromTable,
+                "conditions": [],
+                "distinct": not JT.isFull
+            }
+        }
+        planFinalResult.append(selectPlan)
     
     semiUp, semiDown, lastUp = columnPruneYa(JT, semiUp, semiDown, lastUp, finalResult, set(outputVariables), Agg, list(COMP.values()))
 
-    return semiUp, semiDown, lastUp, finalResult
+    return semiUp, semiDown, lastUp, finalResult, planFinalResult

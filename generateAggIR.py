@@ -772,6 +772,7 @@ def generateAggIR(JT: JoinTree, COMP: dict[int, Comparison], outputVariables: li
     allRelations = list(jointree.getRelations().values())
     comparisons = list(COMP.values())
     selfComparisons = [comp for comp in comparisons if comp.getPredType == predType.Self]
+    planFinalResult = []
     
     aggReduceList: list[AggReducePhase] = []
     reduceList: list[ReducePhase] = []
@@ -1014,7 +1015,7 @@ def generateAggIR(JT: JoinTree, COMP: dict[int, Comparison], outputVariables: li
         lastView = aggReduceList[-1].aggJoin if aggReduceList[-1].aggJoin else aggReduceList[-1].aggView
         finalAnnotFlag = True if 'annot' in lastView.selectAttrAlias else False
     else:
-        reduceList, enumerateList, _ = generateIR(jointree, COMP, outputVariables, computations, isAgg=True, Agg=Agg)
+        reduceList, enumerateList, _, _ = generateIR(jointree, COMP, outputVariables, computations, isAgg=True, Agg=Agg)
         lastView = enumerateList[-1].stageEnd if enumerateList[-1].stageEnd else enumerateList[-1].semiEnumerate
         if len(reduceList) and 'annot' in lastView.selectAttrAlias:
             finalAnnotFlag = True
@@ -1292,13 +1293,36 @@ def generateAggIR(JT: JoinTree, COMP: dict[int, Comparison], outputVariables: li
         finalResult += aggReduceList[-1].aggJoin.viewName
         if not JT.isFreeConnex and len(Agg.groupByVars):
             finalResult += ' group by ' + ', '.join(Agg.groupByVars)
+            groupByPlan = {
+                "operator": "GroupBy",
+                "properties": {
+                    "viewName": "finalResult",
+                    "columns": [s.split(" as ")[0] if " as " in s else s for s in selectName],
+                    "columnAliases": [s.split(" as ")[1] if " as " in s else s for s in selectName],
+                    "inputView": aggReduceList[-1].aggJoin.viewName,
+                    "groupBy": Agg.groupByVars
+                }
+            }
+            planFinalResult.append(groupByPlan)
+        else:
+            selectPlan = {
+                "operator": "Select",
+                "properties": {
+                    "viewName": "finalResult",
+                    "columns": [s.split(" as ")[0] if " as " in s else s for s in selectName],
+                    "columnAliases": [s.split(" as ")[1] if " as " in s else s for s in selectName],
+                    "inputView": aggReduceList[-1].aggJoin.viewName,
+                    "conditions": [],
+                }
+            }
+            planFinalResult.append(selectPlan)
         finalResult += ';\n'
         if globalVar.get_value('GEN_TYPE') == 'Mysql':
             for id, alias in enumerate(selectName):
                 if 'as' in alias:
                     selectName[id] = alias.split(' as ')[1]
             finalResult += 'select sum(' + '+'.join(selectName) + ') from res;' 
-        return aggReduceList, [], [], finalResult
+        return aggReduceList, [], [], finalResult, planFinalResult
         
     # The left undone aggregation is done: 1. [subset > 1] -> final enumeration * annot 2. [subset = 1], done in root
     if len(reduceList):
@@ -1308,12 +1332,34 @@ def generateAggIR(JT: JoinTree, COMP: dict[int, Comparison], outputVariables: li
     # oreder by & limit used for checking answer
     if not JT.isFreeConnex and len(Agg.groupByVars):
         finalResult += fromTable + ' group by ' + ', '.join(Agg.groupByVars) + ';\n'
+        groupByPlan = {
+            "operator": "GroupBy",
+            "properties": {
+                "viewName": "finalResult",
+                "columns": [s.split(" as ")[0] if " as " in s else s for s in selectName],
+                "columnAliases": [s.split(" as ")[1] if " as " in s else s for s in selectName],
+                "inputView": fromTable,
+                "groupBy": Agg.groupByVars
+            }
+        }
+        planFinalResult.append(groupByPlan)
     else:
         finalResult += fromTable + ';\n'
+        selectPlan = {
+            "operator": "Select",
+            "properties": {
+                "viewName": "finalResult",
+                "columns": [s.split(" as ")[0] if " as " in s else s for s in selectName],
+                "columnAliases": [s.split(" as ")[1] if " as " in s else s for s in selectName],
+                "inputView": fromTable,
+                "conditions": []
+            }
+        }
+        planFinalResult.append(selectPlan)
     if globalVar.get_value('GEN_TYPE') == 'Mysql':
         for id, alias in enumerate(selectName):
             if 'as' in alias:
                 selectName[id] = alias.split(' as ')[1]
         finalResult += 'select sum(' + '+'.join(selectName) + ') from res;\n'
     aggReduceList, _, _ = columnPrune(JT, aggReduceList, [], [], finalResult, set(outputVariables), Agg, list(COMP.values()))
-    return aggReduceList, reduceList, enumerateList, finalResult
+    return aggReduceList, reduceList, enumerateList, finalResult, planFinalResult
