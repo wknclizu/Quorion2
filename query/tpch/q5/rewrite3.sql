@@ -1,0 +1,11 @@
+create or replace TEMP view aggView4486398953127604585 as select r_regionkey as v43 from region as region where (r_name = 'ASIA');
+create or replace TEMP view aggJoin7903233136731831527 as select n_nationkey as v4, n_name as v42 from nation as nation, aggView4486398953127604585 where nation.n_regionkey=aggView4486398953127604585.v43;
+create or replace TEMP view aggView1956940752495670229 as select v4, v42, COUNT(*) as annot from aggJoin7903233136731831527 group by v4,v42;
+create or replace TEMP view aggJoin35694013863878166 as select c_custkey as v1, c_nationkey as v4, v42, annot from customer as customer, aggView1956940752495670229 where customer.c_nationkey=aggView1956940752495670229.v4;
+create or replace TEMP view aggView3936812733572622744 as select v1, v4, v42, SUM(annot) as annot from aggJoin35694013863878166 group by v1,v4,v42;
+create or replace TEMP view aggJoin4635383519147426044 as select o_orderkey as v18, o_orderdate as v13, v4, v42, annot from orders as orders, aggView3936812733572622744 where orders.o_custkey=aggView3936812733572622744.v1 and (o_orderdate >= DATE '1993-12-31') and (o_orderdate < DATE '1994-12-31');
+create or replace TEMP view aggView1988931440304302781 as select s_suppkey as v20, s_nationkey as v50 from supplier as supplier;
+create or replace TEMP view aggJoin1355911339419418975 as select l_orderkey as v18, l_extendedprice as v23, l_discount as v24, v50 from lineitem as lineitem, aggView1988931440304302781 where lineitem.l_suppkey=aggView1988931440304302781.v20;
+create or replace TEMP view aggView6137314806554788324 as select v18, v4, v42, SUM(annot) as annot from aggJoin4635383519147426044 group by v18,v4,v42;
+create or replace TEMP view aggJoin435128358213445577 as select v23, v24, v50, v4, v42, annot from aggJoin1355911339419418975 join aggView6137314806554788324 using(v18) where v4 = v50;
+select v42,SUM((v23 * (1 - v24))*annot) as v49 from aggJoin435128358213445577 group by v42;

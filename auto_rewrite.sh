@@ -52,3 +52,4 @@ do
         done
     fi
 done
+# python main.py query/tpch/q5/ tpch -b 2 -m 0 -g P -y Y
