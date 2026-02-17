@@ -1,0 +1,112 @@
+{
+  "plan": [
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiUp3989038268770473170",
+        "columns": [
+          "l_partkey",
+          "l_extendedprice",
+          "l_discount"
+        ],
+        "columnAliases": [
+          "v2",
+          "v6",
+          "v7"
+        ],
+        "probeTable": "lineitem AS lineitem",
+        "buildTable": "part AS part",
+        "probeKeys": [
+          "l_partkey"
+        ],
+        "buildKeys": [
+          "p_partkey"
+        ],
+        "innerConditions": [],
+        "outerConditions": [
+          "(l_shipdate >= DATE '1995-08-31')",
+          "(l_shipdate < DATE '1995-09-30')"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiDown8788038296678959790",
+        "columns": [
+          "p_partkey",
+          "p_type"
+        ],
+        "columnAliases": [
+          "v2",
+          "v21"
+        ],
+        "probeTable": "part AS part",
+        "buildTable": "semiUp3989038268770473170",
+        "probeKeys": [
+          "p_partkey"
+        ],
+        "buildKeys": [
+          "v2"
+        ],
+        "innerConditions": [],
+        "outerConditions": [],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView3951447896288455319",
+        "columns": [
+          "",
+          "CASE WHEN v21 LIKE 'PROMO%' THEN 1 ELSE 0 END"
+        ],
+        "columnAliases": [
+          "v2",
+          "caseCond"
+        ],
+        "inputView": "semiDown8788038296678959790",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin8356559826492704900",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v6",
+          "v7",
+          "caseCond"
+        ],
+        "probeTable": "semiUp3989038268770473170",
+        "buildTable": "aggView3951447896288455319",
+        "joinKeys": [
+          "v2"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "v30) / SUM((v6 * (1 - v7)))"
+        ],
+        "columnAliases": [
+          "v30) / SUM((v6 * (1 - v7)))"
+        ],
+        "inputView": "aggJoin8356559826492704900",
+        "conditions": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "plan": [
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiUp1784325256539430056",
+        "columns": [
+          "l_partkey",
+          "l_extendedprice",
+          "l_discount"
+        ],
+        "columnAliases": [
+          "v17",
+          "v6",
+          "v7"
+        ],
+        "probeTable": "lineitem AS lineitem",
+        "buildTable": "part AS part",
+        "probeKeys": [
+          "l_partkey"
+        ],
+        "buildKeys": [
+          "p_partkey"
+        ],
+        "innerConditions": [
+          "(p_brand = 'Brand#34')",
+          "(p_size >= 1)",
+          "(p_container IN ('LG CASE','LG BOX','LG PACK','LG PKG'))",
+          "(p_size <= 15)"
+        ],
+        "outerConditions": [
+          "(l_quantity >= 21)",
+          "(l_shipinstruct = 'DELIVER IN PERSON')",
+          "(l_quantity <= (21 + 10))",
+          "(l_shipmode IN ('AIR','AIR REG'))"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiDown5344543318078034733",
+        "columns": [
+          "p_partkey"
+        ],
+        "columnAliases": [
+          "v17"
+        ],
+        "probeTable": "part AS part",
+        "buildTable": "semiUp1784325256539430056",
+        "probeKeys": [
+          "p_partkey"
+        ],
+        "buildKeys": [
+          "v17"
+        ],
+        "innerConditions": [],
+        "outerConditions": [
+          "(p_brand = 'Brand#34')",
+          "(p_size >= 1)",
+          "(p_container IN ('LG CASE','LG BOX','LG PACK','LG PKG'))",
+          "(p_size <= 15)"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView2963872847443268436",
+        "columns": [
+          ""
+        ],
+        "columnAliases": [
+          "v17"
+        ],
+        "inputView": "semiDown5344543318078034733",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin2352444679388005089",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v6",
+          "v7"
+        ],
+        "probeTable": "semiUp1784325256539430056",
+        "buildTable": "aggView2963872847443268436",
+        "joinKeys": [
+          "v17"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "v27"
+        ],
+        "columnAliases": [
+          "v27"
+        ],
+        "inputView": "aggJoin2352444679388005089",
+        "conditions": []
+      }
+    }
+  ]
+}

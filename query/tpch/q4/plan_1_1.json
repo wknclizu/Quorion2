@@ -1,0 +1,66 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView3632621914457103670",
+        "columns": [
+          "o_orderkey",
+          "o_orderpriority"
+        ],
+        "columnAliases": [
+          "v10",
+          "v6"
+        ],
+        "inputView": "orders as orders",
+        "conditions": [
+          "(o_orderdate >= DATE '1993-06-30')",
+          "(o_orderdate < DATE '1993-09-30')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin6440142940177878786",
+        "columns": [
+          "l_commitdate",
+          "l_receiptdate",
+          ""
+        ],
+        "columnAliases": [
+          "v21",
+          "v22",
+          "v6"
+        ],
+        "probeTable": "lineitem as lineitem",
+        "buildTable": "aggView3632621914457103670",
+        "joinKeys": [],
+        "conditions": [
+          "lineitem.l_orderkey=aggView3632621914457103670.v10",
+          "(l_commitdate < l_receiptdate)"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "v6",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v6",
+          "v26"
+        ],
+        "inputView": "aggJoin6440142940177878786",
+        "groupBy": [
+          "v6"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    }
+  ]
+}

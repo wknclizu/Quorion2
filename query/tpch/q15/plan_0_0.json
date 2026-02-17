@@ -1,0 +1,149 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "supplierAux65",
+        "columns": [
+          "s_suppkey",
+          "s_name",
+          "s_address",
+          "s_phone"
+        ],
+        "columnAliases": [
+          "v1",
+          "v2",
+          "v3",
+          "v5"
+        ],
+        "inputView": "supplier",
+        "conditions": []
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiJoinView6147301982021505328",
+        "columns": [
+          "supplier_no",
+          "total_revenue"
+        ],
+        "columnAliases": [
+          "v1",
+          "v9"
+        ],
+        "probeTable": "revenue0 AS revenue0",
+        "buildTable": "supplierAux65",
+        "probeKeys": [
+          "supplier_no"
+        ],
+        "buildKeys": [
+          "v1"
+        ],
+        "innerConditions": [],
+        "outerConditions": [],
+        "distinct": false,
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiJoinView4828469985728292440",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v1",
+          "v9"
+        ],
+        "probeTable": "semiJoinView6147301982021505328",
+        "buildTable": "q15_inner AS q15_inner",
+        "probeKeys": [
+          "v9"
+        ],
+        "buildKeys": [
+          "max_tr"
+        ],
+        "innerConditions": [],
+        "outerConditions": [],
+        "distinct": true,
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "semiEnum3306196806876084574",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v9",
+          "v1"
+        ],
+        "probeTable": "semiJoinView4828469985728292440",
+        "buildTable": "q15_inner as q15_inner",
+        "joinKeys": [],
+        "conditions": [
+          "q15_inner.max_tr=semiJoinView4828469985728292440.v9"
+        ],
+        "distinct": true,
+        "joinType": "INNER"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "semiEnum7872092752807888636",
+        "columns": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v5",
+          "v3",
+          "v1",
+          "v9",
+          "v2"
+        ],
+        "probeTable": "semiEnum3306196806876084574",
+        "buildTable": "supplierAux65",
+        "joinKeys": [
+          "v1"
+        ],
+        "conditions": [],
+        "distinct": false,
+        "joinType": "INNER"
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "v1",
+          "v2",
+          "v3",
+          "v5",
+          "v9"
+        ],
+        "columnAliases": [
+          "v1",
+          "v2",
+          "v3",
+          "v5",
+          "v9"
+        ],
+        "inputView": "semiEnum7872092752807888636",
+        "conditions": [],
+        "distinct": true
+      }
+    }
+  ]
+}

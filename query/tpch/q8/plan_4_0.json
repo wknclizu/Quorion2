@@ -1,0 +1,351 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView1132272592559195278",
+        "columns": [
+          "n_nationkey",
+          "CASE WHEN n_name = 'BRAZIL' THEN 1 ELSE 0 END"
+        ],
+        "columnAliases": [
+          "v13",
+          "caseCond"
+        ],
+        "inputView": "nation as n2",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin5777178637584867279",
+        "columns": [
+          "s_suppkey",
+          ""
+        ],
+        "columnAliases": [
+          "v10",
+          "caseCond"
+        ],
+        "probeTable": "supplier as supplier",
+        "buildTable": "aggView1132272592559195278",
+        "joinKeys": [],
+        "conditions": [
+          "supplier.s_nationkey=aggView1132272592559195278.v13"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView6626617323754727237",
+        "columns": [
+          "r_regionkey"
+        ],
+        "columnAliases": [
+          "v53"
+        ],
+        "inputView": "region as region",
+        "conditions": [
+          "(r_name = 'AMERICA')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin7261035021179868605",
+        "columns": [
+          "n_nationkey"
+        ],
+        "columnAliases": [
+          "v46"
+        ],
+        "probeTable": "nation as n1",
+        "buildTable": "aggView6626617323754727237",
+        "joinKeys": [],
+        "conditions": [
+          "n1.n_regionkey=aggView6626617323754727237.v53"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView5261069705737036787",
+        "columns": [
+          "",
+          "",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v10",
+          "caseCond",
+          "annot"
+        ],
+        "inputView": "aggJoin5777178637584867279",
+        "conditions": [],
+        "groupBy": [
+          "v10",
+          "caseCond"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin8207720684581230993",
+        "columns": [
+          "l_orderkey",
+          "l_partkey",
+          "l_extendedprice",
+          "l_discount",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v17",
+          "v1",
+          "v22",
+          "v23",
+          "caseCond",
+          "annot"
+        ],
+        "probeTable": "lineitem as lineitem",
+        "buildTable": "aggView5261069705737036787",
+        "joinKeys": [],
+        "conditions": [
+          "lineitem.l_suppkey=aggView5261069705737036787.v10"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView8210409297526634898",
+        "columns": [
+          "",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v46",
+          "annot"
+        ],
+        "inputView": "aggJoin7261035021179868605",
+        "conditions": [],
+        "groupBy": [
+          "v46"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin8403628246948379297",
+        "columns": [
+          "c_custkey",
+          ""
+        ],
+        "columnAliases": [
+          "v35",
+          "annot"
+        ],
+        "probeTable": "customer as customer",
+        "buildTable": "aggView8210409297526634898",
+        "joinKeys": [],
+        "conditions": [
+          "customer.c_nationkey=aggView8210409297526634898.v46"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView8900284799223784189",
+        "columns": [
+          "p_partkey"
+        ],
+        "columnAliases": [
+          "v1"
+        ],
+        "inputView": "part as part",
+        "conditions": [
+          "(p_type = 'ECONOMY ANODIZED STEEL')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin5062243409208938705",
+        "columns": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v17",
+          "v22",
+          "v23",
+          "caseCond",
+          "annot"
+        ],
+        "probeTable": "aggJoin8207720684581230993",
+        "buildTable": "aggView8900284799223784189",
+        "joinKeys": [
+          "v1"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView6663618427728785677",
+        "columns": [
+          "",
+          "SUM( CASE WHEN caseCond = 1 THEN v22 * (1 - v23)*annot ELSE 0.0 END)",
+          "SUM((v22 * (1 - v23)) * annot)",
+          "SUM(annot)"
+        ],
+        "columnAliases": [
+          "v17",
+          "v64",
+          "v65",
+          "annot"
+        ],
+        "inputView": "aggJoin5062243409208938705",
+        "conditions": [],
+        "groupBy": [
+          "v17"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin7498744150886367197",
+        "columns": [
+          "o_year",
+          "o_custkey",
+          "o_orderdate",
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v34",
+          "v35",
+          "v38",
+          "v64",
+          "v65",
+          "annot"
+        ],
+        "probeTable": "orderswithyear as orderswithyear",
+        "buildTable": "aggView6663618427728785677",
+        "joinKeys": [],
+        "conditions": [
+          "orderswithyear.o_orderkey=aggView6663618427728785677.v17",
+          "(o_orderdate >= DATE '1994-12-31')",
+          "(o_orderdate <= DATE '1996-12-30')"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView578461301707113025",
+        "columns": [
+          "",
+          "SUM(annot)"
+        ],
+        "columnAliases": [
+          "v35",
+          "annot"
+        ],
+        "inputView": "aggJoin8403628246948379297",
+        "conditions": [],
+        "groupBy": [
+          "v35"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin5595423062282072835",
+        "columns": [
+          "",
+          "",
+          "v64*aggView578461301707113025.annot",
+          "v65*aggView578461301707113025.annot",
+          "aggJoin7498744150886367197.annot * aggView578461301707113025.annot"
+        ],
+        "columnAliases": [
+          "v34",
+          "v38",
+          "v64",
+          "v65",
+          "annot"
+        ],
+        "probeTable": "aggJoin7498744150886367197",
+        "buildTable": "aggView578461301707113025",
+        "joinKeys": [
+          "v35"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView7438043186305235029",
+        "columns": [
+          "",
+          "SUM(v64)",
+          "SUM(v65)"
+        ],
+        "columnAliases": [
+          "v34",
+          "v64",
+          "v65"
+        ],
+        "inputView": "aggJoin5595423062282072835",
+        "conditions": [],
+        "groupBy": [
+          "v34"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "v34",
+          "(v64 / SUM(v66))"
+        ],
+        "columnAliases": [
+          "v34",
+          "v66"
+        ],
+        "inputView": "aggView7438043186305235029",
+        "groupBy": [
+          "v34"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    }
+  ]
+}

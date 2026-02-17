@@ -1,0 +1,741 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "lineitemwithyearAux80",
+        "columns": [
+          "l_orderkey",
+          "l_year",
+          "l_suppkey"
+        ],
+        "columnAliases": [
+          "v25",
+          "v9",
+          "v1"
+        ],
+        "inputView": "lineitemwithyear",
+        "conditions": [
+          "(l_shipdate >= DATE '1994-12-31')",
+          "(l_shipdate <= DATE '1996-12-30')"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "n1Aux97",
+        "columns": [
+          "n_nationkey",
+          "n_name"
+        ],
+        "columnAliases": [
+          "v4",
+          "v43"
+        ],
+        "inputView": "nation",
+        "conditions": [
+          "(n_name = 'FRANCE')"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "n2Aux33",
+        "columns": [
+          "n_nationkey",
+          "n_name"
+        ],
+        "columnAliases": [
+          "v37",
+          "v47"
+        ],
+        "inputView": "nation",
+        "conditions": []
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiUp3676292933747081219",
+        "columns": [
+          "c_custkey",
+          "c_nationkey"
+        ],
+        "columnAliases": [
+          "v34",
+          "v37"
+        ],
+        "probeTable": "customer AS customer",
+        "buildTable": "n2Aux33",
+        "probeKeys": [
+          "c_nationkey"
+        ],
+        "buildKeys": [
+          "v37"
+        ],
+        "innerConditions": [],
+        "outerConditions": [],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiUp8367364999786523550",
+        "columns": [
+          "o_orderkey",
+          "o_custkey"
+        ],
+        "columnAliases": [
+          "v25",
+          "v34"
+        ],
+        "probeTable": "orders AS orders",
+        "buildTable": "semiUp3676292933747081219",
+        "probeKeys": [
+          "o_custkey"
+        ],
+        "buildKeys": [
+          "v34"
+        ],
+        "innerConditions": [],
+        "outerConditions": [],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiUp1343465264522932987",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v25",
+          "v9",
+          "v1"
+        ],
+        "probeTable": "lineitemwithyearAux80",
+        "buildTable": "semiUp8367364999786523550",
+        "probeKeys": [
+          "v25"
+        ],
+        "buildKeys": [
+          "v25"
+        ],
+        "innerConditions": [],
+        "outerConditions": [],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiUp3228337138382757391",
+        "columns": [
+          "s_suppkey",
+          "s_nationkey"
+        ],
+        "columnAliases": [
+          "v1",
+          "v4"
+        ],
+        "probeTable": "supplier AS supplier",
+        "buildTable": "semiUp1343465264522932987",
+        "probeKeys": [
+          "s_suppkey"
+        ],
+        "buildKeys": [
+          "v1"
+        ],
+        "innerConditions": [],
+        "outerConditions": [],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiUp2421504628605899224",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v4",
+          "v43"
+        ],
+        "probeTable": "n1Aux97",
+        "buildTable": "semiUp3228337138382757391",
+        "probeKeys": [
+          "v4"
+        ],
+        "buildKeys": [
+          "v4"
+        ],
+        "innerConditions": [],
+        "outerConditions": [],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiDown6886176822403618502",
+        "columns": [
+          "n_nationkey",
+          "n_name"
+        ],
+        "columnAliases": [
+          "v4",
+          "v43"
+        ],
+        "probeTable": "nation AS n1",
+        "buildTable": "semiUp2421504628605899224",
+        "probeKeys": [
+          "n_nationkey",
+          "n_name"
+        ],
+        "buildKeys": [
+          "v4",
+          "v43"
+        ],
+        "innerConditions": [],
+        "outerConditions": [
+          "(n_name = 'FRANCE')"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiDown3521906633078053289",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v1",
+          "v4"
+        ],
+        "probeTable": "semiUp3228337138382757391",
+        "buildTable": "semiUp2421504628605899224",
+        "probeKeys": [
+          "v4"
+        ],
+        "buildKeys": [
+          "v4"
+        ],
+        "innerConditions": [],
+        "outerConditions": [],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiDown3259530406091385139",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v25",
+          "v9",
+          "v1"
+        ],
+        "probeTable": "semiUp1343465264522932987",
+        "buildTable": "semiDown3521906633078053289",
+        "probeKeys": [
+          "v1"
+        ],
+        "buildKeys": [
+          "v1"
+        ],
+        "innerConditions": [],
+        "outerConditions": [],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiDown8120621865760793843",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v25",
+          "v34"
+        ],
+        "probeTable": "semiUp8367364999786523550",
+        "buildTable": "semiDown3259530406091385139",
+        "probeKeys": [
+          "v25"
+        ],
+        "buildKeys": [
+          "v25"
+        ],
+        "innerConditions": [],
+        "outerConditions": [],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiDown4929763938813832112",
+        "columns": [
+          "l_orderkey",
+          "l_year",
+          "l_suppkey",
+          "l_extendedprice",
+          "l_discount"
+        ],
+        "columnAliases": [
+          "v25",
+          "v9",
+          "v1",
+          "v14",
+          "v15"
+        ],
+        "probeTable": "lineitemwithyear AS lineitemwithyear",
+        "buildTable": "semiDown3259530406091385139",
+        "probeKeys": [
+          "l_orderkey",
+          "l_suppkey",
+          "l_year"
+        ],
+        "buildKeys": [
+          "v25",
+          "v1",
+          "v9"
+        ],
+        "innerConditions": [],
+        "outerConditions": [
+          "(l_shipdate >= DATE '1994-12-31')",
+          "(l_shipdate <= DATE '1996-12-30')"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiDown878719168778325374",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v34",
+          "v37"
+        ],
+        "probeTable": "semiUp3676292933747081219",
+        "buildTable": "semiDown8120621865760793843",
+        "probeKeys": [
+          "v34"
+        ],
+        "buildKeys": [
+          "v34"
+        ],
+        "innerConditions": [],
+        "outerConditions": [],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiDown649668328763024189",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v37",
+          "v47"
+        ],
+        "probeTable": "n2Aux33",
+        "buildTable": "semiDown878719168778325374",
+        "probeKeys": [
+          "v37"
+        ],
+        "buildKeys": [
+          "v37"
+        ],
+        "innerConditions": [],
+        "outerConditions": [],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiDown1444705687039328263",
+        "columns": [
+          "n_nationkey",
+          "n_name"
+        ],
+        "columnAliases": [
+          "v37",
+          "v47"
+        ],
+        "probeTable": "nation AS n2",
+        "buildTable": "semiDown649668328763024189",
+        "probeKeys": [
+          "n_name",
+          "n_nationkey"
+        ],
+        "buildKeys": [
+          "v47",
+          "v37"
+        ],
+        "innerConditions": [],
+        "outerConditions": [],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView6756227772108257694",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v47",
+          "v37"
+        ],
+        "inputView": "semiDown1444705687039328263",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView8650887144585718630",
+        "columns": [
+          "",
+          "",
+          "",
+          "SUM(v14 * (1 - v15))",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v25",
+          "v1",
+          "v9",
+          "v51",
+          "annot"
+        ],
+        "inputView": "semiDown4929763938813832112",
+        "conditions": [],
+        "groupBy": [
+          "v25",
+          "v1",
+          "v9"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView2514845271340051158",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v4",
+          "v43"
+        ],
+        "inputView": "semiDown6886176822403618502",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView7372435820967104386",
+        "columns": [
+          "",
+          "",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v37",
+          "v47",
+          "annot"
+        ],
+        "inputView": "aggView6756227772108257694",
+        "conditions": [],
+        "groupBy": [
+          "v37",
+          "v47"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin9200942061185645631",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v34",
+          "v47",
+          "annot"
+        ],
+        "probeTable": "semiDown878719168778325374",
+        "buildTable": "aggView7372435820967104386",
+        "joinKeys": [
+          "v37"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView622779447897405644",
+        "columns": [
+          "",
+          "",
+          "SUM(annot)"
+        ],
+        "columnAliases": [
+          "v34",
+          "v47",
+          "annot"
+        ],
+        "inputView": "aggJoin9200942061185645631",
+        "conditions": [],
+        "groupBy": [
+          "v34",
+          "v47"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin3936789288818444221",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v25",
+          "v47",
+          "annot"
+        ],
+        "probeTable": "semiDown8120621865760793843",
+        "buildTable": "aggView622779447897405644",
+        "joinKeys": [
+          "v34"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView3718789971444186333",
+        "columns": [
+          "",
+          "",
+          "SUM(annot)"
+        ],
+        "columnAliases": [
+          "v25",
+          "v47",
+          "annot"
+        ],
+        "inputView": "aggJoin3936789288818444221",
+        "conditions": [],
+        "groupBy": [
+          "v25",
+          "v47"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin7168151623011108157",
+        "columns": [
+          "",
+          "",
+          "v51*aggView3718789971444186333.annot",
+          "aggView8650887144585718630.annot * aggView3718789971444186333.annot",
+          ""
+        ],
+        "columnAliases": [
+          "v1",
+          "v9",
+          "v51",
+          "annot",
+          "v47"
+        ],
+        "probeTable": "aggView8650887144585718630",
+        "buildTable": "aggView3718789971444186333",
+        "joinKeys": [
+          "v25"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView4092248588225580534",
+        "columns": [
+          "",
+          "SUM(v51)",
+          "",
+          "",
+          "SUM(annot)"
+        ],
+        "columnAliases": [
+          "v1",
+          "v51",
+          "v9",
+          "v47",
+          "annot"
+        ],
+        "inputView": "aggJoin7168151623011108157",
+        "conditions": [],
+        "groupBy": [
+          "v1",
+          "v9",
+          "v51",
+          "v47"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin4475260054819633633",
+        "columns": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v4",
+          "v51",
+          "v9",
+          "v47",
+          "annot"
+        ],
+        "probeTable": "semiDown3521906633078053289",
+        "buildTable": "aggView4092248588225580534",
+        "joinKeys": [
+          "v1"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView1359347166791614318",
+        "columns": [
+          "",
+          "SUM(v51)",
+          "",
+          "",
+          "SUM(annot)"
+        ],
+        "columnAliases": [
+          "v4",
+          "v51",
+          "v9",
+          "v47",
+          "annot"
+        ],
+        "inputView": "aggJoin4475260054819633633",
+        "conditions": [],
+        "groupBy": [
+          "v4",
+          "v9",
+          "v51",
+          "v47"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin8513777540393081826",
+        "columns": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v43",
+          "v51",
+          "v9",
+          "v47"
+        ],
+        "probeTable": "aggView2514845271340051158",
+        "buildTable": "aggView1359347166791614318",
+        "joinKeys": [
+          "v4"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "v43",
+          "v47",
+          "v9",
+          "v51"
+        ],
+        "columnAliases": [
+          "v43",
+          "v47",
+          "v9",
+          "v51"
+        ],
+        "inputView": "aggJoin8513777540393081826",
+        "groupBy": [
+          "v43",
+          "v47",
+          "v9"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "plan": [
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView1633856796938653923",
+        "columns": [
+          "ps_partkey",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v6",
+          "annot"
+        ],
+        "inputView": "partsupp as partsupp",
+        "conditions": [],
+        "groupBy": [
+          "ps_partkey"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin1645491211268101310",
+        "columns": [
+          "p_brand",
+          "p_type",
+          "p_size",
+          ""
+        ],
+        "columnAliases": [
+          "v9",
+          "v10",
+          "v11",
+          "annot"
+        ],
+        "probeTable": "part as part",
+        "buildTable": "aggView1633856796938653923",
+        "joinKeys": [],
+        "conditions": [
+          "part.p_partkey=aggView1633856796938653923.v6",
+          "(p_brand <> 'Brand#45')",
+          "(p_type NOT LIKE 'MEDIUM POLISHED%')",
+          "(p_size IN (49,14,23,45,19,3,36,9))"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView467111455142151323",
+        "columns": [
+          "",
+          "",
+          "",
+          "SUM(annot)"
+        ],
+        "columnAliases": [
+          "v10",
+          "v9",
+          "v11",
+          "annot"
+        ],
+        "inputView": "aggJoin1645491211268101310",
+        "conditions": [],
+        "groupBy": [
+          "v10",
+          "v9",
+          "v11"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "v9",
+          "v10",
+          "v11",
+          "SUM(annot)"
+        ],
+        "columnAliases": [
+          "v9",
+          "v10",
+          "v11",
+          "v15"
+        ],
+        "inputView": "aggView467111455142151323",
+        "groupBy": [
+          "v9",
+          "v10",
+          "v11"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    }
+  ]
+}

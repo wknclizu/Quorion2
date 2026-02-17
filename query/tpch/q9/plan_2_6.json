@@ -1,0 +1,264 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView2594404349325916768",
+        "columns": [
+          "n_nationkey",
+          "n_name"
+        ],
+        "columnAliases": [
+          "v13",
+          "v49"
+        ],
+        "inputView": "nation as nation",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin2181046427541241345",
+        "columns": [
+          "s_suppkey",
+          ""
+        ],
+        "columnAliases": [
+          "v10",
+          "v49"
+        ],
+        "probeTable": "supplier as supplier",
+        "buildTable": "aggView2594404349325916768",
+        "joinKeys": [],
+        "conditions": [
+          "supplier.s_nationkey=aggView2594404349325916768.v13"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView7457848637848242135",
+        "columns": [
+          "",
+          "",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v10",
+          "v49",
+          "annot"
+        ],
+        "inputView": "aggJoin2181046427541241345",
+        "conditions": [],
+        "groupBy": [
+          "v10",
+          "v49"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin4532011560771456279",
+        "columns": [
+          "l_orderkey",
+          "l_partkey",
+          "l_suppkey",
+          "l_quantity",
+          "l_extendedprice",
+          "l_discount",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v38",
+          "v33",
+          "v10",
+          "v21",
+          "v22",
+          "v23",
+          "v49",
+          "annot"
+        ],
+        "probeTable": "lineitem as lineitem",
+        "buildTable": "aggView7457848637848242135",
+        "joinKeys": [],
+        "conditions": [
+          "lineitem.l_suppkey=aggView7457848637848242135.v10"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView7852098536175860307",
+        "columns": [
+          "p_partkey"
+        ],
+        "columnAliases": [
+          "v33"
+        ],
+        "inputView": "part as part",
+        "conditions": [
+          "(p_name LIKE '%green%')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin4816265145818189721",
+        "columns": [
+          "ps_partkey",
+          "ps_suppkey",
+          "ps_supplycost"
+        ],
+        "columnAliases": [
+          "v33",
+          "v10",
+          "v36"
+        ],
+        "probeTable": "partsupp as partsupp",
+        "buildTable": "aggView7852098536175860307",
+        "joinKeys": [],
+        "conditions": [
+          "partsupp.ps_partkey=aggView7852098536175860307.v33"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView922081145026537327",
+        "columns": [
+          "o_orderkey",
+          "o_year"
+        ],
+        "columnAliases": [
+          "v38",
+          "v39"
+        ],
+        "inputView": "orderswithyear as orderswithyear",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin126866458906479278",
+        "columns": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v33",
+          "v10",
+          "v21",
+          "v22",
+          "v23",
+          "v49",
+          "annot",
+          "v39"
+        ],
+        "probeTable": "aggJoin4532011560771456279",
+        "buildTable": "aggView922081145026537327",
+        "joinKeys": [
+          "v38"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView7583521564350187696",
+        "columns": [
+          "",
+          "",
+          "SUM(v36)/COUNT(*)",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v10",
+          "v33",
+          "v36",
+          "annot"
+        ],
+        "inputView": "aggJoin4816265145818189721",
+        "conditions": [],
+        "groupBy": [
+          "v10",
+          "v33"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin8699496671510525592",
+        "columns": [
+          "",
+          "",
+          "",
+          "",
+          "aggJoin126866458906479278.annot * aggView7583521564350187696.annot",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v21",
+          "v22",
+          "v23",
+          "v49",
+          "annot",
+          "v39",
+          "v36"
+        ],
+        "probeTable": "aggJoin126866458906479278",
+        "buildTable": "aggView7583521564350187696",
+        "joinKeys": [
+          "v10",
+          "v33"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "v49",
+          "v39",
+          "SUM((v22 * (1 - v23))*annot)",
+          "SUM((v36 * v21)*annot)"
+        ],
+        "columnAliases": [
+          "v49",
+          "v39",
+          "v54",
+          "v55"
+        ],
+        "inputView": "aggJoin8699496671510525592",
+        "groupBy": [
+          "v49",
+          "v39"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    }
+  ]
+}

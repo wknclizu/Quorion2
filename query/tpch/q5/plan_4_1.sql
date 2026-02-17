@@ -1,0 +1,12 @@
+create or replace TEMP view aggView2174709746904766475 as select r_regionkey as v43 from region as region where (r_name = 'ASIA');
+create or replace TEMP view aggJoin6536935700740676893 as select n_nationkey as v4, n_name as v42 from nation as nation, aggView2174709746904766475 where nation.n_regionkey=aggView2174709746904766475.v43;
+create or replace TEMP view aggView2501924355086762117 as select v4, v42, COUNT(*) as annot from aggJoin6536935700740676893 group by v4,v42;
+create or replace TEMP view aggJoin5744699587444809999 as select c_custkey as v1, c_nationkey as v4, v42, annot from customer as customer, aggView2501924355086762117 where customer.c_nationkey=aggView2501924355086762117.v4;
+create or replace TEMP view aggView4733168685613298143 as select v1, v4, v42, SUM(annot) as annot from aggJoin5744699587444809999 group by v1,v4,v42;
+create or replace TEMP view aggJoin7153341253372972337 as select o_orderkey as v18, o_orderdate as v13, v4, v42, annot from orders as orders, aggView4733168685613298143 where orders.o_custkey=aggView4733168685613298143.v1 and (o_orderdate >= DATE '1993-12-31') and (o_orderdate < DATE '1994-12-31');
+create or replace TEMP view aggView4636002893402145906 as select v18, v4, v42, SUM(annot) as annot from aggJoin7153341253372972337 group by v18,v4,v42;
+create or replace TEMP view aggJoin3856335198895926457 as select l_suppkey as v20, l_extendedprice as v23, l_discount as v24, v4, v42, annot from lineitem as lineitem, aggView4636002893402145906 where lineitem.l_orderkey=aggView4636002893402145906.v18;
+create or replace TEMP view aggView7070283884994794924 as select s_suppkey as v20, s_nationkey as v50 from supplier as supplier;
+create or replace TEMP view aggJoin1082112524214826472 as select v23, v24, v4, v42, annot, v50 from aggJoin3856335198895926457 join aggView7070283884994794924 using(v20) where v4 = v50;
+create or replace TEMP view res as select v42, SUM((v23 * (1 - v24))*annot) as v49 from aggJoin1082112524214826472 group by v42;
+select sum(v42+v49) from res;

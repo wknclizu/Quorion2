@@ -1,0 +1,4 @@
+create or replace TEMP view aggView1614889588375959938 as select p_partkey as v6, p_type as v10, p_size as v11, p_brand as v9 from part as part where (p_brand <> 'Brand#45') and (p_type NOT LIKE 'MEDIUM POLISHED%') and (p_size IN (49,14,23,45,19,3,36,9));
+create or replace TEMP view aggJoin5754077578102177306 as select v10, v11, v9 from partsupp as partsupp, aggView1614889588375959938 where partsupp.ps_partkey=aggView1614889588375959938.v6;
+create or replace TEMP view res as select v9, v10, v11, COUNT(*) as v15 from aggJoin5754077578102177306 group by v9, v10, v11;
+select sum(v9+v10+v11+v15) from res;

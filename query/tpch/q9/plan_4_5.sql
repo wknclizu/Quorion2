@@ -1,0 +1,12 @@
+create or replace TEMP view aggView6035358153182681440 as select p_partkey as v33 from part as part where (p_name LIKE '%green%');
+create or replace TEMP view aggJoin7042646068388341376 as select ps_partkey as v33, ps_suppkey as v10, ps_supplycost as v36 from partsupp as partsupp, aggView6035358153182681440 where partsupp.ps_partkey=aggView6035358153182681440.v33;
+create or replace TEMP view aggView4881145221796174030 as select n_nationkey as v13, n_name as v49 from nation as nation;
+create or replace TEMP view aggJoin3614828189918139449 as select s_suppkey as v10, v49 from supplier as supplier, aggView4881145221796174030 where supplier.s_nationkey=aggView4881145221796174030.v13;
+create or replace TEMP view aggView1294871592098601110 as select v10, v49, COUNT(*) as annot from aggJoin3614828189918139449 group by v10,v49;
+create or replace TEMP view aggJoin8088990410723755000 as select l_orderkey as v38, l_partkey as v33, l_suppkey as v10, l_quantity as v21, l_extendedprice as v22, l_discount as v23, v49, annot from lineitem as lineitem, aggView1294871592098601110 where lineitem.l_suppkey=aggView1294871592098601110.v10;
+create or replace TEMP view aggView4501864432265725736 as select o_orderkey as v38, o_year as v39 from orderswithyear as orderswithyear;
+create or replace TEMP view aggJoin633401056286325119 as select v33, v10, v21, v22, v23, v49, annot, v39 from aggJoin8088990410723755000 join aggView4501864432265725736 using(v38);
+create or replace TEMP view aggView5548167352813437888 as select v33, v10, SUM(v36)/COUNT(*) as v36, COUNT(*) as annot from aggJoin7042646068388341376 group by v33,v10;
+create or replace TEMP view aggJoin7867938686341222527 as select v21, v22, v23, v49, aggJoin633401056286325119.annot * aggView5548167352813437888.annot as annot, v39, v36 from aggJoin633401056286325119 join aggView5548167352813437888 using(v33,v10);
+create or replace TEMP view res as select v49, v39, SUM((v22 * (1 - v23))*annot) as v54, SUM((v36 * v21)*annot) as v55 from aggJoin7867938686341222527 group by v49, v39;
+select sum(v49+v39+v54+v55) from res;

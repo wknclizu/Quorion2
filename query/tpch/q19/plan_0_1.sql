@@ -1,0 +1,4 @@
+create or replace TEMP view aggView3745112125884332129 as select l_partkey as v17, SUM(l_extendedprice * (1 - l_discount)) as v27 from lineitem as lineitem where (l_quantity >= 21) and (l_shipinstruct = 'DELIVER IN PERSON') and (l_quantity <= (21 + 10)) and (l_shipmode IN ('AIR','AIR REG')) group by l_partkey;
+create or replace TEMP view aggJoin2154620763944219424 as select p_brand as v20, p_size as v22, p_container as v23, v27 from part as part, aggView3745112125884332129 where part.p_partkey=aggView3745112125884332129.v17 and (p_brand = 'Brand#34') and (p_size >= 1) and (p_container IN ('LG CASE','LG BOX','LG PACK','LG PKG')) and (p_size <= 15);
+create or replace TEMP view res as select SUM(v27) as v27 from aggJoin2154620763944219424;
+select sum(v27) from res;

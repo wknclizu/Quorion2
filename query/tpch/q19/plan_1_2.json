@@ -1,0 +1,68 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView6521872537662435878",
+        "columns": [
+          "p_partkey"
+        ],
+        "columnAliases": [
+          "v17"
+        ],
+        "inputView": "part as part",
+        "conditions": [
+          "(p_brand = 'Brand#34')",
+          "(p_size >= 1)",
+          "(p_container IN ('LG CASE','LG BOX','LG PACK','LG PKG'))",
+          "(p_size <= 15)"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin8988683205110516082",
+        "columns": [
+          "l_quantity",
+          "l_extendedprice",
+          "l_discount",
+          "l_shipinstruct",
+          "l_shipmode"
+        ],
+        "columnAliases": [
+          "v5",
+          "v6",
+          "v7",
+          "v14",
+          "v15"
+        ],
+        "probeTable": "lineitem as lineitem",
+        "buildTable": "aggView6521872537662435878",
+        "joinKeys": [],
+        "conditions": [
+          "lineitem.l_partkey=aggView6521872537662435878.v17",
+          "(l_quantity >= 21)",
+          "(l_shipinstruct = 'DELIVER IN PERSON')",
+          "(l_quantity <= (21 + 10))",
+          "(l_shipmode IN ('AIR','AIR REG'))"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "SUM((v6 * (1 - v7)))"
+        ],
+        "columnAliases": [
+          "v27"
+        ],
+        "inputView": "aggJoin8988683205110516082",
+        "conditions": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+create or replace TEMP view aggView8098191437369486885 as select o_orderkey as v1, CASE WHEN (o_orderpriority IN ('1-URGENT','2-HIGH')) THEN 1 ELSE 0 END as v28, CASE WHEN (o_orderpriority NOT IN ('1-URGENT','2-HIGH')) THEN 1 ELSE 0 END as v29 from orders as orders;
+create or replace TEMP view aggJoin5473491211485029392 as select l_shipdate as v20, l_commitdate as v21, l_receiptdate as v22, l_shipmode as v24, v28, v29 from lineitem as lineitem, aggView8098191437369486885 where lineitem.l_orderkey=aggView8098191437369486885.v1 and (l_shipmode IN ('MAIL','SHIP')) and (l_receiptdate >= DATE '1993-12-31') and (l_shipdate < l_commitdate) and (l_receiptdate < DATE '1994-12-31') and (l_commitdate < l_receiptdate);
+create or replace TEMP view aggView3563962315989260394 as select v24, SUM(v28) as v28, SUM(v29) as v29 from aggJoin5473491211485029392 group by v24;
+create or replace TEMP view res as select v24, SUM(v28) as v28, SUM(v29) as v29 from aggView3563962315989260394 group by v24;
+select sum(v24+v28+v29) from res;

@@ -1,0 +1,114 @@
+{
+  "plan": [
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiUp5801500814349701203",
+        "columns": [
+          "l_orderkey"
+        ],
+        "columnAliases": [
+          "v10"
+        ],
+        "probeTable": "lineitem AS lineitem",
+        "buildTable": "orders AS orders",
+        "probeKeys": [
+          "l_orderkey"
+        ],
+        "buildKeys": [
+          "o_orderkey"
+        ],
+        "innerConditions": [
+          "(o_orderdate >= DATE '1993-06-30')",
+          "(o_orderdate < DATE '1993-09-30')"
+        ],
+        "outerConditions": [
+          "(l_commitdate < l_receiptdate)"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiDown1134220303940055480",
+        "columns": [
+          "o_orderkey",
+          "o_orderpriority"
+        ],
+        "columnAliases": [
+          "v10",
+          "v6"
+        ],
+        "probeTable": "orders AS orders",
+        "buildTable": "semiUp5801500814349701203",
+        "probeKeys": [
+          "o_orderkey"
+        ],
+        "buildKeys": [
+          "v10"
+        ],
+        "innerConditions": [],
+        "outerConditions": [
+          "(o_orderdate >= DATE '1993-06-30')",
+          "(o_orderdate < DATE '1993-09-30')"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView60293365623039440",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v10",
+          "v6"
+        ],
+        "inputView": "semiDown1134220303940055480",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin2706702389164747594",
+        "columns": [
+          ""
+        ],
+        "columnAliases": [
+          "v6"
+        ],
+        "probeTable": "semiUp5801500814349701203",
+        "buildTable": "aggView60293365623039440",
+        "joinKeys": [
+          "v10"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "v6",
+          "v26"
+        ],
+        "columnAliases": [
+          "v6",
+          "v26"
+        ],
+        "inputView": "aggJoin2706702389164747594",
+        "groupBy": [
+          "v6"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    }
+  ]
+}

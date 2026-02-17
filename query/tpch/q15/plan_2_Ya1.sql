@@ -1,0 +1,11 @@
+create or replace TEMP view supplierAux49 as select s_suppkey as v1, s_name as v2, s_address as v3, s_phone as v5 from supplier;
+create or replace TEMP view semiUp4303522304436953103 as select supplier_no as v1, total_revenue as v9 from revenue0 AS revenue0 where (supplier_no) in (select v1 from supplierAux49);
+create or replace TEMP view semiUp8225293591826506247 as select v1, v9 from semiUp4303522304436953103 where (v9) in (select max_tr from q15_inner AS q15_inner);
+create or replace TEMP view semiDown1676380693788684378 as select max_tr as v9 from q15_inner AS q15_inner where (max_tr) in (select v9 from semiUp8225293591826506247);
+create or replace TEMP view semiDown8152600609174367828 as select v1, v2, v3, v5 from supplierAux49 where (v1) in (select v1 from semiUp8225293591826506247);
+create or replace TEMP view semiDown3106013147669655212 as select s_suppkey as v1, s_name as v2, s_address as v3, s_phone as v5 from supplier AS supplier where (s_suppkey, s_phone, s_address, s_name) in (select v1, v5, v3, v2 from semiDown8152600609174367828);
+create or replace TEMP view joinView2310213639777740447 as select v1, v2, v3, v5 from semiDown8152600609174367828 join semiDown3106013147669655212 using(v5, v1, v3, v2);
+create or replace TEMP view joinView1864524790309240274 as select v1, v9 from semiUp8225293591826506247 join semiDown1676380693788684378 using(v9);
+create or replace TEMP view joinView5329092693075906496 as select v1, v9, v2, v3, v5 from joinView1864524790309240274 join joinView2310213639777740447 using(v1);
+create or replace TEMP view res as select distinct v1, v2, v3, v5, v9 from joinView5329092693075906496;
+select sum(v1+v2+v3+v5+v9) from res;

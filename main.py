@@ -10,6 +10,7 @@ Options:
   -m, --mode mode   Set topK algorithm mode. 0: level-k, 1: product-k [default: 0]
   -g, --genType type    Set generate code mode D(DuckDB)/M(MySql) [default: D]
   -y, --yanna yanna     Set Y for yannakakis generation; N for our rewrite [default: N]
+  -p, --plan plan       Set plan file name [default: ]
 """
 from pandas import reset_option
 from treenode import *
@@ -302,7 +303,7 @@ def connect(base: int, mode: int, type: GenType, response, responseType: int = 1
             JT.addEdge(edge)
 
         for id, node in JT.node.items():
-            if len(node.children) and len(node.hintJoinOrder):
+            if node.children and node.hintJoinOrder:
                 for child in node.children:
                     try:
                         child.reduceOrder = len(node.hintJoinOrder) - node.hintJoinOrder.index(child.id)
@@ -551,11 +552,9 @@ def pass2Java():
     return jsonify(response_data)
 
 
-def init_global_vars(base=2, mode=0, gen_type="DuckDB", yanna=False):
+def init_global_vars(base=2, mode=0, gen_type="DuckDB", yanna=False, plan_name=""):
     globalVar._init()
     globalVar.set_value('QUERY_NAME', 'query.sql')
-    globalVar.set_value('OUT_NAME', 'rewrite.sql')
-    globalVar.set_value('OUT_YA_NAME', 'rewriteYa.sql')
     globalVar.set_value('COST_NAME', 'cost.csv')
     globalVar.set_value('GEN_TYPE', gen_type)
     globalVar.set_value('YANNA', yanna)
@@ -567,10 +566,19 @@ def init_global_vars(base=2, mode=0, gen_type="DuckDB", yanna=False):
     globalVar.set_value('DDL_NAME', "lsqb.ddl")
     globalVar.set_value('ANNOT_ELIMINATION', True)
 
-    if gen_type != 'PG':
-        globalVar.set_value('PLAN_NAME', 'plan.json')
+    if plan_name:
+        globalVar.set_value('PLAN_NAME', plan_name)
+        # e.g. plan_0.json -> stem="plan_0" -> OUT_NAME="plan_0_.sql", OUT_YA_NAME="plan_0_Ya.sql"
+        stem = plan_name.rsplit('.', 1)[0]
+        globalVar.set_value('OUT_NAME', stem + '_.sql')
+        globalVar.set_value('OUT_YA_NAME', stem + '_Ya.sql')
     else:
-        globalVar.set_value('PLAN_NAME', 'plan_pg.json')
+        globalVar.set_value('OUT_NAME', 'rewrite.sql')
+        globalVar.set_value('OUT_YA_NAME', 'rewriteYa.sql')
+        if gen_type != 'PG':
+            globalVar.set_value('PLAN_NAME', 'plan.json')
+        else:
+            globalVar.set_value('PLAN_NAME', 'plan_pg.json')
     # 固定路径
     globalVar.set_value('REWRITE_TIME', 'rewrite_time.txt')
 
@@ -584,12 +592,14 @@ def web_ui():
 # Method2: command-line
 def command_line():
     from docopt import docopt  
-    init_global_vars(base=2, mode=0, gen_type="DuckDB", yanna=False)
-    base = globalVar.get_value('BASE')
-    mode = globalVar.get_value('MODE')
-    
     # NOTE: auto-rewrite keeps here
     arguments = docopt(__doc__)
+
+    plan_name = arguments['--plan'] if arguments['--plan'] else ""
+    init_global_vars(base=2, mode=0, gen_type="DuckDB", yanna=False, plan_name=plan_name)
+    base = globalVar.get_value('BASE')
+    mode = globalVar.get_value('MODE')
+
     globalVar.set_value('BASE_PATH', arguments['<query>'] + '/')
     globalVar.set_value('DDL_NAME', arguments['<ddl>'] + '.ddl')
     globalVar.set_value('ANNOT_ELIMINATION', True)
@@ -607,6 +617,8 @@ def command_line():
         globalVar.set_value('GEN_TYPE', 'Mysql')
     elif type == GenType.PG:
         globalVar.set_value('GEN_TYPE', 'PG')
+        if not plan_name:
+            globalVar.set_value('PLAN_NAME', 'plan_pg.json')
     else:
         globalVar.set_value('GEN_TYPE', 'DuckDB')
     

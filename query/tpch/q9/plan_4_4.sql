@@ -1,0 +1,12 @@
+create or replace TEMP view aggView4798278387793195482 as select n_nationkey as v13, n_name as v49 from nation as nation;
+create or replace TEMP view aggJoin85928602720250946 as select s_suppkey as v10, v49 from supplier as supplier, aggView4798278387793195482 where supplier.s_nationkey=aggView4798278387793195482.v13;
+create or replace TEMP view aggView4594060617724380704 as select v10, v49, COUNT(*) as annot from aggJoin85928602720250946 group by v10,v49;
+create or replace TEMP view aggJoin4450959307767251568 as select l_orderkey as v38, l_partkey as v33, l_suppkey as v10, l_quantity as v21, l_extendedprice as v22, l_discount as v23, v49, annot from lineitem as lineitem, aggView4594060617724380704 where lineitem.l_suppkey=aggView4594060617724380704.v10;
+create or replace TEMP view aggView4468038146457257722 as select o_orderkey as v38, o_year as v39 from orderswithyear as orderswithyear;
+create or replace TEMP view aggJoin9083115032296586329 as select v33, v10, v21, v22, v23, v49, annot, v39 from aggJoin4450959307767251568 join aggView4468038146457257722 using(v38);
+create or replace TEMP view aggView2309486836640416792 as select p_partkey as v33 from part as part where (p_name LIKE '%green%');
+create or replace TEMP view aggJoin1342358827204800571 as select v33, v10, v21, v22, v23, v49, annot, v39 from aggJoin9083115032296586329 join aggView2309486836640416792 using(v33);
+create or replace TEMP view aggView6084578996795100547 as select ps_partkey as v33, ps_suppkey as v10, ps_supplycost as v36 from partsupp as partsupp;
+create or replace TEMP view aggJoin8236261431774837563 as select v21, v22, v23, v49, annot, v39, v36 from aggJoin1342358827204800571 join aggView6084578996795100547 using(v33,v10);
+create or replace TEMP view res as select v49, v39, SUM((v22 * (1 - v23))*annot) as v54, SUM((v36 * v21)*annot) as v55 from aggJoin8236261431774837563 group by v49, v39;
+select sum(v49+v39+v54+v55) from res;

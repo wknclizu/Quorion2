@@ -1,0 +1,99 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView8098191437369486885",
+        "columns": [
+          "o_orderkey",
+          "CASE WHEN (o_orderpriority IN ('1-URGENT','2-HIGH')) THEN 1 ELSE 0 END",
+          "CASE WHEN (o_orderpriority NOT IN ('1-URGENT','2-HIGH')) THEN 1 ELSE 0 END"
+        ],
+        "columnAliases": [
+          "v1",
+          "v28",
+          "v29"
+        ],
+        "inputView": "orders as orders",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin5473491211485029392",
+        "columns": [
+          "l_shipdate",
+          "l_commitdate",
+          "l_receiptdate",
+          "l_shipmode",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v20",
+          "v21",
+          "v22",
+          "v24",
+          "v28",
+          "v29"
+        ],
+        "probeTable": "lineitem as lineitem",
+        "buildTable": "aggView8098191437369486885",
+        "joinKeys": [],
+        "conditions": [
+          "lineitem.l_orderkey=aggView8098191437369486885.v1",
+          "(l_shipmode IN ('MAIL','SHIP'))",
+          "(l_receiptdate >= DATE '1993-12-31')",
+          "(l_shipdate < l_commitdate)",
+          "(l_receiptdate < DATE '1994-12-31')",
+          "(l_commitdate < l_receiptdate)"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView3563962315989260394",
+        "columns": [
+          "",
+          "SUM(v28)",
+          "SUM(v29)"
+        ],
+        "columnAliases": [
+          "v24",
+          "v28",
+          "v29"
+        ],
+        "inputView": "aggJoin5473491211485029392",
+        "conditions": [],
+        "groupBy": [
+          "v24"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "v24",
+          "SUM(v28)",
+          "SUM(v29)"
+        ],
+        "columnAliases": [
+          "v24",
+          "v28",
+          "v29"
+        ],
+        "inputView": "aggView3563962315989260394",
+        "groupBy": [
+          "v24"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    }
+  ]
+}

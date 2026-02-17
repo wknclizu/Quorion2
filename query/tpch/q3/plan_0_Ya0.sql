@@ -1,0 +1,13 @@
+create or replace TEMP view semiUp8218320517836244948 as select o_orderkey as v18, o_custkey as v1, o_orderdate as v13, o_shippriority as v16 from orders AS orders where (o_custkey) in (select c_custkey from customer AS customer where (c_mktsegment = 'BUILDING')) and (o_orderdate < DATE '1995-03-14');
+create or replace TEMP view ordersAux41 as select v18, v13, v16 from semiUp8218320517836244948;
+create or replace TEMP view semiUp3376067851240371890 as select v18, v13, v16 from ordersAux41 where (v18) in (select l_orderkey from lineitem AS lineitem where (l_shipdate > DATE '1995-03-14'));
+create or replace TEMP view semiDown3834370149475305649 as select v18, v1, v13, v16 from semiUp8218320517836244948 where (v13, v18, v16) in (select v13, v18, v16 from semiUp3376067851240371890);
+create or replace TEMP view semiDown831996742798413548 as select l_orderkey as v18, l_extendedprice as v23, l_discount as v24 from lineitem AS lineitem where (l_orderkey) in (select v18 from semiUp3376067851240371890) and (l_shipdate > DATE '1995-03-14');
+create or replace TEMP view semiDown3653090103794442732 as select c_custkey as v1 from customer AS customer where (c_custkey) in (select v1 from semiDown3834370149475305649) and (c_mktsegment = 'BUILDING');
+create or replace TEMP view aggView4295836641459610956 as select v1 from semiDown3653090103794442732;
+create or replace TEMP view aggJoin3323957439955322291 as select v18, v13, v16 from semiDown3834370149475305649 join aggView4295836641459610956 using(v1);
+create or replace TEMP view aggView569109074993747378 as select v13, v18, v16, COUNT(*) as annot from aggJoin3323957439955322291 group by v13,v18,v16;
+create or replace TEMP view aggView7608755902210808500 as select v18, SUM(v23 * (1 - v24)) as v35, COUNT(*) as annot from semiDown831996742798413548 group by v18;
+create or replace TEMP view aggJoin5762555690014606579 as select v13, v18, v16, v35 * aggView569109074993747378.annot as v35 from aggView569109074993747378 join aggView7608755902210808500 using(v18);
+create or replace TEMP view res as select v18, SUM(v35) as v35, v13, v16 from aggJoin5762555690014606579 group by v18, v13, v16;
+select sum(v18+v35+v13+v16) from res;

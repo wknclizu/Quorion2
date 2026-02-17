@@ -1,0 +1,14 @@
+create or replace TEMP view aggView8599301422699612481 as select n_name as v49, n_nationkey as v13 from nation as nation;
+create or replace TEMP view aggView426342936079362088 as select o_orderkey as v38, o_year as v39 from orderswithyear as orderswithyear;
+create or replace TEMP view aggView8707819295435527702 as select p_partkey as v33 from part as part where (p_name LIKE '%green%');
+create or replace TEMP view aggJoin2579257957270508112 as select l_orderkey as v38, l_partkey as v33, l_suppkey as v10, l_quantity as v21, l_extendedprice as v22, l_discount as v23 from lineitem as lineitem, aggView8707819295435527702 where lineitem.l_partkey=aggView8707819295435527702.v33;
+create or replace TEMP view aggView189521657039698859 as select ps_suppkey as v10, ps_partkey as v33, ps_supplycost as v36 from partsupp as partsupp;
+create or replace TEMP view aggJoin5591101128771389326 as select v38, v10, v21, v22, v23, v36 from aggJoin2579257957270508112 join aggView189521657039698859 using(v10,v33);
+create or replace TEMP view semiJoinView5871241871239911707 as select s_suppkey as v10, s_nationkey as v13 from supplier AS supplier where (s_nationkey) in (select v13 from aggView8599301422699612481);
+create or replace TEMP view semiJoinView7658770405549636237 as select v38, v10, v21, v22, v23, v36, (v22 * (1 - v23)) as v54 from aggJoin5591101128771389326 where (v10) in (select v10 from semiJoinView5871241871239911707);
+create or replace TEMP view semiJoinView3668555340609783633 as select distinct v38, v39 from aggView426342936079362088 where (v38) in (select v38 from semiJoinView7658770405549636237);
+create or replace TEMP view semiEnum1243083493253686819 as select distinct v22, v21, v10, v39, v36, v54, v23 from semiJoinView3668555340609783633 join semiJoinView7658770405549636237 using(v38);
+create or replace TEMP view semiEnum8134344856371189199 as select distinct v22, v21, v13, v39, v36, v54, v23 from semiEnum1243083493253686819 join semiJoinView5871241871239911707 using(v10);
+create or replace TEMP view semiEnum1317383303329752160 as select v22, v21, v39, v36, v54, v49, v23 from semiEnum8134344856371189199 join aggView8599301422699612481 using(v13);
+create or replace TEMP view res as select v49, v39, SUM(v54) as v54, SUM((v36 * v21)) as v55 from semiEnum1317383303329752160 group by v49, v39;
+select sum(v49+v39+v54+v55) from res;

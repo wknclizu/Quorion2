@@ -1,0 +1,12 @@
+create or replace TEMP view aggView6001926583531188105 as select r_regionkey as v43 from region as region where (r_name = 'ASIA');
+create or replace TEMP view aggJoin866658770399863535 as select n_nationkey as v4, n_name as v42 from nation as nation, aggView6001926583531188105 where nation.n_regionkey=aggView6001926583531188105.v43;
+create or replace TEMP view aggView936857655161673895 as select v4, v42, COUNT(*) as annot from aggJoin866658770399863535 group by v4,v42;
+create or replace TEMP view aggJoin8276211485813409133 as select c_custkey as v1, c_nationkey as v4, v42, annot from customer as customer, aggView936857655161673895 where customer.c_nationkey=aggView936857655161673895.v4;
+create or replace TEMP view aggView4543583297254497179 as select v1, v4, v42, SUM(annot) as annot from aggJoin8276211485813409133 group by v1,v4,v42;
+create or replace TEMP view aggJoin1263214247168965834 as select o_orderkey as v18, o_orderdate as v13, v4, v42, annot from orders as orders, aggView4543583297254497179 where orders.o_custkey=aggView4543583297254497179.v1 and (o_orderdate >= DATE '1993-12-31') and (o_orderdate < DATE '1994-12-31');
+create or replace TEMP view aggView2126223842649294616 as select v18, v4, v42, SUM(annot) as annot from aggJoin1263214247168965834 group by v18,v4,v42;
+create or replace TEMP view aggJoin5367913723717253171 as select l_suppkey as v20, l_extendedprice as v23, l_discount as v24, v4, v42, annot from lineitem as lineitem, aggView2126223842649294616 where lineitem.l_orderkey=aggView2126223842649294616.v18;
+create or replace TEMP view aggView4409451538340952810 as select s_suppkey as v20, s_nationkey as v51 from supplier as supplier;
+create or replace TEMP view aggJoin2636003285238753835 as select v23, v24, v4, v42, annot, v51 from aggJoin5367913723717253171 join aggView4409451538340952810 using(v20) where v4 = v51;
+create or replace TEMP view res as select v42, SUM((v23 * (1 - v24))*annot) as v49 from aggJoin2636003285238753835 group by v42;
+select sum(v42+v49) from res;

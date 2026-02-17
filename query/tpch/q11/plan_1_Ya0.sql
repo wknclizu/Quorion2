@@ -1,0 +1,13 @@
+create or replace TEMP view semiUp6709287900646218306 as select s_suppkey as v2, s_nationkey as v9 from supplier AS supplier where (s_nationkey) in (select n_nationkey from nation AS nation where (n_name = 'GERMANY'));
+create or replace TEMP view semiUp7871389323420916478 as select ps_partkey as v1, ps_suppkey as v2, ps_availqty as v3, ps_supplycost as v4 from partsupp AS partsupp where (ps_suppkey) in (select v2 from semiUp6709287900646218306);
+create or replace TEMP view partsuppAux14 as select v1 from semiUp7871389323420916478;
+create or replace TEMP view semiDown165045817057245012 as select v1, v2, v3, v4 from semiUp7871389323420916478 where (v1) in (select v1 from partsuppAux14);
+create or replace TEMP view semiDown5403331374660851755 as select v2, v9 from semiUp6709287900646218306 where (v2) in (select v2 from semiDown165045817057245012);
+create or replace TEMP view semiDown8011144938583823838 as select n_nationkey as v9 from nation AS nation where (n_nationkey) in (select v9 from semiDown5403331374660851755) and (n_name = 'GERMANY');
+create or replace TEMP view aggView3105644579587528353 as select v9 from semiDown8011144938583823838;
+create or replace TEMP view aggJoin5481624663283505515 as select v2 from semiDown5403331374660851755 join aggView3105644579587528353 using(v9);
+create or replace TEMP view aggView6641217147659949022 as select v2, COUNT(*) as annot from aggJoin5481624663283505515 group by v2;
+create or replace TEMP view aggJoin793691043163928765 as select v1, v3, v4, annot from semiDown165045817057245012 join aggView6641217147659949022 using(v2);
+create or replace TEMP view aggView1787761344889153876 as select v1, SUM((v4 * v3) * annot) as v18, SUM(annot) as annot from aggJoin793691043163928765 group by v1;
+create or replace TEMP view res as select v1, SUM(v18) as v18 from aggView1787761344889153876 group by v1;
+select sum(v1+v18) from res;

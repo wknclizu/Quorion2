@@ -1,0 +1,15 @@
+create or replace TEMP view aggView8972590655929755481 as select n_name as v43, n_nationkey as v4 from nation as n1 where (n_name = 'FRANCE');
+create or replace TEMP view aggView425711642378807630 as select l_orderkey as v25, l_suppkey as v1, l_year as v9, SUM(l_extendedprice * (1 - l_discount)) as v51, COUNT(*) as annot from lineitemwithyear as lineitemwithyear where (l_shipdate >= DATE '1994-12-31') and (l_shipdate <= DATE '1996-12-30') group by l_orderkey,l_suppkey,l_year;
+create or replace TEMP view aggView8823235503486040442 as select n_nationkey as v37, n_name as v47 from nation as n2 where (n_name = 'GERMANY');
+create or replace TEMP view semiJoinView3504740971958297640 as select s_suppkey as v1, s_nationkey as v4 from supplier AS supplier where (s_nationkey) in (select v4 from aggView8972590655929755481);
+create or replace TEMP view semiJoinView8155615228567417851 as select v25, v1, v9, v51, annot from aggView425711642378807630 where (v1) in (select v1 from semiJoinView3504740971958297640);
+create or replace TEMP view semiJoinView5148357923916327162 as select o_orderkey as v25, o_custkey as v34 from orders AS orders where (o_orderkey) in (select v25 from semiJoinView8155615228567417851);
+create or replace TEMP view semiJoinView3730966331869976098 as select c_custkey as v34, c_nationkey as v37 from customer AS customer where (c_custkey) in (select v34 from semiJoinView5148357923916327162);
+create or replace TEMP view semiJoinView360984777380430138 as select distinct v37, v47 from aggView8823235503486040442 where (v37) in (select v37 from semiJoinView3730966331869976098);
+create or replace TEMP view semiEnum5935964459839717500 as select distinct v34, v47 from semiJoinView360984777380430138 join semiJoinView3730966331869976098 using(v37);
+create or replace TEMP view semiEnum1012586496004826258 as select distinct v47, v25 from semiEnum5935964459839717500 join semiJoinView5148357923916327162 using(v34);
+create or replace TEMP view semiEnum8125306909308318964 as select distinct v9, annot, v1, v47, v51 from semiEnum1012586496004826258 join semiJoinView8155615228567417851 using(v25);
+create or replace TEMP view semiEnum3517155676455237505 as select distinct v4, v9, annot, v47, v51 from semiEnum8125306909308318964 join semiJoinView3504740971958297640 using(v1);
+create or replace TEMP view semiEnum8316341946230196201 as select v9, annot, v47, v51, v43 from semiEnum3517155676455237505 join aggView8972590655929755481 using(v4);
+create or replace TEMP view res as select v43, v47, v9, SUM(v51) as v51 from semiEnum8316341946230196201 group by v43, v47, v9;
+select sum(v43+v47+v9+v51) from res;

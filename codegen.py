@@ -309,7 +309,7 @@ def codeGen(reduceList: list[ReducePhase], enumerateList: list[EnumeratePhase], 
     '''
     queries = ""
     outFile = open(outPath, 'w+')
-    planOutFile = open(outPath.replace('.sql', '_plan.json'), 'w+')
+    planOutFile = open(outPath.replace('.sql', '.json'), 'w+')
     dropView = []
     plan = []
     
@@ -945,6 +945,24 @@ def codeGen(reduceList: list[ReducePhase], enumerateList: list[EnumeratePhase], 
     
     for planLine in planFinalResult:
         plan.append(copy.deepcopy(planLine))
+    addTerminationPolicy(plan)
     planOutFile.write(json.dumps({"plan": plan}, indent=2))
     planOutFile.close()
     return queries
+
+
+def addTerminationPolicy(plan: list[dict]):
+    """Add terminationPolicy to SemiJoin/GroupBy operators.
+    Last GroupBy gets NONE, all others get ADAPTIVE."""
+    last_groupby_idx = -1
+    for i in range(len(plan) - 1, -1, -1):
+        if plan[i].get("operator") == "GroupBy":
+            last_groupby_idx = i
+            break
+    for i, op in enumerate(plan):
+        operator = op.get("operator", "")
+        if operator in ("SemiJoin", "GroupBy"):
+            if operator == "GroupBy" and i == last_groupby_idx:
+                op["properties"]["terminationPolicy"] = "NONE"
+            else:
+                op["properties"]["terminationPolicy"] = "ADAPTIVE"

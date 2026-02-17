@@ -1,0 +1,10 @@
+create or replace TEMP view aggView7133740221580662938 as select c_phone as v5, c_name as v2, c_nationkey as v4, c_address as v3, c_custkey as v1, c_comment as v8, c_acctbal as v6 from customer as customer;
+create or replace TEMP view aggView8262477172822036398 as select n_name as v35, n_nationkey as v4 from nation as nation;
+create or replace TEMP view aggView5747932682368013497 as select l_orderkey as v18, SUM(l_extendedprice * (1 - l_discount)) as v39, COUNT(*) as annot from lineitem as lineitem where (l_returnflag = 'R') group by l_orderkey;
+create or replace TEMP view aggJoin1959335890747815539 as select o_custkey as v1, o_orderdate as v13, v39, annot from orders as orders, aggView5747932682368013497 where orders.o_orderkey=aggView5747932682368013497.v18 and (o_orderdate >= DATE '1993-09-30') and (o_orderdate < DATE '1993-12-31');
+create or replace TEMP view aggView7593518481782384588 as select v1, SUM(v39) as v39, SUM(annot) as annot from aggJoin1959335890747815539 group by v1;
+create or replace TEMP view aggJoin2184597451415532462 as select v5, v2, v4, v3, v1, v8, v6, v39, annot from aggView7133740221580662938 join aggView7593518481782384588 using(v1);
+create or replace TEMP view semiJoinView4822122222000352558 as select distinct v35, v4 from aggView8262477172822036398 where (v4) in (select v4 from aggJoin2184597451415532462);
+create or replace TEMP view semiEnum7559044019939651458 as select v5, v35, v2, v3, v1, v39, v8, v6, annot from semiJoinView4822122222000352558 join aggJoin2184597451415532462 using(v4);
+create or replace TEMP view res as select v1, v2, SUM(v39) as v39, v6, v35, v3, v5, v8 from semiEnum7559044019939651458 group by v1, v2, v6, v5, v35, v3, v8;
+select sum(v1+v2+v39+v6+v35+v3+v5+v8) from res;

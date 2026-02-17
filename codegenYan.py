@@ -4,7 +4,7 @@ from reduce import *
 from aggregation import *
 from enumsType import *
 from treenode import *
-from codegen import transSelectData
+from codegen import transSelectData, addTerminationPolicy
 
 import globalVar
 
@@ -14,7 +14,7 @@ END = ';\n'
 def codeGenYa(semiUp: list[SemiUpPhase], semiDown: list[SemiJoin], lastUp: Union[list[AggReducePhase], list[Join2tables]], finalResult: str, outPath: str, genType: GenType = GenType.DuckDB, isAgg: bool = False, planFinalResult: list[dict[str, any]] = []):
     outFile = open(outPath, 'w')
     queries = ""
-    planOutFile = open(outPath.replace('.sql', '_plan.json'), 'w+')
+    planOutFile = open(outPath.replace('.sql', '.json'), 'w+')
     plan = []
 
     for semi in semiUp:
@@ -235,6 +235,7 @@ def codeGenYa(semiUp: list[SemiUpPhase], semiDown: list[SemiJoin], lastUp: Union
     
     for planLine in planFinalResult:
         plan.append(planLine)
+    addTerminationPolicy(plan)
     planOutFile.write(json.dumps({"plan": plan}, indent=2))
     planOutFile.close()
     

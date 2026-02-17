@@ -1,0 +1,16 @@
+create or replace TEMP view aggView6549655436483567521 as select r_regionkey as v53 from region as region where (r_name = 'AMERICA');
+create or replace TEMP view aggJoin4962400821942885705 as select n_nationkey as v46 from nation as n1, aggView6549655436483567521 where n1.n_regionkey=aggView6549655436483567521.v53;
+create or replace TEMP view aggView2312766820630324856 as select v46, COUNT(*) as annot from aggJoin4962400821942885705 group by v46;
+create or replace TEMP view aggJoin6903684387494341397 as select c_custkey as v35, annot from customer as customer, aggView2312766820630324856 where customer.c_nationkey=aggView2312766820630324856.v46;
+create or replace TEMP view aggView909552283981250568 as select n_nationkey as v13, CASE WHEN n_name = 'BRAZIL' THEN 1 ELSE 0 END as caseCond from nation as n2;
+create or replace TEMP view aggJoin8605150175716891946 as select s_suppkey as v10, caseCond from supplier as supplier, aggView909552283981250568 where supplier.s_nationkey=aggView909552283981250568.v13;
+create or replace TEMP view aggView2523436204464203678 as select v35, SUM(annot) as annot from aggJoin6903684387494341397 group by v35;
+create or replace TEMP view aggJoin3838111805159693302 as select o_orderkey as v17, o_year as v34, o_orderdate as v38, annot from orderswithyear as orderswithyear, aggView2523436204464203678 where orderswithyear.o_custkey=aggView2523436204464203678.v35 and (o_orderdate >= DATE '1994-12-31') and (o_orderdate <= DATE '1996-12-30');
+create or replace TEMP view aggView8003801686391429083 as select p_partkey as v1 from part as part where (p_type = 'ECONOMY ANODIZED STEEL');
+create or replace TEMP view aggJoin990306648722937922 as select l_orderkey as v17, l_suppkey as v10, l_extendedprice as v22, l_discount as v23 from lineitem as lineitem, aggView8003801686391429083 where lineitem.l_partkey=aggView8003801686391429083.v1;
+create or replace TEMP view aggView672660003853258681 as select v17, v34, SUM(annot) as annot from aggJoin3838111805159693302 group by v17,v34;
+create or replace TEMP view aggJoin7795846513842170723 as select v10, v22, v23, v34, annot from aggJoin990306648722937922 join aggView672660003853258681 using(v17);
+create or replace TEMP view aggView3256325396710758063 as select v10, caseCond, COUNT(*) as annot from aggJoin8605150175716891946 group by v10,caseCond;
+create or replace TEMP view aggJoin7822894412672318213 as select v22, v23, v34, aggJoin7795846513842170723.annot * aggView3256325396710758063.annot as annot, caseCond from aggJoin7795846513842170723 join aggView3256325396710758063 using(v10);
+create or replace TEMP view res as select v34, (SUM( CASE WHEN caseCond = 1 THEN v22 * (1 - v23)* annot ELSE 0.0 END) / SUM((v22 * (1 - v23))*annot)) as v66 from aggJoin7822894412672318213 group by v34;
+select sum(v34+v66) from res;
