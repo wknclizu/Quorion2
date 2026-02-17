@@ -1,0 +1,112 @@
+{
+  "plan": [
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView3873283584627617327",
+        "columns": [
+          "l_partkey",
+          "SUM(l_extendedprice)",
+          "COUNT(*)",
+          "l_quantity"
+        ],
+        "columnAliases": [
+          "v17",
+          "v28",
+          "annot",
+          "v5"
+        ],
+        "inputView": "lineitem as lineitem",
+        "conditions": [],
+        "groupBy": [
+          "l_partkey",
+          "l_quantity"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin2013511481774132669",
+        "columns": [
+          "v1_partkey",
+          "v1_quantity_avg",
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v17",
+          "v27",
+          "v28",
+          "v5",
+          "annot"
+        ],
+        "probeTable": "q17_inner as q17_inner",
+        "buildTable": "aggView3873283584627617327",
+        "joinKeys": [],
+        "conditions": [
+          "q17_inner.v1_partkey=aggView3873283584627617327.v17",
+          "v5>v1_quantity_avg"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView9172097463268880141",
+        "columns": [
+          "p_partkey"
+        ],
+        "columnAliases": [
+          "v17"
+        ],
+        "inputView": "part as part",
+        "conditions": [
+          "(p_brand = 'Brand#23')",
+          "(p_container = 'MED BOX')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin8393563066607421671",
+        "columns": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v27",
+          "v28",
+          "v5",
+          "annot"
+        ],
+        "probeTable": "aggJoin2013511481774132669",
+        "buildTable": "aggView9172097463268880141",
+        "joinKeys": [
+          "v17"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "(SUM(v28) / 7.0)"
+        ],
+        "columnAliases": [
+          "v29"
+        ],
+        "inputView": "aggJoin8393563066607421671",
+        "conditions": []
+      }
+    }
+  ]
+}

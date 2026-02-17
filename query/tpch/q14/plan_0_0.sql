@@ -1,4 +1,4 @@
-create or replace TEMP view aggView1485771714342435087 as select l_partkey as v2, l_extendedprice * (1 - l_discount) as caseRes, SUM(l_extendedprice * (1 - l_discount)) as v29, COUNT(*) as annot from lineitem as lineitem where (l_shipdate >= DATE '1995-08-31') and (l_shipdate < DATE '1995-09-30') group by l_partkey,caseRes;
-create or replace TEMP view aggJoin6571707200103759409 as select p_type as v21, caseRes, v29, annot from part as part, aggView1485771714342435087 where part.p_partkey=aggView1485771714342435087.v2;
-create or replace TEMP view res as select ((100.0 * SUM( CASE WHEN v21 LIKE 'PROMO%' THEN caseRes * annot ELSE 0.0 END)) / SUM(v30)) as v30 from aggJoin6571707200103759409;
+create or replace TEMP view aggView3746403805422608002 as select l_partkey as v2, l_extendedprice * (1 - l_discount) as caseRes, SUM(l_extendedprice * (1 - l_discount)) as v29, COUNT(*) as annot from lineitem as lineitem where (l_shipdate >= DATE '1995-08-31') and (l_shipdate < DATE '1995-09-30') group by l_partkey,caseRes;
+create or replace TEMP view aggJoin5463758039383006649 as select p_type as v21, caseRes, v29, annot from part as part, aggView3746403805422608002 where part.p_partkey=aggView3746403805422608002.v2;
+create or replace TEMP view res as select ((100.0 * SUM( CASE WHEN v21 LIKE 'PROMO%' THEN caseRes * annot ELSE 0.0 END)) / SUM(v30)) as v30 from aggJoin5463758039383006649;
 select sum(v30) from res;

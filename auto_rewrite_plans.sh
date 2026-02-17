@@ -24,14 +24,10 @@ success=0
 fail=0
 
 for dir in $(find "${INPUT_DIR}" -type d | sort); do
-    if [ "$dir" = "${INPUT_DIR}" ]; then
-        continue
-    fi
-
     CUR_PATH="${SCRIPT_PATH}/${dir}"
 
-    # Find all plan_*.json files in this directory
-    plan_files=$(find "${CUR_PATH}" -maxdepth 1 -name "plan_*.json" | sort)
+    # Find input plan files: plan_N.json (single number, not rewrite outputs like plan_0_1.json)
+    plan_files=$(find "${CUR_PATH}" -maxdepth 1 -regex '.*/plan_[0-9]+\.json' | sort)
     if [ -z "$plan_files" ]; then
         continue
     fi
