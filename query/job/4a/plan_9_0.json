@@ -1,0 +1,186 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView9207517536781525898",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v3"
+        ],
+        "inputView": "keyword as k",
+        "conditions": [
+          "(keyword LIKE '%sequel%')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin1696139680458810881",
+        "columns": [
+          "movie_id"
+        ],
+        "columnAliases": [
+          "v14"
+        ],
+        "probeTable": "movie_keyword as mk",
+        "buildTable": "aggView9207517536781525898",
+        "joinKeys": [],
+        "conditions": [
+          "mk.keyword_id=aggView9207517536781525898.v3"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView5595149493066685710",
+        "columns": [
+          "",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v14",
+          "annot"
+        ],
+        "inputView": "aggJoin1696139680458810881",
+        "conditions": [],
+        "groupBy": [
+          "v14"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin3536565245077895050",
+        "columns": [
+          "movie_id",
+          "info_type_id",
+          "info",
+          ""
+        ],
+        "columnAliases": [
+          "v14",
+          "v1",
+          "v9",
+          "annot"
+        ],
+        "probeTable": "movie_info_idx as mi_idx",
+        "buildTable": "aggView5595149493066685710",
+        "joinKeys": [],
+        "conditions": [
+          "mi_idx.movie_id=aggView5595149493066685710.v14",
+          "(info > '5.0')"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView3457044931581361929",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v1"
+        ],
+        "inputView": "info_type as it",
+        "conditions": [
+          "(info = 'rating')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin328499086909818422",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v14",
+          "v9",
+          "annot"
+        ],
+        "probeTable": "aggJoin3536565245077895050",
+        "buildTable": "aggView3457044931581361929",
+        "joinKeys": [
+          "v1"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView6899300629469849894",
+        "columns": [
+          "",
+          "MIN(v9)",
+          "SUM(annot)"
+        ],
+        "columnAliases": [
+          "v14",
+          "v26",
+          "annot"
+        ],
+        "inputView": "aggJoin328499086909818422",
+        "conditions": [],
+        "groupBy": [
+          "v14"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin1870940527023252013",
+        "columns": [
+          "title",
+          "production_year",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v15",
+          "v18",
+          "v26",
+          "annot"
+        ],
+        "probeTable": "title as t",
+        "buildTable": "aggView6899300629469849894",
+        "joinKeys": [],
+        "conditions": [
+          "t.id=aggView6899300629469849894.v14",
+          "(production_year > 2005)"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "MIN(v26)",
+          "MIN(v15)"
+        ],
+        "columnAliases": [
+          "v26",
+          "v27"
+        ],
+        "inputView": "aggJoin1870940527023252013",
+        "conditions": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,187 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView4673223630517428970",
+        "columns": [
+          "id",
+          "keyword"
+        ],
+        "columnAliases": [
+          "v8",
+          "v35"
+        ],
+        "inputView": "keyword as k",
+        "conditions": [
+          "(keyword = 'marvel-cinematic-universe')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin5025472024186971212",
+        "columns": [
+          "movie_id",
+          ""
+        ],
+        "columnAliases": [
+          "v23",
+          "v35"
+        ],
+        "probeTable": "movie_keyword as mk",
+        "buildTable": "aggView4673223630517428970",
+        "joinKeys": [],
+        "conditions": [
+          "mk.keyword_id=aggView4673223630517428970.v8"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView4977827515849734442",
+        "columns": [
+          "id",
+          "title"
+        ],
+        "columnAliases": [
+          "v23",
+          "v37"
+        ],
+        "inputView": "title as t",
+        "conditions": [
+          "(production_year > 2000)"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin5075687551441669056",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v23",
+          "v35",
+          "v37"
+        ],
+        "probeTable": "aggJoin5025472024186971212",
+        "buildTable": "aggView4977827515849734442",
+        "joinKeys": [
+          "v23"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView2079073181556259819",
+        "columns": [
+          "id",
+          "name"
+        ],
+        "columnAliases": [
+          "v14",
+          "v36"
+        ],
+        "inputView": "name as n",
+        "conditions": [
+          "(name LIKE '%Downey%Robert%')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin4417417636667312870",
+        "columns": [
+          "movie_id",
+          ""
+        ],
+        "columnAliases": [
+          "v23",
+          "v36"
+        ],
+        "probeTable": "cast_info as ci",
+        "buildTable": "aggView2079073181556259819",
+        "joinKeys": [],
+        "conditions": [
+          "ci.person_id=aggView2079073181556259819.v14"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView290394852186397505",
+        "columns": [
+          "",
+          "MIN(v35)",
+          "MIN(v37)"
+        ],
+        "columnAliases": [
+          "v23",
+          "v35",
+          "v37"
+        ],
+        "inputView": "aggJoin5075687551441669056",
+        "conditions": [],
+        "groupBy": [
+          "v23",
+          "v37",
+          "v35"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin688956288480165180",
+        "columns": [
+          "v36",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v36",
+          "v35",
+          "v37"
+        ],
+        "probeTable": "aggJoin4417417636667312870",
+        "buildTable": "aggView290394852186397505",
+        "joinKeys": [
+          "v23"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "MIN(v35)",
+          "MIN(v36)",
+          "MIN(v37)"
+        ],
+        "columnAliases": [
+          "v35",
+          "v36",
+          "v37"
+        ],
+        "inputView": "aggJoin688956288480165180",
+        "conditions": []
+      }
+    }
+  ]
+}

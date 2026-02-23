@@ -1,0 +1,186 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView642574585715175939",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v3"
+        ],
+        "inputView": "keyword as k",
+        "conditions": [
+          "(keyword LIKE '%sequel%')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin8961769118336755520",
+        "columns": [
+          "movie_id"
+        ],
+        "columnAliases": [
+          "v14"
+        ],
+        "probeTable": "movie_keyword as mk",
+        "buildTable": "aggView642574585715175939",
+        "joinKeys": [],
+        "conditions": [
+          "mk.keyword_id=aggView642574585715175939.v3"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView6916586932282539586",
+        "columns": [
+          "",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v14",
+          "annot"
+        ],
+        "inputView": "aggJoin8961769118336755520",
+        "conditions": [],
+        "groupBy": [
+          "v14"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin4828834118224151911",
+        "columns": [
+          "id",
+          "title",
+          "production_year",
+          ""
+        ],
+        "columnAliases": [
+          "v14",
+          "v15",
+          "v18",
+          "annot"
+        ],
+        "probeTable": "title as t",
+        "buildTable": "aggView6916586932282539586",
+        "joinKeys": [],
+        "conditions": [
+          "t.id=aggView6916586932282539586.v14",
+          "(production_year > 1990)"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView6915413176482441051",
+        "columns": [
+          "",
+          "MIN(v15)",
+          "SUM(annot)"
+        ],
+        "columnAliases": [
+          "v14",
+          "v27",
+          "annot"
+        ],
+        "inputView": "aggJoin4828834118224151911",
+        "conditions": [],
+        "groupBy": [
+          "v14"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin3438297134531392416",
+        "columns": [
+          "info_type_id",
+          "info",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v1",
+          "v9",
+          "v27",
+          "annot"
+        ],
+        "probeTable": "movie_info_idx as mi_idx",
+        "buildTable": "aggView6915413176482441051",
+        "joinKeys": [],
+        "conditions": [
+          "mi_idx.movie_id=aggView6915413176482441051.v14",
+          "(info > '2.0')"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView5927374419038813719",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v1"
+        ],
+        "inputView": "info_type as it",
+        "conditions": [
+          "(info = 'rating')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin1519000672890642149",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v9",
+          "v27",
+          "annot"
+        ],
+        "probeTable": "aggJoin3438297134531392416",
+        "buildTable": "aggView5927374419038813719",
+        "joinKeys": [
+          "v1"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "MIN(v9)",
+          "MIN(v27)"
+        ],
+        "columnAliases": [
+          "v26",
+          "v27"
+        ],
+        "inputView": "aggJoin1519000672890642149",
+        "conditions": []
+      }
+    }
+  ]
+}

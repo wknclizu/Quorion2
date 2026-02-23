@@ -1,0 +1,183 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView7734803278950174624",
+        "columns": [
+          "id",
+          "title"
+        ],
+        "columnAliases": [
+          "v15",
+          "v27"
+        ],
+        "inputView": "title as t",
+        "conditions": [
+          "(production_year > 2010)"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin7679227785806823588",
+        "columns": [
+          "movie_id",
+          "company_type_id",
+          "note",
+          ""
+        ],
+        "columnAliases": [
+          "v15",
+          "v1",
+          "v9",
+          "v27"
+        ],
+        "probeTable": "movie_companies as mc",
+        "buildTable": "aggView7734803278950174624",
+        "joinKeys": [],
+        "conditions": [
+          "mc.movie_id=aggView7734803278950174624.v15",
+          "(note LIKE '%(USA)%')",
+          "(note LIKE '%(VHS)%')",
+          "(note LIKE '%(1994)%')"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView7988727620157527709",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v1"
+        ],
+        "inputView": "company_type as ct",
+        "conditions": [
+          "(kind = 'production companies')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin4637225796635356029",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v15",
+          "v9",
+          "v27"
+        ],
+        "probeTable": "aggJoin7679227785806823588",
+        "buildTable": "aggView7988727620157527709",
+        "joinKeys": [
+          "v1"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView1733430343596882273",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v3"
+        ],
+        "inputView": "info_type as it",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin8085850772927690198",
+        "columns": [
+          "movie_id",
+          "info"
+        ],
+        "columnAliases": [
+          "v15",
+          "v13"
+        ],
+        "probeTable": "movie_info as mi",
+        "buildTable": "aggView1733430343596882273",
+        "joinKeys": [],
+        "conditions": [
+          "mi.info_type_id=aggView1733430343596882273.v3",
+          "(info IN ('USA','America'))"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView1973530306679189648",
+        "columns": [
+          "",
+          "MIN(v27)",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v15",
+          "v27",
+          "annot"
+        ],
+        "inputView": "aggJoin4637225796635356029",
+        "conditions": [],
+        "groupBy": [
+          "v15"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin5070929137757998339",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v13",
+          "v27",
+          "annot"
+        ],
+        "probeTable": "aggJoin8085850772927690198",
+        "buildTable": "aggView1973530306679189648",
+        "joinKeys": [
+          "v15"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "MIN(v27)"
+        ],
+        "columnAliases": [
+          "v27"
+        ],
+        "inputView": "aggJoin5070929137757998339",
+        "conditions": []
+      }
+    }
+  ]
+}

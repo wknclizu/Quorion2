@@ -1,0 +1,177 @@
+{
+  "plan": [
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiUp3377087811079646465",
+        "columns": [
+          "o_orderkey",
+          "o_orderpriority"
+        ],
+        "columnAliases": [
+          "v10",
+          "v6"
+        ],
+        "probeTable": "orders AS orders",
+        "buildTable": "lineitem AS lineitem",
+        "probeKeys": [
+          "o_orderkey"
+        ],
+        "buildKeys": [
+          "l_orderkey"
+        ],
+        "innerConditions": [
+          "(l_commitdate < l_receiptdate)"
+        ],
+        "outerConditions": [
+          "(o_orderdate >= DATE '1993-06-30')",
+          "(o_orderdate < DATE '1993-09-30')"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "ordersAux56",
+        "columns": [
+          ""
+        ],
+        "columnAliases": [
+          "v6"
+        ],
+        "inputView": "semiUp3377087811079646465",
+        "conditions": []
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiDown6290610511350560884",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v10",
+          "v6"
+        ],
+        "probeTable": "semiUp3377087811079646465",
+        "buildTable": "ordersAux56",
+        "probeKeys": [
+          "v6"
+        ],
+        "buildKeys": [
+          "v6"
+        ],
+        "innerConditions": [],
+        "outerConditions": [],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiDown6626257731234725676",
+        "columns": [
+          "l_orderkey"
+        ],
+        "columnAliases": [
+          "v10"
+        ],
+        "probeTable": "lineitem AS lineitem",
+        "buildTable": "semiDown6290610511350560884",
+        "probeKeys": [
+          "l_orderkey"
+        ],
+        "buildKeys": [
+          "v10"
+        ],
+        "innerConditions": [],
+        "outerConditions": [
+          "(l_commitdate < l_receiptdate)"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView6060240931325336079",
+        "columns": [
+          "",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v10",
+          "annot"
+        ],
+        "inputView": "semiDown6626257731234725676",
+        "conditions": [],
+        "groupBy": [
+          "v10"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin1030091399635929531",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v6",
+          "annot"
+        ],
+        "probeTable": "semiDown6290610511350560884",
+        "buildTable": "aggView6060240931325336079",
+        "joinKeys": [
+          "v10"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView6251590701300709692",
+        "columns": [
+          "",
+          "SUM(annot)"
+        ],
+        "columnAliases": [
+          "v6",
+          "annot"
+        ],
+        "inputView": "aggJoin1030091399635929531",
+        "conditions": [],
+        "groupBy": [
+          "v6"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "v6",
+          "v26"
+        ],
+        "columnAliases": [
+          "v6",
+          "v26"
+        ],
+        "inputView": "aggView6251590701300709692",
+        "groupBy": [
+          "v6"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    }
+  ]
+}

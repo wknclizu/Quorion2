@@ -1,0 +1,137 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView4988122391538070532",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v1"
+        ],
+        "inputView": "keyword as k",
+        "conditions": [
+          "(keyword LIKE '%sequel%')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin6824713120815143234",
+        "columns": [
+          "movie_id"
+        ],
+        "columnAliases": [
+          "v12"
+        ],
+        "probeTable": "movie_keyword as mk",
+        "buildTable": "aggView4988122391538070532",
+        "joinKeys": [],
+        "conditions": [
+          "mk.keyword_id=aggView4988122391538070532.v1"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView2932629016166890811",
+        "columns": [
+          "id",
+          "title"
+        ],
+        "columnAliases": [
+          "v12",
+          "v24"
+        ],
+        "inputView": "title as t",
+        "conditions": [
+          "(production_year > 2010)"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin8208496785537898491",
+        "columns": [
+          "movie_id",
+          "info",
+          ""
+        ],
+        "columnAliases": [
+          "v12",
+          "v7",
+          "v24"
+        ],
+        "probeTable": "movie_info as mi",
+        "buildTable": "aggView2932629016166890811",
+        "joinKeys": [],
+        "conditions": [
+          "mi.movie_id=aggView2932629016166890811.v12",
+          "(info = 'Bulgaria')"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView8805300092798267157",
+        "columns": [
+          "",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v12",
+          "annot"
+        ],
+        "inputView": "aggJoin6824713120815143234",
+        "conditions": [],
+        "groupBy": [
+          "v12"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin5059216654830837980",
+        "columns": [
+          "",
+          "v24",
+          ""
+        ],
+        "columnAliases": [
+          "v7",
+          "v24",
+          "annot"
+        ],
+        "probeTable": "aggJoin8208496785537898491",
+        "buildTable": "aggView8805300092798267157",
+        "joinKeys": [
+          "v12"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "MIN(v24)"
+        ],
+        "columnAliases": [
+          "v24"
+        ],
+        "inputView": "aggJoin5059216654830837980",
+        "conditions": []
+      }
+    }
+  ]
+}

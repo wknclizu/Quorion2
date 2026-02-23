@@ -1,0 +1,10 @@
+create or replace TEMP view aggView3106730204055728136 as select id as v1 from company_type as ct where (kind = 'production companies');
+create or replace TEMP view aggJoin3024613521900396506 as select movie_id as v15, note as v9 from movie_companies as mc, aggView3106730204055728136 where mc.company_type_id=aggView3106730204055728136.v1 and (note LIKE '%(USA)%') and (note NOT LIKE '%(TV)%');
+create or replace TEMP view aggView2245608506483573448 as select v15, COUNT(*) as annot from aggJoin3024613521900396506 group by v15;
+create or replace TEMP view aggJoin439857584252473089 as select id as v15, title as v16, production_year as v19, annot from title as t, aggView2245608506483573448 where t.id=aggView2245608506483573448.v15 and (production_year > 1990);
+create or replace TEMP view aggView8283191986669994285 as select v15, MIN(v16) as v27, SUM(annot) as annot from aggJoin439857584252473089 group by v15;
+create or replace TEMP view aggJoin8854413106800445838 as select info_type_id as v3, info as v13, v27, annot from movie_info as mi, aggView8283191986669994285 where mi.movie_id=aggView8283191986669994285.v15 and (info IN ('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German','USA','American'));
+create or replace TEMP view aggView3937730957321420106 as select v3, MIN(v27) as v27, SUM(annot) as annot from aggJoin8854413106800445838 group by v3;
+create or replace TEMP view aggJoin4959812460865736871 as select v27, annot from info_type as it, aggView3937730957321420106 where it.id=aggView3937730957321420106.v3;
+create or replace TEMP view res as select MIN(v27) as v27 from aggJoin4959812460865736871;
+select sum(v27) from res;

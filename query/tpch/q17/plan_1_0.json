@@ -1,43 +1,55 @@
 {
   "plan": [
     {
-      "operator": "Select",
+      "operator": "GroupBy",
       "properties": {
-        "viewName": "aggView1000941344999929479",
+        "viewName": "aggView7106296876501390722",
         "columns": [
-          "v1_partkey",
-          "v1_quantity_avg"
+          "l_partkey",
+          "SUM(l_extendedprice)",
+          "COUNT(*)",
+          "l_quantity"
         ],
         "columnAliases": [
           "v17",
-          "v27"
+          "v28",
+          "annot",
+          "v5"
         ],
-        "inputView": "q17_inner as q17_inner",
+        "inputView": "lineitem as lineitem",
         "conditions": [],
-        "groupBy": []
+        "groupBy": [
+          "l_partkey",
+          "l_quantity"
+        ],
+        "terminationPolicy": "ADAPTIVE"
       }
     },
     {
       "operator": "Join",
       "properties": {
-        "viewName": "aggJoin4183551221505425460",
+        "viewName": "aggJoin5440870419744265986",
         "columns": [
           "p_partkey",
           "p_brand",
           "p_container",
+          "",
+          "",
           ""
         ],
         "columnAliases": [
           "v17",
           "v20",
           "v23",
-          "v27"
+          "v28",
+          "v5",
+          "annot"
         ],
         "probeTable": "part as part",
-        "buildTable": "aggView1000941344999929479",
+        "buildTable": "aggView7106296876501390722",
         "joinKeys": [],
         "conditions": [
-          "part.p_partkey=aggView1000941344999929479.v17",
+          "part.p_partkey=aggView7106296876501390722.v17",
           "(p_brand = 'Brand#23')",
           "(p_container = 'MED BOX')"
         ]
@@ -46,22 +58,24 @@
     {
       "operator": "GroupBy",
       "properties": {
-        "viewName": "aggView6542214011280716151",
+        "viewName": "aggView1401399080985892074",
         "columns": [
           "",
-          "COUNT(*)",
+          "SUM(v28)",
+          "SUM(annot)",
           ""
         ],
         "columnAliases": [
           "v17",
+          "v28",
           "annot",
-          "v27"
+          "v5"
         ],
-        "inputView": "aggJoin4183551221505425460",
+        "inputView": "aggJoin5440870419744265986",
         "conditions": [],
         "groupBy": [
           "v17",
-          "v27"
+          "v5"
         ],
         "terminationPolicy": "NONE"
       }
@@ -69,25 +83,25 @@
     {
       "operator": "Join",
       "properties": {
-        "viewName": "aggJoin2776607659686093874",
+        "viewName": "aggJoin5515817424477981298",
         "columns": [
-          "l_quantity",
-          "l_extendedprice",
+          "v1_quantity_avg",
+          "",
           "",
           ""
         ],
         "columnAliases": [
-          "v5",
-          "v6",
           "v27",
+          "v28",
+          "v5",
           "annot"
         ],
-        "probeTable": "lineitem as lineitem",
-        "buildTable": "aggView6542214011280716151",
+        "probeTable": "q17_inner as q17_inner",
+        "buildTable": "aggView1401399080985892074",
         "joinKeys": [],
         "conditions": [
-          "lineitem.l_partkey=aggView6542214011280716151.v17",
-          "l_quantity>v27"
+          "q17_inner.v1_partkey=aggView1401399080985892074.v17",
+          "v5>v1_quantity_avg"
         ]
       }
     },
@@ -96,12 +110,12 @@
       "properties": {
         "viewName": "finalResult",
         "columns": [
-          "(SUM((v6)* annot) / 7.0)"
+          "(SUM(v28) / 7.0)"
         ],
         "columnAliases": [
           "v29"
         ],
-        "inputView": "aggJoin2776607659686093874",
+        "inputView": "aggJoin5515817424477981298",
         "conditions": []
       }
     }

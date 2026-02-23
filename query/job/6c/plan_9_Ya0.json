@@ -1,0 +1,395 @@
+{
+  "plan": [
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiUp7163017211147910412",
+        "columns": [
+          "person_id",
+          "movie_id"
+        ],
+        "columnAliases": [
+          "v14",
+          "v23"
+        ],
+        "probeTable": "cast_info AS ci",
+        "buildTable": "name AS n",
+        "probeKeys": [
+          "person_id"
+        ],
+        "buildKeys": [
+          "id"
+        ],
+        "innerConditions": [
+          "(name LIKE '%Downey%Robert%')"
+        ],
+        "outerConditions": [],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiUp76684028952277953",
+        "columns": [
+          "movie_id",
+          "keyword_id"
+        ],
+        "columnAliases": [
+          "v23",
+          "v8"
+        ],
+        "probeTable": "movie_keyword AS mk",
+        "buildTable": "semiUp7163017211147910412",
+        "probeKeys": [
+          "movie_id"
+        ],
+        "buildKeys": [
+          "v23"
+        ],
+        "innerConditions": [],
+        "outerConditions": [],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiUp351510928768153390",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v23",
+          "v8"
+        ],
+        "probeTable": "semiUp76684028952277953",
+        "buildTable": "keyword AS k",
+        "probeKeys": [
+          "v8"
+        ],
+        "buildKeys": [
+          "id"
+        ],
+        "innerConditions": [
+          "(keyword = 'marvel-cinematic-universe')"
+        ],
+        "outerConditions": [],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiUp1425183955264201895",
+        "columns": [
+          "id",
+          "title"
+        ],
+        "columnAliases": [
+          "v23",
+          "v24"
+        ],
+        "probeTable": "title AS t",
+        "buildTable": "semiUp351510928768153390",
+        "probeKeys": [
+          "id"
+        ],
+        "buildKeys": [
+          "v23"
+        ],
+        "innerConditions": [],
+        "outerConditions": [
+          "(production_year > 2014)"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiDown4258130272819225695",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v23",
+          "v8"
+        ],
+        "probeTable": "semiUp351510928768153390",
+        "buildTable": "semiUp1425183955264201895",
+        "probeKeys": [
+          "v23"
+        ],
+        "buildKeys": [
+          "v23"
+        ],
+        "innerConditions": [],
+        "outerConditions": [],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiDown3657344195835265846",
+        "columns": [
+          "id",
+          "keyword"
+        ],
+        "columnAliases": [
+          "v8",
+          "v9"
+        ],
+        "probeTable": "keyword AS k",
+        "buildTable": "semiDown4258130272819225695",
+        "probeKeys": [
+          "id"
+        ],
+        "buildKeys": [
+          "v8"
+        ],
+        "innerConditions": [],
+        "outerConditions": [
+          "(keyword = 'marvel-cinematic-universe')"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiDown1106865395003845553",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v14",
+          "v23"
+        ],
+        "probeTable": "semiUp7163017211147910412",
+        "buildTable": "semiDown4258130272819225695",
+        "probeKeys": [
+          "v23"
+        ],
+        "buildKeys": [
+          "v23"
+        ],
+        "innerConditions": [],
+        "outerConditions": [],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiDown5053661374439627805",
+        "columns": [
+          "id",
+          "name"
+        ],
+        "columnAliases": [
+          "v14",
+          "v15"
+        ],
+        "probeTable": "name AS n",
+        "buildTable": "semiDown1106865395003845553",
+        "probeKeys": [
+          "id"
+        ],
+        "buildKeys": [
+          "v14"
+        ],
+        "innerConditions": [],
+        "outerConditions": [
+          "(name LIKE '%Downey%Robert%')"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView4895127516819681713",
+        "columns": [
+          "",
+          "v15"
+        ],
+        "columnAliases": [
+          "v14",
+          "v36"
+        ],
+        "inputView": "semiDown5053661374439627805",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin5199806943045245377",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v23",
+          "v36"
+        ],
+        "probeTable": "semiDown1106865395003845553",
+        "buildTable": "aggView4895127516819681713",
+        "joinKeys": [
+          "v14"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView6348586335145330590",
+        "columns": [
+          "",
+          "v9"
+        ],
+        "columnAliases": [
+          "v8",
+          "v35"
+        ],
+        "inputView": "semiDown3657344195835265846",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin8941934548223795514",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v23",
+          "v35"
+        ],
+        "probeTable": "semiDown4258130272819225695",
+        "buildTable": "aggView6348586335145330590",
+        "joinKeys": [
+          "v8"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView4481114518590468651",
+        "columns": [
+          "",
+          "MIN(v36)"
+        ],
+        "columnAliases": [
+          "v23",
+          "v36"
+        ],
+        "inputView": "aggJoin5199806943045245377",
+        "conditions": [],
+        "groupBy": [
+          "v23",
+          "v36"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin9016158122111421319",
+        "columns": [
+          "",
+          "v35",
+          ""
+        ],
+        "columnAliases": [
+          "v23",
+          "v35",
+          "v36"
+        ],
+        "probeTable": "aggJoin8941934548223795514",
+        "buildTable": "aggView4481114518590468651",
+        "joinKeys": [
+          "v23"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView7091539558405442666",
+        "columns": [
+          "",
+          "MIN(v35)",
+          "MIN(v36)"
+        ],
+        "columnAliases": [
+          "v23",
+          "v35",
+          "v36"
+        ],
+        "inputView": "aggJoin9016158122111421319",
+        "conditions": [],
+        "groupBy": [
+          "v23",
+          "v36",
+          "v35"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin3248398645538863270",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v24",
+          "v35",
+          "v36"
+        ],
+        "probeTable": "semiUp1425183955264201895",
+        "buildTable": "aggView7091539558405442666",
+        "joinKeys": [
+          "v23"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "v35",
+          "v36",
+          "v37"
+        ],
+        "columnAliases": [
+          "v35",
+          "v36",
+          "v37"
+        ],
+        "inputView": "aggJoin3248398645538863270",
+        "conditions": []
+      }
+    }
+  ]
+}

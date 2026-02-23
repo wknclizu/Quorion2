@@ -1,0 +1,184 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView5152142969313522773",
+        "columns": [
+          "id",
+          "title"
+        ],
+        "columnAliases": [
+          "v14",
+          "v27"
+        ],
+        "inputView": "title as t",
+        "conditions": [
+          "(production_year > 2005)"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin4574536841201095326",
+        "columns": [
+          "movie_id",
+          "keyword_id",
+          ""
+        ],
+        "columnAliases": [
+          "v14",
+          "v3",
+          "v27"
+        ],
+        "probeTable": "movie_keyword as mk",
+        "buildTable": "aggView5152142969313522773",
+        "joinKeys": [],
+        "conditions": [
+          "mk.movie_id=aggView5152142969313522773.v14"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView1694079769267966733",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v3"
+        ],
+        "inputView": "keyword as k",
+        "conditions": [
+          "(keyword LIKE '%sequel%')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin1513585570901915497",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v14",
+          "v27"
+        ],
+        "probeTable": "aggJoin4574536841201095326",
+        "buildTable": "aggView1694079769267966733",
+        "joinKeys": [
+          "v3"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView4184800816305205795",
+        "columns": [
+          "",
+          "MIN(v27)",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v14",
+          "v27",
+          "annot"
+        ],
+        "inputView": "aggJoin1513585570901915497",
+        "conditions": [],
+        "groupBy": [
+          "v14"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin3328149041747257040",
+        "columns": [
+          "info_type_id",
+          "info",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v1",
+          "v9",
+          "v27",
+          "annot"
+        ],
+        "probeTable": "movie_info_idx as mi_idx",
+        "buildTable": "aggView4184800816305205795",
+        "joinKeys": [],
+        "conditions": [
+          "mi_idx.movie_id=aggView4184800816305205795.v14",
+          "(info > '5.0')"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView8833055386920960717",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v1"
+        ],
+        "inputView": "info_type as it",
+        "conditions": [
+          "(info = 'rating')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin7638770144809133271",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v9",
+          "v27",
+          "annot"
+        ],
+        "probeTable": "aggJoin3328149041747257040",
+        "buildTable": "aggView8833055386920960717",
+        "joinKeys": [
+          "v1"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "MIN(v9)",
+          "MIN(v27)"
+        ],
+        "columnAliases": [
+          "v26",
+          "v27"
+        ],
+        "inputView": "aggJoin7638770144809133271",
+        "conditions": []
+      }
+    }
+  ]
+}

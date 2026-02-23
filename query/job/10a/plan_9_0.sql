@@ -1,0 +1,14 @@
+create or replace TEMP view aggView3284990180202328218 as select id as v31, title as v44 from title as t where (production_year > 2005);
+create or replace TEMP view aggJoin2231133365276253153 as select movie_id as v31, person_role_id as v1, note as v12, role_id as v29, v44 from cast_info as ci, aggView3284990180202328218 where ci.movie_id=aggView3284990180202328218.v31 and (note LIKE '%(voice)%') and (note LIKE '%(uncredited)%');
+create or replace TEMP view aggView6574776364033751146 as select id as v22 from company_type as ct;
+create or replace TEMP view aggJoin5089679014849850666 as select movie_id as v31, company_id as v15 from movie_companies as mc, aggView6574776364033751146 where mc.company_type_id=aggView6574776364033751146.v22;
+create or replace TEMP view aggView4208331340776744700 as select id as v29 from role_type as rt where (role = 'actor');
+create or replace TEMP view aggJoin65531816208000771 as select v31, v1, v12, v44 from aggJoin2231133365276253153 join aggView4208331340776744700 using(v29);
+create or replace TEMP view aggView2263487785297744419 as select id as v1, name as v43 from char_name as chn;
+create or replace TEMP view aggJoin4968459869823787036 as select v31, v12, v44, v43 from aggJoin65531816208000771 join aggView2263487785297744419 using(v1);
+create or replace TEMP view aggView5500041743901335684 as select v31, MIN(v44) as v44, MIN(v43) as v43, COUNT(*) as annot from aggJoin4968459869823787036 group by v31;
+create or replace TEMP view aggJoin2834753770882383105 as select v15, v44, v43, annot from aggJoin5089679014849850666 join aggView5500041743901335684 using(v31);
+create or replace TEMP view aggView3349830107535137924 as select v15, MIN(v44) as v44, MIN(v43) as v43, SUM(annot) as annot from aggJoin2834753770882383105 group by v15;
+create or replace TEMP view aggJoin5238353732285169826 as select country_code as v17, v44, v43, annot from company_name as cn, aggView3349830107535137924 where cn.id=aggView3349830107535137924.v15 and (country_code = '[ru]');
+create or replace TEMP view res as select MIN(v43) as v43, MIN(v44) as v44 from aggJoin5238353732285169826;
+select sum(v43+v44) from res;

@@ -1,0 +1,61 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView2177629165558445722",
+        "columns": [
+          "p_partkey",
+          "CASE WHEN p_type LIKE 'PROMO%' THEN 1 ELSE 0 END"
+        ],
+        "columnAliases": [
+          "v2",
+          "caseCond"
+        ],
+        "inputView": "part as part",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin3501720968989365864",
+        "columns": [
+          "l_extendedprice",
+          "l_discount",
+          "l_shipdate",
+          ""
+        ],
+        "columnAliases": [
+          "v6",
+          "v7",
+          "v11",
+          "caseCond"
+        ],
+        "probeTable": "lineitem as lineitem",
+        "buildTable": "aggView2177629165558445722",
+        "joinKeys": [],
+        "conditions": [
+          "lineitem.l_partkey=aggView2177629165558445722.v2",
+          "(l_shipdate >= DATE '1995-08-31')",
+          "(l_shipdate < DATE '1995-09-30')"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "((100.0 * SUM( CASE WHEN caseCond = 1 THEN v6 * (1 - v7) ELSE 0.0 END)) / SUM((v6 * (1 - v7))))"
+        ],
+        "columnAliases": [
+          "v30"
+        ],
+        "inputView": "aggJoin3501720968989365864",
+        "conditions": []
+      }
+    }
+  ]
+}

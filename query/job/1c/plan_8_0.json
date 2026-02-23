@@ -1,0 +1,195 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView6629303570930873312",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v1"
+        ],
+        "inputView": "company_type as ct",
+        "conditions": [
+          "(kind = 'production companies')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin8055424562806323574",
+        "columns": [
+          "movie_id",
+          "note"
+        ],
+        "columnAliases": [
+          "v15",
+          "v9"
+        ],
+        "probeTable": "movie_companies as mc",
+        "buildTable": "aggView6629303570930873312",
+        "joinKeys": [],
+        "conditions": [
+          "mc.company_type_id=aggView6629303570930873312.v1",
+          "(note LIKE '%(co-production)%')",
+          "(note NOT LIKE '%(as Metro-Goldwyn-Mayer Pictures)%')"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView1649674368839483524",
+        "columns": [
+          "id",
+          "title",
+          "production_year"
+        ],
+        "columnAliases": [
+          "v15",
+          "v28",
+          "v29"
+        ],
+        "inputView": "title as t",
+        "conditions": [
+          "(production_year > 2010)"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin5344815169405906076",
+        "columns": [
+          "movie_id",
+          "info_type_id",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v15",
+          "v3",
+          "v28",
+          "v29"
+        ],
+        "probeTable": "movie_info_idx as mi_idx",
+        "buildTable": "aggView1649674368839483524",
+        "joinKeys": [],
+        "conditions": [
+          "mi_idx.movie_id=aggView1649674368839483524.v15"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView8150041260873926652",
+        "columns": [
+          "",
+          "MIN(v9)",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v15",
+          "v27",
+          "annot"
+        ],
+        "inputView": "aggJoin8055424562806323574",
+        "conditions": [],
+        "groupBy": [
+          "v15"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin7161802225335207222",
+        "columns": [
+          "",
+          "v28",
+          "v29",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v3",
+          "v28",
+          "v29",
+          "v27",
+          "annot"
+        ],
+        "probeTable": "aggJoin5344815169405906076",
+        "buildTable": "aggView8150041260873926652",
+        "joinKeys": [
+          "v15"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView5370784489486528329",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v3"
+        ],
+        "inputView": "info_type as it",
+        "conditions": [
+          "(info = 'top 250 rank')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin1075129962291472007",
+        "columns": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v28",
+          "v29",
+          "v27",
+          "annot"
+        ],
+        "probeTable": "aggJoin7161802225335207222",
+        "buildTable": "aggView5370784489486528329",
+        "joinKeys": [
+          "v3"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "MIN(v27)",
+          "MIN(v28)",
+          "MIN(v29)"
+        ],
+        "columnAliases": [
+          "v27",
+          "v28",
+          "v29"
+        ],
+        "inputView": "aggJoin1075129962291472007",
+        "conditions": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,187 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView7958534170613334652",
+        "columns": [
+          "id",
+          "name"
+        ],
+        "columnAliases": [
+          "v14",
+          "v36"
+        ],
+        "inputView": "name as n",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin3313501840324063483",
+        "columns": [
+          "movie_id",
+          ""
+        ],
+        "columnAliases": [
+          "v23",
+          "v36"
+        ],
+        "probeTable": "cast_info as ci",
+        "buildTable": "aggView7958534170613334652",
+        "joinKeys": [],
+        "conditions": [
+          "ci.person_id=aggView7958534170613334652.v14"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView3128238682079481258",
+        "columns": [
+          "id",
+          "title"
+        ],
+        "columnAliases": [
+          "v23",
+          "v37"
+        ],
+        "inputView": "title as t",
+        "conditions": [
+          "(production_year > 2000)"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin8591372350545361769",
+        "columns": [
+          "movie_id",
+          "keyword_id",
+          ""
+        ],
+        "columnAliases": [
+          "v23",
+          "v8",
+          "v37"
+        ],
+        "probeTable": "movie_keyword as mk",
+        "buildTable": "aggView3128238682079481258",
+        "joinKeys": [],
+        "conditions": [
+          "mk.movie_id=aggView3128238682079481258.v23"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView2216599953714591696",
+        "columns": [
+          "id",
+          "keyword"
+        ],
+        "columnAliases": [
+          "v8",
+          "v35"
+        ],
+        "inputView": "keyword as k",
+        "conditions": [
+          "(keyword IN ('superhero','sequel','second-part','marvel-comics','based-on-comic','tv-special','fight','violence'))"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin4572527208598722908",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v23",
+          "v37",
+          "v35"
+        ],
+        "probeTable": "aggJoin8591372350545361769",
+        "buildTable": "aggView2216599953714591696",
+        "joinKeys": [
+          "v8"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView91289566259886566",
+        "columns": [
+          "",
+          "MIN(v36)",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v23",
+          "v36",
+          "annot"
+        ],
+        "inputView": "aggJoin3313501840324063483",
+        "conditions": [],
+        "groupBy": [
+          "v23"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin4194505096007400848",
+        "columns": [
+          "v37",
+          "v35",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v37",
+          "v35",
+          "v36",
+          "annot"
+        ],
+        "probeTable": "aggJoin4572527208598722908",
+        "buildTable": "aggView91289566259886566",
+        "joinKeys": [
+          "v23"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "MIN(v35)",
+          "MIN(v36)",
+          "MIN(v37)"
+        ],
+        "columnAliases": [
+          "v35",
+          "v36",
+          "v37"
+        ],
+        "inputView": "aggJoin4194505096007400848",
+        "conditions": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+create or replace TEMP view aggView8724859786198216355 as select id as v14, title as v27 from title as t where (production_year > 1990);
+create or replace TEMP view aggJoin3900896489901055424 as select movie_id as v14, info_type_id as v1, info as v9, v27 from movie_info_idx as mi_idx, aggView8724859786198216355 where mi_idx.movie_id=aggView8724859786198216355.v14 and (info > '2.0');
+create or replace TEMP view aggView5743665923568686629 as select id as v1 from info_type as it where (info = 'rating');
+create or replace TEMP view aggJoin9027316316719744662 as select v14, v9, v27 from aggJoin3900896489901055424 join aggView5743665923568686629 using(v1);
+create or replace TEMP view aggView7386604163823055384 as select v14, MIN(v27) as v27, MIN(v9) as v26, COUNT(*) as annot from aggJoin9027316316719744662 group by v14;
+create or replace TEMP view aggJoin8660838866178969236 as select keyword_id as v3, v27, v26, annot from movie_keyword as mk, aggView7386604163823055384 where mk.movie_id=aggView7386604163823055384.v14;
+create or replace TEMP view aggView6190488271140283569 as select id as v3 from keyword as k where (keyword LIKE '%sequel%');
+create or replace TEMP view aggJoin6139510172023717544 as select v27, v26, annot from aggJoin8660838866178969236 join aggView6190488271140283569 using(v3);
+create or replace TEMP view res as select MIN(v26) as v26, MIN(v27) as v27 from aggJoin6139510172023717544;
+select sum(v26+v27) from res;

@@ -3,7 +3,35 @@
     {
       "operator": "SemiJoin",
       "properties": {
-        "viewName": "semiUp3903844662421925618",
+        "viewName": "semiUp1345284801420347650",
+        "columns": [
+          "p_partkey",
+          "p_type"
+        ],
+        "columnAliases": [
+          "v2",
+          "v21"
+        ],
+        "probeTable": "part AS part",
+        "buildTable": "lineitem AS lineitem",
+        "probeKeys": [
+          "p_partkey"
+        ],
+        "buildKeys": [
+          "l_partkey"
+        ],
+        "innerConditions": [
+          "(l_shipdate >= DATE '1995-08-31')",
+          "(l_shipdate < DATE '1995-09-30')"
+        ],
+        "outerConditions": [],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiDown4317613266369443548",
         "columns": [
           "l_partkey",
           "l_extendedprice",
@@ -15,12 +43,12 @@
           "v7"
         ],
         "probeTable": "lineitem AS lineitem",
-        "buildTable": "part AS part",
+        "buildTable": "semiUp1345284801420347650",
         "probeKeys": [
           "l_partkey"
         ],
         "buildKeys": [
-          "p_partkey"
+          "v2"
         ],
         "innerConditions": [],
         "outerConditions": [
@@ -31,63 +59,48 @@
       }
     },
     {
-      "operator": "SemiJoin",
+      "operator": "GroupBy",
       "properties": {
-        "viewName": "semiDown2249379279018039168",
-        "columns": [
-          "p_partkey",
-          "p_type"
-        ],
-        "columnAliases": [
-          "v2",
-          "v21"
-        ],
-        "probeTable": "part AS part",
-        "buildTable": "semiUp3903844662421925618",
-        "probeKeys": [
-          "p_partkey"
-        ],
-        "buildKeys": [
-          "v2"
-        ],
-        "innerConditions": [],
-        "outerConditions": [],
-        "terminationPolicy": "ADAPTIVE"
-      }
-    },
-    {
-      "operator": "Select",
-      "properties": {
-        "viewName": "aggView5977137108363773808",
+        "viewName": "aggView1085877253242376255",
         "columns": [
           "",
-          "CASE WHEN v21 LIKE 'PROMO%' THEN 1 ELSE 0 END"
+          "v6 * (1 - v7)",
+          "SUM(v6 * (1 - v7))",
+          "COUNT(*)"
         ],
         "columnAliases": [
           "v2",
-          "caseCond"
+          "caseRes",
+          "v29",
+          "annot"
         ],
-        "inputView": "semiDown2249379279018039168",
+        "inputView": "semiDown4317613266369443548",
         "conditions": [],
-        "groupBy": []
+        "groupBy": [
+          "v2",
+          "caseRes"
+        ],
+        "terminationPolicy": "NONE"
       }
     },
     {
       "operator": "Join",
       "properties": {
-        "viewName": "aggJoin336282477549951394",
+        "viewName": "aggJoin1717551338788896273",
         "columns": [
+          "",
           "",
           "",
           ""
         ],
         "columnAliases": [
-          "v6",
-          "v7",
-          "caseCond"
+          "v21",
+          "caseRes",
+          "v29",
+          "annot"
         ],
-        "probeTable": "semiUp3903844662421925618",
-        "buildTable": "aggView5977137108363773808",
+        "probeTable": "semiUp1345284801420347650",
+        "buildTable": "aggView1085877253242376255",
         "joinKeys": [
           "v2"
         ],
@@ -99,12 +112,12 @@
       "properties": {
         "viewName": "finalResult",
         "columns": [
-          "v30) / SUM((v6 * (1 - v7)))"
+          "v30) / SUM(v30)"
         ],
         "columnAliases": [
-          "v30) / SUM((v6 * (1 - v7)))"
+          "v30) / SUM(v30)"
         ],
-        "inputView": "aggJoin336282477549951394",
+        "inputView": "aggJoin1717551338788896273",
         "conditions": []
       }
     }

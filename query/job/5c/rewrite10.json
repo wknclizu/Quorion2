@@ -1,0 +1,182 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView6247941676376012504",
+        "columns": [
+          "id",
+          "title"
+        ],
+        "columnAliases": [
+          "v15",
+          "v27"
+        ],
+        "inputView": "title as t",
+        "conditions": [
+          "(production_year > 1990)"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin5030555283221113040",
+        "columns": [
+          "movie_id",
+          "company_type_id",
+          "note",
+          ""
+        ],
+        "columnAliases": [
+          "v15",
+          "v1",
+          "v9",
+          "v27"
+        ],
+        "probeTable": "movie_companies as mc",
+        "buildTable": "aggView6247941676376012504",
+        "joinKeys": [],
+        "conditions": [
+          "mc.movie_id=aggView6247941676376012504.v15",
+          "(note LIKE '%(USA)%')",
+          "(note NOT LIKE '%(TV)%')"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView2166590573528838513",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v1"
+        ],
+        "inputView": "company_type as ct",
+        "conditions": [
+          "(kind = 'production companies')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin1312061694681501528",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v15",
+          "v9",
+          "v27"
+        ],
+        "probeTable": "aggJoin5030555283221113040",
+        "buildTable": "aggView2166590573528838513",
+        "joinKeys": [
+          "v1"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView3433381150308051382",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v3"
+        ],
+        "inputView": "info_type as it",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin761857069750119783",
+        "columns": [
+          "movie_id",
+          "info"
+        ],
+        "columnAliases": [
+          "v15",
+          "v13"
+        ],
+        "probeTable": "movie_info as mi",
+        "buildTable": "aggView3433381150308051382",
+        "joinKeys": [],
+        "conditions": [
+          "mi.info_type_id=aggView3433381150308051382.v3",
+          "(info IN ('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German','USA','American'))"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView992936478702750465",
+        "columns": [
+          "",
+          "MIN(v27)",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v15",
+          "v27",
+          "annot"
+        ],
+        "inputView": "aggJoin1312061694681501528",
+        "conditions": [],
+        "groupBy": [
+          "v15"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin8780361257508163676",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v13",
+          "v27",
+          "annot"
+        ],
+        "probeTable": "aggJoin761857069750119783",
+        "buildTable": "aggView992936478702750465",
+        "joinKeys": [
+          "v15"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "MIN(v27)"
+        ],
+        "columnAliases": [
+          "v27"
+        ],
+        "inputView": "aggJoin8780361257508163676",
+        "conditions": []
+      }
+    }
+  ]
+}

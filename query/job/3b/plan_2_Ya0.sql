@@ -1,0 +1,14 @@
+create or replace TEMP view semiUp6463225330224302529 as select movie_id as v12, keyword_id as v1 from movie_keyword AS mk where (keyword_id) in (select id from keyword AS k where (keyword LIKE '%sequel%'));
+create or replace TEMP view semiUp4100641651772480381 as select id as v12, title as v13 from title AS t where (id) in (select movie_id from movie_info AS mi where (info = 'Bulgaria')) and (production_year > 2010);
+create or replace TEMP view semiUp2115891800342259511 as select v12, v1 from semiUp6463225330224302529 where (v12) in (select v12 from semiUp4100641651772480381);
+create or replace TEMP view semiDown4220606781776290873 as select id as v1 from keyword AS k where (id) in (select v1 from semiUp2115891800342259511) and (keyword LIKE '%sequel%');
+create or replace TEMP view semiDown5577783595905860427 as select v12, v13 from semiUp4100641651772480381 where (v12) in (select v12 from semiUp2115891800342259511);
+create or replace TEMP view semiDown3953528884265616773 as select movie_id as v12 from movie_info AS mi where (movie_id) in (select v12 from semiDown5577783595905860427) and (info = 'Bulgaria');
+create or replace TEMP view aggView9002036352269548132 as select v12 from semiDown3953528884265616773 group by v12;
+create or replace TEMP view aggJoin7702441450653019956 as select v12, v13 from semiDown5577783595905860427 join aggView9002036352269548132 using(v12);
+create or replace TEMP view aggView8094095369101562885 as select v12, MIN(v13) as v24 from aggJoin7702441450653019956 group by v12;
+create or replace TEMP view aggJoin3152511693932733913 as select v1, v24 from semiUp2115891800342259511 join aggView8094095369101562885 using(v12);
+create or replace TEMP view aggView7187869549247344047 as select v1 from semiDown4220606781776290873;
+create or replace TEMP view aggJoin639578706353944825 as select v24 from aggJoin3152511693932733913 join aggView7187869549247344047 using(v1);
+create or replace TEMP view res as select MIN(v24) as v24 from aggJoin639578706353944825;
+select sum(v24) from res;

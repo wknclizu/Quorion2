@@ -1,0 +1,18 @@
+create or replace TEMP view semiUp4801834559293520219 as select movie_id as v14, info_type_id as v1, info as v9 from movie_info_idx AS mi_idx where (info_type_id) in (select id from info_type AS it where (info = 'rating')) and (info > '9.0');
+create or replace TEMP view semiUp8663675209229728125 as select id as v14, title as v15 from title AS t where (id) in (select v14 from semiUp4801834559293520219) and (production_year > 2010);
+create or replace TEMP view semiUp8174128061221823212 as select movie_id as v14, keyword_id as v3 from movie_keyword AS mk where (keyword_id) in (select id from keyword AS k where (keyword LIKE '%sequel%'));
+create or replace TEMP view semiUp3987359179707844981 as select v14, v15 from semiUp8663675209229728125 where (v14) in (select v14 from semiUp8174128061221823212);
+create or replace TEMP view semiDown8984752162574441057 as select v14, v1, v9 from semiUp4801834559293520219 where (v14) in (select v14 from semiUp3987359179707844981);
+create or replace TEMP view semiDown652068717160698779 as select v14, v3 from semiUp8174128061221823212 where (v14) in (select v14 from semiUp3987359179707844981);
+create or replace TEMP view semiDown8836970913753264773 as select id as v1 from info_type AS it where (id) in (select v1 from semiDown8984752162574441057) and (info = 'rating');
+create or replace TEMP view semiDown4601965053842579593 as select id as v3 from keyword AS k where (id) in (select v3 from semiDown652068717160698779) and (keyword LIKE '%sequel%');
+create or replace TEMP view aggView1262318156013468145 as select v1 from semiDown8836970913753264773;
+create or replace TEMP view aggJoin2783598805353345847 as select v14, v9 from semiDown8984752162574441057 join aggView1262318156013468145 using(v1);
+create or replace TEMP view aggView466306546601369461 as select v3 from semiDown4601965053842579593;
+create or replace TEMP view aggJoin6825262964303847423 as select v14 from semiDown652068717160698779 join aggView466306546601369461 using(v3);
+create or replace TEMP view aggView5355927212611571917 as select v14 from aggJoin6825262964303847423 group by v14;
+create or replace TEMP view aggJoin1196920172159190134 as select v14, v15 from semiUp3987359179707844981 join aggView5355927212611571917 using(v14);
+create or replace TEMP view aggView5493134759905084697 as select v14, MIN(v9) as v26 from aggJoin2783598805353345847 group by v14;
+create or replace TEMP view aggJoin6582511597839762818 as select v15, v26 from aggJoin1196920172159190134 join aggView5493134759905084697 using(v14);
+create or replace TEMP view res as select MIN(v26) as v26, MIN(v15) as v27 from aggJoin6582511597839762818;
+select sum(v26+v27) from res;

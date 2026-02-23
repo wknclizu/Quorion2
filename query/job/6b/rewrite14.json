@@ -1,0 +1,201 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView4955688515856743801",
+        "columns": [
+          "id",
+          "title"
+        ],
+        "columnAliases": [
+          "v23",
+          "v37"
+        ],
+        "inputView": "title as t",
+        "conditions": [
+          "(production_year > 2014)"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin7812273091708584291",
+        "columns": [
+          "person_id",
+          "movie_id",
+          ""
+        ],
+        "columnAliases": [
+          "v14",
+          "v23",
+          "v37"
+        ],
+        "probeTable": "cast_info as ci",
+        "buildTable": "aggView4955688515856743801",
+        "joinKeys": [],
+        "conditions": [
+          "ci.movie_id=aggView4955688515856743801.v23"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView9070725625820731773",
+        "columns": [
+          "id",
+          "name"
+        ],
+        "columnAliases": [
+          "v14",
+          "v36"
+        ],
+        "inputView": "name as n",
+        "conditions": [
+          "(name LIKE '%Downey%Robert%')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin3728760782629908157",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v23",
+          "v37",
+          "v36"
+        ],
+        "probeTable": "aggJoin7812273091708584291",
+        "buildTable": "aggView9070725625820731773",
+        "joinKeys": [
+          "v14"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView1597649758602595911",
+        "columns": [
+          "",
+          "MIN(v37)",
+          "MIN(v36)",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v23",
+          "v37",
+          "v36",
+          "annot"
+        ],
+        "inputView": "aggJoin3728760782629908157",
+        "conditions": [],
+        "groupBy": [
+          "v23"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin8021710604505069973",
+        "columns": [
+          "keyword_id",
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v8",
+          "v37",
+          "v36",
+          "annot"
+        ],
+        "probeTable": "movie_keyword as mk",
+        "buildTable": "aggView1597649758602595911",
+        "joinKeys": [],
+        "conditions": [
+          "mk.movie_id=aggView1597649758602595911.v23"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView4357951849830562217",
+        "columns": [
+          "",
+          "MIN(v37)",
+          "MIN(v36)",
+          "SUM(annot)"
+        ],
+        "columnAliases": [
+          "v8",
+          "v37",
+          "v36",
+          "annot"
+        ],
+        "inputView": "aggJoin8021710604505069973",
+        "conditions": [],
+        "groupBy": [
+          "v8"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin3454344491250055556",
+        "columns": [
+          "keyword",
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v9",
+          "v37",
+          "v36",
+          "annot"
+        ],
+        "probeTable": "keyword as k",
+        "buildTable": "aggView4357951849830562217",
+        "joinKeys": [],
+        "conditions": [
+          "k.id=aggView4357951849830562217.v8",
+          "(keyword IN ('superhero','sequel','second-part','marvel-comics','based-on-comic','tv-special','fight','violence'))"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "MIN(v9)",
+          "MIN(v36)",
+          "MIN(v37)"
+        ],
+        "columnAliases": [
+          "v35",
+          "v36",
+          "v37"
+        ],
+        "inputView": "aggJoin3454344491250055556",
+        "conditions": []
+      }
+    }
+  ]
+}

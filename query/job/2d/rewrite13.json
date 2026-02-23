@@ -1,0 +1,183 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView4113101027968449151",
+        "columns": [
+          "id",
+          "title"
+        ],
+        "columnAliases": [
+          "v12",
+          "v31"
+        ],
+        "inputView": "title as t",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin913207254803999363",
+        "columns": [
+          "movie_id",
+          "company_id",
+          ""
+        ],
+        "columnAliases": [
+          "v12",
+          "v1",
+          "v31"
+        ],
+        "probeTable": "movie_companies as mc",
+        "buildTable": "aggView4113101027968449151",
+        "joinKeys": [],
+        "conditions": [
+          "mc.movie_id=aggView4113101027968449151.v12"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView8581173423341954562",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v1"
+        ],
+        "inputView": "company_name as cn",
+        "conditions": [
+          "(country_code = '[us]')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin3095868695622754062",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v12",
+          "v31"
+        ],
+        "probeTable": "aggJoin913207254803999363",
+        "buildTable": "aggView8581173423341954562",
+        "joinKeys": [
+          "v1"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView4318758276367127590",
+        "columns": [
+          "",
+          "MIN(v31)",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v12",
+          "v31",
+          "annot"
+        ],
+        "inputView": "aggJoin3095868695622754062",
+        "conditions": [],
+        "groupBy": [
+          "v12"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin6514446672797394418",
+        "columns": [
+          "keyword_id",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v18",
+          "v31",
+          "annot"
+        ],
+        "probeTable": "movie_keyword as mk",
+        "buildTable": "aggView4318758276367127590",
+        "joinKeys": [],
+        "conditions": [
+          "mk.movie_id=aggView4318758276367127590.v12"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView3538607893313722882",
+        "columns": [
+          "",
+          "MIN(v31)",
+          "SUM(annot)"
+        ],
+        "columnAliases": [
+          "v18",
+          "v31",
+          "annot"
+        ],
+        "inputView": "aggJoin6514446672797394418",
+        "conditions": [],
+        "groupBy": [
+          "v18"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin2400659481548990949",
+        "columns": [
+          "keyword",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v9",
+          "v31",
+          "annot"
+        ],
+        "probeTable": "keyword as k",
+        "buildTable": "aggView3538607893313722882",
+        "joinKeys": [],
+        "conditions": [
+          "k.id=aggView3538607893313722882.v18",
+          "(keyword = 'character-name-in-title')"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "MIN(v31)"
+        ],
+        "columnAliases": [
+          "v31"
+        ],
+        "inputView": "aggJoin2400659481548990949",
+        "conditions": []
+      }
+    }
+  ]
+}

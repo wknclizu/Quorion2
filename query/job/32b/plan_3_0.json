@@ -1,0 +1,225 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView5132715486958394435",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v8"
+        ],
+        "inputView": "keyword as k",
+        "conditions": [
+          "(keyword = 'character-name-in-title')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin5701024680595357560",
+        "columns": [
+          "movie_id"
+        ],
+        "columnAliases": [
+          "v13"
+        ],
+        "probeTable": "movie_keyword as mk",
+        "buildTable": "aggView5132715486958394435",
+        "joinKeys": [],
+        "conditions": [
+          "mk.keyword_id=aggView5132715486958394435.v8"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView8687253928538535885",
+        "columns": [
+          "",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v13",
+          "annot"
+        ],
+        "inputView": "aggJoin5701024680595357560",
+        "conditions": [],
+        "groupBy": [
+          "v13"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin43142542939252661",
+        "columns": [
+          "id",
+          "title",
+          ""
+        ],
+        "columnAliases": [
+          "v13",
+          "v14",
+          "annot"
+        ],
+        "probeTable": "title as t1",
+        "buildTable": "aggView8687253928538535885",
+        "joinKeys": [],
+        "conditions": [
+          "t1.id=aggView8687253928538535885.v13"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView5260224790110823884",
+        "columns": [
+          "id",
+          "title"
+        ],
+        "columnAliases": [
+          "v11",
+          "v39"
+        ],
+        "inputView": "title as t2",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin9181399316425218866",
+        "columns": [
+          "movie_id",
+          "link_type_id",
+          ""
+        ],
+        "columnAliases": [
+          "v13",
+          "v4",
+          "v39"
+        ],
+        "probeTable": "movie_link as ml",
+        "buildTable": "aggView5260224790110823884",
+        "joinKeys": [],
+        "conditions": [
+          "ml.linked_movie_id=aggView5260224790110823884.v11"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView157916558031444483",
+        "columns": [
+          "",
+          "MIN(v14)",
+          "SUM(annot)"
+        ],
+        "columnAliases": [
+          "v13",
+          "v38",
+          "annot"
+        ],
+        "inputView": "aggJoin43142542939252661",
+        "conditions": [],
+        "groupBy": [
+          "v13"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin7016236979482406777",
+        "columns": [
+          "",
+          "v39",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v4",
+          "v39",
+          "v38",
+          "annot"
+        ],
+        "probeTable": "aggJoin9181399316425218866",
+        "buildTable": "aggView157916558031444483",
+        "joinKeys": [
+          "v13"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView8484598903128859254",
+        "columns": [
+          "id",
+          "link"
+        ],
+        "columnAliases": [
+          "v4",
+          "v37"
+        ],
+        "inputView": "link_type as lt",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin2082733530830367226",
+        "columns": [
+          "",
+          "",
+          "",
+          "v37"
+        ],
+        "columnAliases": [
+          "v39",
+          "v38",
+          "annot",
+          "v37"
+        ],
+        "probeTable": "aggJoin7016236979482406777",
+        "buildTable": "aggView8484598903128859254",
+        "joinKeys": [
+          "v4"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "MIN(v37)",
+          "MIN(v38)",
+          "MIN(v39)"
+        ],
+        "columnAliases": [
+          "v37",
+          "v38",
+          "v39"
+        ],
+        "inputView": "aggJoin2082733530830367226",
+        "conditions": []
+      }
+    }
+  ]
+}

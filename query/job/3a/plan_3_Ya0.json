@@ -1,0 +1,281 @@
+{
+  "plan": [
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiUp6613331247333440296",
+        "columns": [
+          "movie_id",
+          "keyword_id"
+        ],
+        "columnAliases": [
+          "v12",
+          "v1"
+        ],
+        "probeTable": "movie_keyword AS mk",
+        "buildTable": "keyword AS k",
+        "probeKeys": [
+          "keyword_id"
+        ],
+        "buildKeys": [
+          "id"
+        ],
+        "innerConditions": [
+          "(keyword LIKE '%sequel%')"
+        ],
+        "outerConditions": [],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiUp4696682543766637525",
+        "columns": [
+          "id",
+          "title"
+        ],
+        "columnAliases": [
+          "v12",
+          "v13"
+        ],
+        "probeTable": "title AS t",
+        "buildTable": "movie_info AS mi",
+        "probeKeys": [
+          "id"
+        ],
+        "buildKeys": [
+          "movie_id"
+        ],
+        "innerConditions": [
+          "(info IN ('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German'))"
+        ],
+        "outerConditions": [
+          "(production_year > 2005)"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiUp4868172716630238587",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v12",
+          "v13"
+        ],
+        "probeTable": "semiUp4696682543766637525",
+        "buildTable": "semiUp6613331247333440296",
+        "probeKeys": [
+          "v12"
+        ],
+        "buildKeys": [
+          "v12"
+        ],
+        "innerConditions": [],
+        "outerConditions": [],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiDown3106885193633620522",
+        "columns": [
+          "movie_id"
+        ],
+        "columnAliases": [
+          "v12"
+        ],
+        "probeTable": "movie_info AS mi",
+        "buildTable": "semiUp4868172716630238587",
+        "probeKeys": [
+          "movie_id"
+        ],
+        "buildKeys": [
+          "v12"
+        ],
+        "innerConditions": [],
+        "outerConditions": [
+          "(info IN ('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German'))"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiDown4326278692555023226",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v12",
+          "v1"
+        ],
+        "probeTable": "semiUp6613331247333440296",
+        "buildTable": "semiUp4868172716630238587",
+        "probeKeys": [
+          "v12"
+        ],
+        "buildKeys": [
+          "v12"
+        ],
+        "innerConditions": [],
+        "outerConditions": [],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiDown4333327530156943158",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v1"
+        ],
+        "probeTable": "keyword AS k",
+        "buildTable": "semiDown4326278692555023226",
+        "probeKeys": [
+          "id"
+        ],
+        "buildKeys": [
+          "v1"
+        ],
+        "innerConditions": [],
+        "outerConditions": [
+          "(keyword LIKE '%sequel%')"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView175028567122686353",
+        "columns": [
+          ""
+        ],
+        "columnAliases": [
+          "v1"
+        ],
+        "inputView": "semiDown4333327530156943158",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin7793487154530860017",
+        "columns": [
+          ""
+        ],
+        "columnAliases": [
+          "v12"
+        ],
+        "probeTable": "semiDown4326278692555023226",
+        "buildTable": "aggView175028567122686353",
+        "joinKeys": [
+          "v1"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView6526022173678335219",
+        "columns": [
+          ""
+        ],
+        "columnAliases": [
+          "v12"
+        ],
+        "inputView": "aggJoin7793487154530860017",
+        "conditions": [],
+        "groupBy": [
+          "v12"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin5470003143129906749",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v12",
+          "v13"
+        ],
+        "probeTable": "semiUp4868172716630238587",
+        "buildTable": "aggView6526022173678335219",
+        "joinKeys": [
+          "v12"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView214619087876005424",
+        "columns": [
+          ""
+        ],
+        "columnAliases": [
+          "v12"
+        ],
+        "inputView": "semiDown3106885193633620522",
+        "conditions": [],
+        "groupBy": [
+          "v12"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin4705837469955544155",
+        "columns": [
+          ""
+        ],
+        "columnAliases": [
+          "v13"
+        ],
+        "probeTable": "aggJoin5470003143129906749",
+        "buildTable": "aggView214619087876005424",
+        "joinKeys": [
+          "v12"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "v24"
+        ],
+        "columnAliases": [
+          "v24"
+        ],
+        "inputView": "aggJoin4705837469955544155",
+        "conditions": []
+      }
+    }
+  ]
+}

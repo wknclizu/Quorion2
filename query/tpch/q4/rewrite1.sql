@@ -1,0 +1,4 @@
+create or replace TEMP view aggView3781384643520358961 as select o_orderkey as v10, o_orderpriority as v6 from orders as orders where (o_orderdate >= DATE '1993-06-30') and (o_orderdate < DATE '1993-09-30');
+create or replace TEMP view aggJoin3348442390927358827 as select l_commitdate as v21, l_receiptdate as v22, v6 from lineitem as lineitem, aggView3781384643520358961 where lineitem.l_orderkey=aggView3781384643520358961.v10 and (l_commitdate < l_receiptdate);
+create or replace TEMP view res as select v6, COUNT(*) as v26 from aggJoin3348442390927358827 group by v6;
+select sum(v6+v26) from res;

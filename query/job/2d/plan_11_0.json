@@ -1,0 +1,184 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView3381913159017068807",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v1"
+        ],
+        "inputView": "company_name as cn",
+        "conditions": [
+          "(country_code = '[us]')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin7990589064147588121",
+        "columns": [
+          "movie_id"
+        ],
+        "columnAliases": [
+          "v12"
+        ],
+        "probeTable": "movie_companies as mc",
+        "buildTable": "aggView3381913159017068807",
+        "joinKeys": [],
+        "conditions": [
+          "mc.company_id=aggView3381913159017068807.v1"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView2203343144061619530",
+        "columns": [
+          "",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v12",
+          "annot"
+        ],
+        "inputView": "aggJoin7990589064147588121",
+        "conditions": [],
+        "groupBy": [
+          "v12"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin5161828416068170888",
+        "columns": [
+          "id",
+          "title",
+          ""
+        ],
+        "columnAliases": [
+          "v12",
+          "v20",
+          "annot"
+        ],
+        "probeTable": "title as t",
+        "buildTable": "aggView2203343144061619530",
+        "joinKeys": [],
+        "conditions": [
+          "t.id=aggView2203343144061619530.v12"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView1649370222570810817",
+        "columns": [
+          "",
+          "MIN(v20)",
+          "SUM(annot)"
+        ],
+        "columnAliases": [
+          "v12",
+          "v31",
+          "annot"
+        ],
+        "inputView": "aggJoin5161828416068170888",
+        "conditions": [],
+        "groupBy": [
+          "v12"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin2581649210050805298",
+        "columns": [
+          "keyword_id",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v18",
+          "v31",
+          "annot"
+        ],
+        "probeTable": "movie_keyword as mk",
+        "buildTable": "aggView1649370222570810817",
+        "joinKeys": [],
+        "conditions": [
+          "mk.movie_id=aggView1649370222570810817.v12"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView7399830552002319759",
+        "columns": [
+          "",
+          "MIN(v31)",
+          "SUM(annot)"
+        ],
+        "columnAliases": [
+          "v18",
+          "v31",
+          "annot"
+        ],
+        "inputView": "aggJoin2581649210050805298",
+        "conditions": [],
+        "groupBy": [
+          "v18"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin7561015826355361293",
+        "columns": [
+          "keyword",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v9",
+          "v31",
+          "annot"
+        ],
+        "probeTable": "keyword as k",
+        "buildTable": "aggView7399830552002319759",
+        "joinKeys": [],
+        "conditions": [
+          "k.id=aggView7399830552002319759.v18",
+          "(keyword = 'character-name-in-title')"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "MIN(v31)"
+        ],
+        "columnAliases": [
+          "v31"
+        ],
+        "inputView": "aggJoin7561015826355361293",
+        "conditions": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,182 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView8807702888373874363",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v1"
+        ],
+        "inputView": "company_type as ct",
+        "conditions": [
+          "(kind = 'production companies')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin6501286848149879692",
+        "columns": [
+          "movie_id",
+          "note"
+        ],
+        "columnAliases": [
+          "v15",
+          "v9"
+        ],
+        "probeTable": "movie_companies as mc",
+        "buildTable": "aggView8807702888373874363",
+        "joinKeys": [],
+        "conditions": [
+          "mc.company_type_id=aggView8807702888373874363.v1",
+          "(note LIKE '%(theatrical)%')",
+          "(note LIKE '%(France)%')"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView3692035933663701567",
+        "columns": [
+          "id",
+          "title"
+        ],
+        "columnAliases": [
+          "v15",
+          "v27"
+        ],
+        "inputView": "title as t",
+        "conditions": [
+          "(production_year > 2005)"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin2165900231583297405",
+        "columns": [
+          "movie_id",
+          "info_type_id",
+          "info",
+          ""
+        ],
+        "columnAliases": [
+          "v15",
+          "v3",
+          "v13",
+          "v27"
+        ],
+        "probeTable": "movie_info as mi",
+        "buildTable": "aggView3692035933663701567",
+        "joinKeys": [],
+        "conditions": [
+          "mi.movie_id=aggView3692035933663701567.v15",
+          "(info IN ('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German'))"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView8588819229175388481",
+        "columns": [
+          "",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v15",
+          "annot"
+        ],
+        "inputView": "aggJoin6501286848149879692",
+        "conditions": [],
+        "groupBy": [
+          "v15"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin6904260614588191005",
+        "columns": [
+          "",
+          "",
+          "v27",
+          ""
+        ],
+        "columnAliases": [
+          "v3",
+          "v13",
+          "v27",
+          "annot"
+        ],
+        "probeTable": "aggJoin2165900231583297405",
+        "buildTable": "aggView8588819229175388481",
+        "joinKeys": [
+          "v15"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView2080972794963098616",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v3"
+        ],
+        "inputView": "info_type as it",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin6998851534013260608",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v13",
+          "v27",
+          "annot"
+        ],
+        "probeTable": "aggJoin6904260614588191005",
+        "buildTable": "aggView2080972794963098616",
+        "joinKeys": [
+          "v3"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "MIN(v27)"
+        ],
+        "columnAliases": [
+          "v27"
+        ],
+        "inputView": "aggJoin6998851534013260608",
+        "conditions": []
+      }
+    }
+  ]
+}

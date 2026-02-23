@@ -1,0 +1,267 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView7490700338257104250",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v22"
+        ],
+        "inputView": "company_type as ct",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin38456268451931998",
+        "columns": [
+          "movie_id",
+          "company_id"
+        ],
+        "columnAliases": [
+          "v31",
+          "v15"
+        ],
+        "probeTable": "movie_companies as mc",
+        "buildTable": "aggView7490700338257104250",
+        "joinKeys": [],
+        "conditions": [
+          "mc.company_type_id=aggView7490700338257104250.v22"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView6211178023206214662",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v15"
+        ],
+        "inputView": "company_name as cn",
+        "conditions": [
+          "(country_code = '[us]')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin8103012319154848469",
+        "columns": [
+          ""
+        ],
+        "columnAliases": [
+          "v31"
+        ],
+        "probeTable": "aggJoin38456268451931998",
+        "buildTable": "aggView6211178023206214662",
+        "joinKeys": [
+          "v15"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView8712137513901332169",
+        "columns": [
+          "",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v31",
+          "annot"
+        ],
+        "inputView": "aggJoin8103012319154848469",
+        "conditions": [],
+        "groupBy": [
+          "v31"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin6896239926166645324",
+        "columns": [
+          "id",
+          "title",
+          "production_year",
+          ""
+        ],
+        "columnAliases": [
+          "v31",
+          "v32",
+          "v35",
+          "annot"
+        ],
+        "probeTable": "title as t",
+        "buildTable": "aggView8712137513901332169",
+        "joinKeys": [],
+        "conditions": [
+          "t.id=aggView8712137513901332169.v31",
+          "(production_year > 1990)"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView5851385478347586773",
+        "columns": [
+          "",
+          "MIN(v32)",
+          "SUM(annot)"
+        ],
+        "columnAliases": [
+          "v31",
+          "v44",
+          "annot"
+        ],
+        "inputView": "aggJoin6896239926166645324",
+        "conditions": [],
+        "groupBy": [
+          "v31"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin931728421944669724",
+        "columns": [
+          "person_role_id",
+          "note",
+          "role_id",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v1",
+          "v12",
+          "v29",
+          "v44",
+          "annot"
+        ],
+        "probeTable": "cast_info as ci",
+        "buildTable": "aggView5851385478347586773",
+        "joinKeys": [],
+        "conditions": [
+          "ci.movie_id=aggView5851385478347586773.v31",
+          "(note LIKE '%(producer)%')"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView358660141717232437",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v29"
+        ],
+        "inputView": "role_type as rt",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin8964075399874331098",
+        "columns": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v1",
+          "v12",
+          "v44",
+          "annot"
+        ],
+        "probeTable": "aggJoin931728421944669724",
+        "buildTable": "aggView358660141717232437",
+        "joinKeys": [
+          "v29"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView5181703857167535559",
+        "columns": [
+          "",
+          "MIN(v44)",
+          "SUM(annot)"
+        ],
+        "columnAliases": [
+          "v1",
+          "v44",
+          "annot"
+        ],
+        "inputView": "aggJoin8964075399874331098",
+        "conditions": [],
+        "groupBy": [
+          "v1"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin1269302515002453647",
+        "columns": [
+          "name",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v2",
+          "v44",
+          "annot"
+        ],
+        "probeTable": "char_name as chn",
+        "buildTable": "aggView5181703857167535559",
+        "joinKeys": [],
+        "conditions": [
+          "chn.id=aggView5181703857167535559.v1"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "MIN(v2)",
+          "MIN(v44)"
+        ],
+        "columnAliases": [
+          "v43",
+          "v44"
+        ],
+        "inputView": "aggJoin1269302515002453647",
+        "conditions": []
+      }
+    }
+  ]
+}

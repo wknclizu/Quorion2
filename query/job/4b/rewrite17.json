@@ -1,0 +1,185 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView8711016239799970682",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v1"
+        ],
+        "inputView": "info_type as it",
+        "conditions": [
+          "(info = 'rating')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin8544539623413243698",
+        "columns": [
+          "movie_id",
+          "info"
+        ],
+        "columnAliases": [
+          "v14",
+          "v9"
+        ],
+        "probeTable": "movie_info_idx as mi_idx",
+        "buildTable": "aggView8711016239799970682",
+        "joinKeys": [],
+        "conditions": [
+          "mi_idx.info_type_id=aggView8711016239799970682.v1",
+          "(info > '9.0')"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView1307147439678201084",
+        "columns": [
+          "",
+          "MIN(v9)",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v14",
+          "v26",
+          "annot"
+        ],
+        "inputView": "aggJoin8544539623413243698",
+        "conditions": [],
+        "groupBy": [
+          "v14"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin2926765465497736075",
+        "columns": [
+          "id",
+          "title",
+          "production_year",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v14",
+          "v15",
+          "v18",
+          "v26",
+          "annot"
+        ],
+        "probeTable": "title as t",
+        "buildTable": "aggView1307147439678201084",
+        "joinKeys": [],
+        "conditions": [
+          "t.id=aggView1307147439678201084.v14",
+          "(production_year > 2010)"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView1125537731180322904",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v3"
+        ],
+        "inputView": "keyword as k",
+        "conditions": [
+          "(keyword LIKE '%sequel%')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin4989791373946414515",
+        "columns": [
+          "movie_id"
+        ],
+        "columnAliases": [
+          "v14"
+        ],
+        "probeTable": "movie_keyword as mk",
+        "buildTable": "aggView1125537731180322904",
+        "joinKeys": [],
+        "conditions": [
+          "mk.keyword_id=aggView1125537731180322904.v3"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView8938949796022804699",
+        "columns": [
+          "",
+          "MIN(v26)",
+          "MIN(v15)"
+        ],
+        "columnAliases": [
+          "v14",
+          "v26",
+          "v27"
+        ],
+        "inputView": "aggJoin2926765465497736075",
+        "conditions": [],
+        "groupBy": [
+          "v14",
+          "v26"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin3241729440970552365",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v26",
+          "v27"
+        ],
+        "probeTable": "aggJoin4989791373946414515",
+        "buildTable": "aggView8938949796022804699",
+        "joinKeys": [
+          "v14"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "MIN(v26)",
+          "MIN(v27)"
+        ],
+        "columnAliases": [
+          "v26",
+          "v27"
+        ],
+        "inputView": "aggJoin3241729440970552365",
+        "conditions": []
+      }
+    }
+  ]
+}

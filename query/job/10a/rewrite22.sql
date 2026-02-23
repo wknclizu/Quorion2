@@ -1,0 +1,14 @@
+create or replace TEMP view aggView5575593717967987755 as select id as v15 from company_name as cn where (country_code = '[ru]');
+create or replace TEMP view aggJoin7886816058148725779 as select movie_id as v31, company_type_id as v22 from movie_companies as mc, aggView5575593717967987755 where mc.company_id=aggView5575593717967987755.v15;
+create or replace TEMP view aggView1591967702245236259 as select id as v22 from company_type as ct;
+create or replace TEMP view aggJoin8965525775925577197 as select v31 from aggJoin7886816058148725779 join aggView1591967702245236259 using(v22);
+create or replace TEMP view aggView850944339693415103 as select id as v31, title as v44 from title as t where (production_year > 2005);
+create or replace TEMP view aggJoin7247800659333881876 as select v31, v44 from aggJoin8965525775925577197 join aggView850944339693415103 using(v31);
+create or replace TEMP view aggView7497372234531306556 as select id as v29 from role_type as rt where (role = 'actor');
+create or replace TEMP view aggJoin2476440718897370837 as select movie_id as v31, person_role_id as v1, note as v12 from cast_info as ci, aggView7497372234531306556 where ci.role_id=aggView7497372234531306556.v29 and (note LIKE '%(voice)%') and (note LIKE '%(uncredited)%');
+create or replace TEMP view aggView6826121937759193912 as select v31, MIN(v44) as v44, COUNT(*) as annot from aggJoin7247800659333881876 group by v31,v44;
+create or replace TEMP view aggJoin2627661899555863027 as select v1, v12, v44, annot from aggJoin2476440718897370837 join aggView6826121937759193912 using(v31);
+create or replace TEMP view aggView6280442838091137755 as select v1, MIN(v44) as v44 from aggJoin2627661899555863027 group by v1,v44;
+create or replace TEMP view aggJoin7701000097570946460 as select name as v2, v44 from char_name as chn, aggView6280442838091137755 where chn.id=aggView6280442838091137755.v1;
+create or replace TEMP view res as select MIN(v2) as v43, MIN(v44) as v44 from aggJoin7701000097570946460;
+select sum(v43+v44) from res;

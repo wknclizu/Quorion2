@@ -1,0 +1,183 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView148429446366321957",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v1"
+        ],
+        "inputView": "company_type as ct",
+        "conditions": [
+          "(kind = 'production companies')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin6805331710548640914",
+        "columns": [
+          "movie_id",
+          "note"
+        ],
+        "columnAliases": [
+          "v15",
+          "v9"
+        ],
+        "probeTable": "movie_companies as mc",
+        "buildTable": "aggView148429446366321957",
+        "joinKeys": [],
+        "conditions": [
+          "mc.company_type_id=aggView148429446366321957.v1",
+          "(note NOT LIKE '%(as Metro-Goldwyn-Mayer Pictures)%')",
+          "((note LIKE '%(co-production)%') OR (note LIKE '%(presents)%'))"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView4035844114278558246",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v3"
+        ],
+        "inputView": "info_type as it",
+        "conditions": [
+          "(info = 'top 250 rank')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin7212500874530144644",
+        "columns": [
+          "movie_id"
+        ],
+        "columnAliases": [
+          "v15"
+        ],
+        "probeTable": "movie_info_idx as mi_idx",
+        "buildTable": "aggView4035844114278558246",
+        "joinKeys": [],
+        "conditions": [
+          "mi_idx.info_type_id=aggView4035844114278558246.v3"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView6208943037762469210",
+        "columns": [
+          "",
+          "MIN(v9)",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v15",
+          "v27",
+          "annot"
+        ],
+        "inputView": "aggJoin6805331710548640914",
+        "conditions": [],
+        "groupBy": [
+          "v15"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin9067546796931198212",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v15",
+          "v27",
+          "annot"
+        ],
+        "probeTable": "aggJoin7212500874530144644",
+        "buildTable": "aggView6208943037762469210",
+        "joinKeys": [
+          "v15"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView8512260806188482425",
+        "columns": [
+          "",
+          "MIN(v27)"
+        ],
+        "columnAliases": [
+          "v15",
+          "v27"
+        ],
+        "inputView": "aggJoin9067546796931198212",
+        "conditions": [],
+        "groupBy": [
+          "v15",
+          "v27"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin6778749312889791028",
+        "columns": [
+          "title",
+          "production_year",
+          ""
+        ],
+        "columnAliases": [
+          "v16",
+          "v19",
+          "v27"
+        ],
+        "probeTable": "title as t",
+        "buildTable": "aggView8512260806188482425",
+        "joinKeys": [],
+        "conditions": [
+          "t.id=aggView8512260806188482425.v15"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "MIN(v27)",
+          "MIN(v16)",
+          "MIN(v19)"
+        ],
+        "columnAliases": [
+          "v27",
+          "v28",
+          "v29"
+        ],
+        "inputView": "aggJoin6778749312889791028",
+        "conditions": []
+      }
+    }
+  ]
+}

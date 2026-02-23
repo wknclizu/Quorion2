@@ -1,3 +1,14 @@
-create or replace TEMP view aggView6081259694404524119 as select o_orderkey as v10, o_orderpriority as v6 from orders as orders where (o_orderdate >= DATE '1993-07-01') and (o_orderdate < DATE '1993-10-01');
-create or replace TEMP view aggJoin2923810140992231511 as select l_commitdate as v21, l_receiptdate as v22, v6 from lineitem as lineitem, aggView6081259694404524119 where lineitem.l_orderkey=aggView6081259694404524119.v10 and (l_commitdate < l_receiptdate);
-select v6,COUNT(*) as v26 from aggJoin2923810140992231511 group by v6;
+create or replace TEMP view semiJoinView2767275777772368574 as select n_nationkey as v13, n_name as v23, n_regionkey as v24 from nation AS nation where (n_regionkey) in (select r_regionkey from region AS region where (r_name = 'EUROPE'));
+create or replace TEMP view partsuppAux65 as select ps_partkey as v1, ps_suppkey as v10, ps_supplycost as v20 from partsupp;
+create or replace TEMP view partAux66 as select p_partkey as v1, p_mfgr as v3 from part where (p_size = 15) and (p_type LIKE '%BRASS');
+create or replace TEMP view nationAux27 as select v13, v23 from semiJoinView2767275777772368574;
+create or replace TEMP view semiJoinView2450704628109140205 as select v1, v10, v20 from partsuppAux65 where (v1, v20) in (select v1_partkey, v1_supplycost_min from q2_inner AS q2_inner);
+create or replace TEMP view semiJoinView6168714908773748662 as select s_suppkey as v10, s_name as v11, s_address as v12, s_nationkey as v13, s_phone as v14, s_acctbal as v15, s_comment as v16 from supplier AS supplier where (s_nationkey) in (select v13 from nationAux27);
+create or replace TEMP view semiJoinView2986924206238348190 as select v1, v10, v20 from semiJoinView2450704628109140205 where (v10) in (select v10 from semiJoinView6168714908773748662);
+create or replace TEMP view semiJoinView1551495169414073641 as select distinct v1, v3 from partAux66 where (v1) in (select v1 from semiJoinView2986924206238348190);
+create or replace TEMP view semiEnum1681516398045809076 as select distinct v1, v3, v10, v20 from semiJoinView1551495169414073641 join semiJoinView2986924206238348190 using(v1);
+create or replace TEMP view semiEnum5133994750494167809 as select distinct v13, v1, v15, v11, v14, v3, v12, v10, v16, v20 from semiEnum1681516398045809076 join semiJoinView6168714908773748662 using(v10);
+create or replace TEMP view semiEnum1351144103654010276 as select distinct v13, v1, v15, v11, v23, v14, v3, v12, v10, v16, v20 from semiEnum5133994750494167809 join nationAux27 using(v13);
+create or replace TEMP view semiEnum3164826065821928531 as select v1, v15, v11, v23, v14, v3, v12, v16 from semiEnum1351144103654010276, q2_inner as q2_inner where q2_inner.v1_partkey=semiEnum1351144103654010276.v1 and q2_inner.v1_supplycost_min=semiEnum1351144103654010276.v20;
+create or replace TEMP view res as select distinct v15, v11, v23, v1, v3, v12, v14, v16 from semiEnum3164826065821928531;
+select sum(v15+v11+v23+v1+v3+v12+v14+v16) from res;

@@ -1,0 +1,14 @@
+create or replace TEMP view semiUp31316617020831172 as select movie_id as v12, keyword_id as v1 from movie_keyword AS mk where (keyword_id) in (select id from keyword AS k where (keyword LIKE '%sequel%'));
+create or replace TEMP view semiUp5239990464533471122 as select movie_id as v12 from movie_info AS mi where (movie_id) in (select v12 from semiUp31316617020831172) and (info IN ('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German'));
+create or replace TEMP view semiUp1676942754676093613 as select id as v12, title as v13 from title AS t where (id) in (select v12 from semiUp5239990464533471122) and (production_year > 2005);
+create or replace TEMP view semiDown2700528208187970669 as select v12 from semiUp5239990464533471122 where (v12) in (select v12 from semiUp1676942754676093613);
+create or replace TEMP view semiDown4212141698709423726 as select v12, v1 from semiUp31316617020831172 where (v12) in (select v12 from semiDown2700528208187970669);
+create or replace TEMP view semiDown8074849302469441714 as select id as v1 from keyword AS k where (id) in (select v1 from semiDown4212141698709423726) and (keyword LIKE '%sequel%');
+create or replace TEMP view aggView2945375433732510675 as select v1 from semiDown8074849302469441714;
+create or replace TEMP view aggJoin3152886262358813231 as select v12 from semiDown4212141698709423726 join aggView2945375433732510675 using(v1);
+create or replace TEMP view aggView9055829267873867057 as select v12 from aggJoin3152886262358813231 group by v12;
+create or replace TEMP view aggJoin7389675537846459756 as select v12 from semiDown2700528208187970669 join aggView9055829267873867057 using(v12);
+create or replace TEMP view aggView7695105215241748163 as select v12 from aggJoin7389675537846459756 group by v12;
+create or replace TEMP view aggJoin1726396411049835954 as select v13 from semiUp1676942754676093613 join aggView7695105215241748163 using(v12);
+create or replace TEMP view res as select MIN(v13) as v24 from aggJoin1726396411049835954;
+select sum(v24) from res;

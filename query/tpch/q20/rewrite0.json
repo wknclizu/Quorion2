@@ -1,0 +1,96 @@
+{
+  "plan": [
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "bag297158",
+        "columns": [
+          "partsupp.ps_partkey",
+          "partsupp.ps_suppkey",
+          "partsupp.ps_availqty",
+          "partsupp.ps_supplycost",
+          "partsupp.ps_comment"
+        ],
+        "columnAliases": [
+          "v1",
+          "v2",
+          "v3",
+          "v4",
+          "v5"
+        ],
+        "inputView": [
+          "partsupp as partsupp",
+          "q20_inner1 as q20_inner1"
+        ],
+        "conditions": [
+          "partsupp.ps_partkey=q20_inner1.v1_partkey"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "bag297158Aux91",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v2",
+          "v3"
+        ],
+        "inputView": "bag297158",
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "minView4082787223083820484",
+        "columns": [
+          "v2_quantity_sum"
+        ],
+        "columnAliases": [
+          "mfR3628648733494425185"
+        ],
+        "inputView": "q20_inner2",
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "joinView8374281746821532701",
+        "columns": [
+          ""
+        ],
+        "columnAliases": [
+          "v2"
+        ],
+        "probeTable": "bag297158Aux91",
+        "buildTable": "minView4082787223083820484",
+        "joinKeys": [],
+        "conditions": [
+          "v3>mfR3628648733494425185"
+        ],
+        "distinct": true,
+        "joinType": "INNER"
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "v2"
+        ],
+        "columnAliases": [
+          "v2"
+        ],
+        "inputView": "joinView8374281746821532701",
+        "conditions": [],
+        "distinct": true
+      }
+    }
+  ]
+}

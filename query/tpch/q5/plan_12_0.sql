@@ -1,0 +1,12 @@
+create or replace TEMP view aggView2059249951723080525 as select o_orderkey as v18, o_custkey as v1 from orders as orders where (o_orderdate >= DATE '1993-12-31') and (o_orderdate < DATE '1994-12-31');
+create or replace TEMP view aggJoin2140082793758048678 as select l_suppkey as v20, l_extendedprice as v23, l_discount as v24, v1 from lineitem as lineitem, aggView2059249951723080525 where lineitem.l_orderkey=aggView2059249951723080525.v18;
+create or replace TEMP view aggView4767323976086686030 as select r_regionkey as v43 from region as region where (r_name = 'ASIA');
+create or replace TEMP view aggJoin5723555818541105849 as select n_nationkey as v4, n_name as v42 from nation as nation, aggView4767323976086686030 where nation.n_regionkey=aggView4767323976086686030.v43;
+create or replace TEMP view aggView5396710695737855480 as select v20, v1, SUM(v23 * (1 - v24)) as v49, COUNT(*) as annot from aggJoin2140082793758048678 group by v20,v1;
+create or replace TEMP view aggJoin399885404710765350 as select s_nationkey as v4, v1, v49, annot from supplier as supplier, aggView5396710695737855480 where supplier.s_suppkey=aggView5396710695737855480.v20;
+create or replace TEMP view semiJoinView8904918220406531332 as select v4, v1, v49, annot from aggJoin399885404710765350 where (v4) in (select v4 from aggJoin5723555818541105849);
+create or replace TEMP view semiJoinView9071077769248889056 as select distinct c_custkey as v1, c_nationkey as v4 from customer AS customer where (c_nationkey, c_custkey) in (select v4, v1 from semiJoinView8904918220406531332);
+create or replace TEMP view semiEnum7393174705917931436 as select distinct v49, annot, v4 from semiJoinView9071077769248889056 join semiJoinView8904918220406531332 using(v4, v1);
+create or replace TEMP view semiEnum5704632971722468491 as select v49, v42, annot from semiEnum7393174705917931436 join aggJoin5723555818541105849 using(v4);
+create or replace TEMP view res as select v42, SUM(v49) as v49 from semiEnum5704632971722468491 group by v42;
+select sum(v42+v49) from res;

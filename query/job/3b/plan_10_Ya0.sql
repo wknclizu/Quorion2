@@ -1,0 +1,14 @@
+create or replace TEMP view semiUp2563179203839410675 as select movie_id as v12, keyword_id as v1 from movie_keyword AS mk where (movie_id) in (select movie_id from movie_info AS mi where (info = 'Bulgaria'));
+create or replace TEMP view semiUp402135931352798174 as select v12, v1 from semiUp2563179203839410675 where (v12) in (select id from title AS t where (production_year > 2010));
+create or replace TEMP view semiUp964050442582186148 as select v12, v1 from semiUp402135931352798174 where (v1) in (select id from keyword AS k where (keyword LIKE '%sequel%'));
+create or replace TEMP view semiDown272336729953842578 as select id as v1 from keyword AS k where (id) in (select v1 from semiUp964050442582186148) and (keyword LIKE '%sequel%');
+create or replace TEMP view semiDown1501039060647131570 as select movie_id as v12 from movie_info AS mi where (movie_id) in (select v12 from semiUp964050442582186148) and (info = 'Bulgaria');
+create or replace TEMP view semiDown6201439081175718580 as select id as v12, title as v13 from title AS t where (id) in (select v12 from semiUp964050442582186148) and (production_year > 2010);
+create or replace TEMP view aggView7986760475228099039 as select v12, v13 as v24 from semiDown6201439081175718580;
+create or replace TEMP view aggJoin7544033590096252825 as select v12, v1, v24 from semiUp964050442582186148 join aggView7986760475228099039 using(v12);
+create or replace TEMP view aggView2578111220424205292 as select v12 from semiDown1501039060647131570 group by v12;
+create or replace TEMP view aggJoin9048236189477858117 as select v1, v24 as v24 from aggJoin7544033590096252825 join aggView2578111220424205292 using(v12);
+create or replace TEMP view aggView3746641890293022378 as select v1 from semiDown272336729953842578;
+create or replace TEMP view aggJoin6974369114527489448 as select v24 from aggJoin9048236189477858117 join aggView3746641890293022378 using(v1);
+create or replace TEMP view res as select MIN(v24) as v24 from aggJoin6974369114527489448;
+select sum(v24) from res;

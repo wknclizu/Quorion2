@@ -1,0 +1,197 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView1033915772263807003",
+        "columns": [
+          "id",
+          "name"
+        ],
+        "columnAliases": [
+          "v14",
+          "v36"
+        ],
+        "inputView": "name as n",
+        "conditions": [
+          "(name LIKE '%Downey%Robert%')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin2216798250629019049",
+        "columns": [
+          "movie_id",
+          ""
+        ],
+        "columnAliases": [
+          "v23",
+          "v36"
+        ],
+        "probeTable": "cast_info as ci",
+        "buildTable": "aggView1033915772263807003",
+        "joinKeys": [],
+        "conditions": [
+          "ci.person_id=aggView1033915772263807003.v14"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView9083195466384149903",
+        "columns": [
+          "id",
+          "keyword"
+        ],
+        "columnAliases": [
+          "v8",
+          "v35"
+        ],
+        "inputView": "keyword as k",
+        "conditions": [
+          "(keyword = 'marvel-cinematic-universe')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin3510449602660955024",
+        "columns": [
+          "movie_id",
+          ""
+        ],
+        "columnAliases": [
+          "v23",
+          "v35"
+        ],
+        "probeTable": "movie_keyword as mk",
+        "buildTable": "aggView9083195466384149903",
+        "joinKeys": [],
+        "conditions": [
+          "mk.keyword_id=aggView9083195466384149903.v8"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView3395817858826250306",
+        "columns": [
+          "",
+          "MIN(v36)",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v23",
+          "v36",
+          "annot"
+        ],
+        "inputView": "aggJoin2216798250629019049",
+        "conditions": [],
+        "groupBy": [
+          "v23"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin1073327456638751226",
+        "columns": [
+          "",
+          "v35",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v23",
+          "v35",
+          "v36",
+          "annot"
+        ],
+        "probeTable": "aggJoin3510449602660955024",
+        "buildTable": "aggView3395817858826250306",
+        "joinKeys": [
+          "v23"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView8339814018239515980",
+        "columns": [
+          "",
+          "MIN(v35)",
+          "MIN(v36)",
+          "SUM(annot)"
+        ],
+        "columnAliases": [
+          "v23",
+          "v35",
+          "v36",
+          "annot"
+        ],
+        "inputView": "aggJoin1073327456638751226",
+        "conditions": [],
+        "groupBy": [
+          "v23"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin6577775542502183991",
+        "columns": [
+          "title",
+          "production_year",
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v24",
+          "v27",
+          "v35",
+          "v36",
+          "annot"
+        ],
+        "probeTable": "title as t",
+        "buildTable": "aggView8339814018239515980",
+        "joinKeys": [],
+        "conditions": [
+          "t.id=aggView8339814018239515980.v23",
+          "(production_year > 2000)"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "MIN(v35)",
+          "MIN(v36)",
+          "MIN(v24)"
+        ],
+        "columnAliases": [
+          "v35",
+          "v36",
+          "v37"
+        ],
+        "inputView": "aggJoin6577775542502183991",
+        "conditions": []
+      }
+    }
+  ]
+}

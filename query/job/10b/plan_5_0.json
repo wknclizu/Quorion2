@@ -1,0 +1,274 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView8625248536577209180",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v22"
+        ],
+        "inputView": "company_type as ct",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin9091130020545452864",
+        "columns": [
+          "movie_id",
+          "company_id"
+        ],
+        "columnAliases": [
+          "v31",
+          "v15"
+        ],
+        "probeTable": "movie_companies as mc",
+        "buildTable": "aggView8625248536577209180",
+        "joinKeys": [],
+        "conditions": [
+          "mc.company_type_id=aggView8625248536577209180.v22"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView2731467072107550936",
+        "columns": [
+          "id",
+          "title"
+        ],
+        "columnAliases": [
+          "v31",
+          "v44"
+        ],
+        "inputView": "title as t",
+        "conditions": [
+          "(production_year > 2010)"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin8166668792230820630",
+        "columns": [
+          "movie_id",
+          "person_role_id",
+          "note",
+          "role_id",
+          ""
+        ],
+        "columnAliases": [
+          "v31",
+          "v1",
+          "v12",
+          "v29",
+          "v44"
+        ],
+        "probeTable": "cast_info as ci",
+        "buildTable": "aggView2731467072107550936",
+        "joinKeys": [],
+        "conditions": [
+          "ci.movie_id=aggView2731467072107550936.v31",
+          "(note LIKE '%(producer)%')"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView1386498698704825452",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v15"
+        ],
+        "inputView": "company_name as cn",
+        "conditions": [
+          "(country_code = '[ru]')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin8825341631563703857",
+        "columns": [
+          ""
+        ],
+        "columnAliases": [
+          "v31"
+        ],
+        "probeTable": "aggJoin9091130020545452864",
+        "buildTable": "aggView1386498698704825452",
+        "joinKeys": [
+          "v15"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView6439314749229699650",
+        "columns": [
+          "",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v31",
+          "annot"
+        ],
+        "inputView": "aggJoin8825341631563703857",
+        "conditions": [],
+        "groupBy": [
+          "v31"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin6677266889094071969",
+        "columns": [
+          "",
+          "",
+          "",
+          "v44",
+          ""
+        ],
+        "columnAliases": [
+          "v1",
+          "v12",
+          "v29",
+          "v44",
+          "annot"
+        ],
+        "probeTable": "aggJoin8166668792230820630",
+        "buildTable": "aggView6439314749229699650",
+        "joinKeys": [
+          "v31"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView1367093603992795647",
+        "columns": [
+          "id",
+          "name"
+        ],
+        "columnAliases": [
+          "v1",
+          "v43"
+        ],
+        "inputView": "char_name as chn",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin1055168971314845379",
+        "columns": [
+          "",
+          "",
+          "",
+          "",
+          "v43"
+        ],
+        "columnAliases": [
+          "v12",
+          "v29",
+          "v44",
+          "annot",
+          "v43"
+        ],
+        "probeTable": "aggJoin6677266889094071969",
+        "buildTable": "aggView1367093603992795647",
+        "joinKeys": [
+          "v1"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView1314276977778757614",
+        "columns": [
+          "",
+          "MIN(v44)",
+          "MIN(v43)",
+          "SUM(annot)"
+        ],
+        "columnAliases": [
+          "v29",
+          "v44",
+          "v43",
+          "annot"
+        ],
+        "inputView": "aggJoin1055168971314845379",
+        "conditions": [],
+        "groupBy": [
+          "v29"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin4695444848566504677",
+        "columns": [
+          "role",
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v30",
+          "v44",
+          "v43",
+          "annot"
+        ],
+        "probeTable": "role_type as rt",
+        "buildTable": "aggView1314276977778757614",
+        "joinKeys": [],
+        "conditions": [
+          "rt.id=aggView1314276977778757614.v29",
+          "(role = 'actor')"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "MIN(v43)",
+          "MIN(v44)"
+        ],
+        "columnAliases": [
+          "v43",
+          "v44"
+        ],
+        "inputView": "aggJoin4695444848566504677",
+        "conditions": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+create or replace TEMP view semiUp3855534707607341597 as select movie_id as v12, keyword_id as v1 from movie_keyword AS mk where (keyword_id) in (select id from keyword AS k where (keyword LIKE '%sequel%'));
+create or replace TEMP view semiUp110342051601290014 as select movie_id as v12 from movie_info AS mi where (movie_id) in (select id from title AS t where (production_year > 2010)) and (info = 'Bulgaria');
+create or replace TEMP view semiUp6369322986889259974 as select v12, v1 from semiUp3855534707607341597 where (v12) in (select v12 from semiUp110342051601290014);
+create or replace TEMP view semiDown4434122207928294118 as select id as v1 from keyword AS k where (id) in (select v1 from semiUp6369322986889259974) and (keyword LIKE '%sequel%');
+create or replace TEMP view semiDown7698431625225020247 as select v12 from semiUp110342051601290014 where (v12) in (select v12 from semiUp6369322986889259974);
+create or replace TEMP view semiDown5578549243033553882 as select id as v12, title as v13 from title AS t where (id) in (select v12 from semiDown7698431625225020247) and (production_year > 2010);
+create or replace TEMP view aggView1453774407430801553 as select v12, v13 as v24 from semiDown5578549243033553882;
+create or replace TEMP view aggJoin7095959231646958662 as select v12, v24 from semiDown7698431625225020247 join aggView1453774407430801553 using(v12);
+create or replace TEMP view aggView5222161435893451708 as select v12, MIN(v24) as v24 from aggJoin7095959231646958662 group by v12,v24;
+create or replace TEMP view aggJoin50885321250462114 as select v1, v24 from semiUp6369322986889259974 join aggView5222161435893451708 using(v12);
+create or replace TEMP view aggView1552634824928338207 as select v1 from semiDown4434122207928294118;
+create or replace TEMP view aggJoin4377001262009218754 as select v24 from aggJoin50885321250462114 join aggView1552634824928338207 using(v1);
+create or replace TEMP view res as select MIN(v24) as v24 from aggJoin4377001262009218754;
+select sum(v24) from res;

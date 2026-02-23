@@ -1,0 +1,264 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView1054971048748647763",
+        "columns": [
+          "r_regionkey"
+        ],
+        "columnAliases": [
+          "v43"
+        ],
+        "inputView": "region as region",
+        "conditions": [
+          "(r_name = 'ASIA')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin4231704435285543269",
+        "columns": [
+          "n_nationkey",
+          "n_name"
+        ],
+        "columnAliases": [
+          "v4",
+          "v42"
+        ],
+        "probeTable": "nation as nation",
+        "buildTable": "aggView1054971048748647763",
+        "joinKeys": [],
+        "conditions": [
+          "nation.n_regionkey=aggView1054971048748647763.v43"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView8342866516054435429",
+        "columns": [
+          "l_suppkey",
+          "l_orderkey",
+          "SUM(l_extendedprice * (1 - l_discount))",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v20",
+          "v18",
+          "v49",
+          "annot"
+        ],
+        "inputView": "lineitem as lineitem",
+        "conditions": [],
+        "groupBy": [
+          "l_suppkey",
+          "l_orderkey"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin4150215581510493979",
+        "columns": [
+          "s_nationkey",
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v4",
+          "v18",
+          "v49",
+          "annot"
+        ],
+        "probeTable": "supplier as supplier",
+        "buildTable": "aggView8342866516054435429",
+        "joinKeys": [],
+        "conditions": [
+          "supplier.s_suppkey=aggView8342866516054435429.v20"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView1639340324008948501",
+        "columns": [
+          "o_custkey",
+          "o_orderkey",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v1",
+          "v18",
+          "annot"
+        ],
+        "inputView": "orders as orders",
+        "conditions": [
+          "(o_orderdate >= DATE '1993-12-31')",
+          "(o_orderdate < DATE '1994-12-31')"
+        ],
+        "groupBy": [
+          "o_custkey",
+          "o_orderkey"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin8503174133125412756",
+        "columns": [
+          "c_nationkey",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v4",
+          "v18",
+          "annot"
+        ],
+        "probeTable": "customer as customer",
+        "buildTable": "aggView1639340324008948501",
+        "joinKeys": [],
+        "conditions": [
+          "customer.c_custkey=aggView1639340324008948501.v1"
+        ]
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiJoinView2708494080043570903",
+        "columns": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v4",
+          "v18",
+          "v49",
+          "annot"
+        ],
+        "probeTable": "aggJoin4150215581510493979",
+        "buildTable": "aggJoin4231704435285543269",
+        "probeKeys": [
+          "v4"
+        ],
+        "buildKeys": [
+          "v4"
+        ],
+        "innerConditions": [],
+        "outerConditions": [],
+        "distinct": false,
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiJoinView3004999648803587043",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v4",
+          "v18",
+          "annot"
+        ],
+        "probeTable": "aggJoin8503174133125412756",
+        "buildTable": "semiJoinView2708494080043570903",
+        "probeKeys": [
+          "v4"
+        ],
+        "buildKeys": [
+          "v4"
+        ],
+        "innerConditions": [],
+        "outerConditions": [],
+        "distinct": true,
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "semiEnum17219891264893162",
+        "columns": [
+          "semiJoinView3004999648803587043.annot * semiJoinView2708494080043570903.annot",
+          "",
+          "v49*semiJoinView3004999648803587043.annot"
+        ],
+        "columnAliases": [
+          "annot",
+          "v4",
+          "v49"
+        ],
+        "probeTable": "semiJoinView3004999648803587043",
+        "buildTable": "semiJoinView2708494080043570903",
+        "joinKeys": [
+          "v4",
+          "v18"
+        ],
+        "conditions": [],
+        "distinct": true,
+        "joinType": "INNER"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "semiEnum3244427678590179361",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "annot",
+          "v42",
+          "v49"
+        ],
+        "probeTable": "semiEnum17219891264893162",
+        "buildTable": "aggJoin4231704435285543269",
+        "joinKeys": [
+          "v4"
+        ],
+        "conditions": [],
+        "distinct": false,
+        "joinType": "INNER"
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "v42",
+          "SUM(v49)"
+        ],
+        "columnAliases": [
+          "v42",
+          "v49"
+        ],
+        "inputView": "semiEnum3244427678590179361",
+        "groupBy": [
+          "v42"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    }
+  ]
+}

@@ -1,0 +1,206 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView8296949390303815872",
+        "columns": [
+          "id",
+          "keyword"
+        ],
+        "columnAliases": [
+          "v8",
+          "v35"
+        ],
+        "inputView": "keyword as k",
+        "conditions": [
+          "(keyword IN ('superhero','sequel','second-part','marvel-comics','based-on-comic','tv-special','fight','violence'))"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin6645810437234582573",
+        "columns": [
+          "movie_id",
+          ""
+        ],
+        "columnAliases": [
+          "v23",
+          "v35"
+        ],
+        "probeTable": "movie_keyword as mk",
+        "buildTable": "aggView8296949390303815872",
+        "joinKeys": [],
+        "conditions": [
+          "mk.keyword_id=aggView8296949390303815872.v8"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView5332711529748117379",
+        "columns": [
+          "",
+          "MIN(v35)",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v23",
+          "v35",
+          "annot"
+        ],
+        "inputView": "aggJoin6645810437234582573",
+        "conditions": [],
+        "groupBy": [
+          "v23",
+          "v35"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin1070682102071373833",
+        "columns": [
+          "id",
+          "title",
+          "production_year",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v23",
+          "v24",
+          "v27",
+          "v35",
+          "annot"
+        ],
+        "probeTable": "title as t",
+        "buildTable": "aggView5332711529748117379",
+        "joinKeys": [],
+        "conditions": [
+          "t.id=aggView5332711529748117379.v23",
+          "(production_year > 2000)"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView2675965062983814655",
+        "columns": [
+          "",
+          "MIN(v35)",
+          "MIN(v24)",
+          "SUM(annot)"
+        ],
+        "columnAliases": [
+          "v23",
+          "v35",
+          "v37",
+          "annot"
+        ],
+        "inputView": "aggJoin1070682102071373833",
+        "conditions": [],
+        "groupBy": [
+          "v23",
+          "v35"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin2408189741791935813",
+        "columns": [
+          "person_id",
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v14",
+          "v35",
+          "v37",
+          "annot"
+        ],
+        "probeTable": "cast_info as ci",
+        "buildTable": "aggView2675965062983814655",
+        "joinKeys": [],
+        "conditions": [
+          "ci.movie_id=aggView2675965062983814655.v23"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView532050595092787758",
+        "columns": [
+          "",
+          "MIN(v35)",
+          "MIN(v37)"
+        ],
+        "columnAliases": [
+          "v14",
+          "v35",
+          "v37"
+        ],
+        "inputView": "aggJoin2408189741791935813",
+        "conditions": [],
+        "groupBy": [
+          "v14",
+          "v35",
+          "v37"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin5660552651935271078",
+        "columns": [
+          "name",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v15",
+          "v35",
+          "v37"
+        ],
+        "probeTable": "name as n",
+        "buildTable": "aggView532050595092787758",
+        "joinKeys": [],
+        "conditions": [
+          "n.id=aggView532050595092787758.v14"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "MIN(v35)",
+          "MIN(v15)",
+          "MIN(v37)"
+        ],
+        "columnAliases": [
+          "v35",
+          "v36",
+          "v37"
+        ],
+        "inputView": "aggJoin5660552651935271078",
+        "conditions": []
+      }
+    }
+  ]
+}

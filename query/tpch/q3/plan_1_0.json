@@ -3,7 +3,7 @@
     {
       "operator": "Select",
       "properties": {
-        "viewName": "aggView3272554285779179098",
+        "viewName": "aggView1820322496372080313",
         "columns": [
           "c_custkey"
         ],
@@ -20,7 +20,7 @@
     {
       "operator": "Join",
       "properties": {
-        "viewName": "aggJoin921377333193566382",
+        "viewName": "aggJoin4253743419602935844",
         "columns": [
           "o_orderkey",
           "o_orderdate",
@@ -32,84 +32,70 @@
           "v16"
         ],
         "probeTable": "orders as orders",
-        "buildTable": "aggView3272554285779179098",
+        "buildTable": "aggView1820322496372080313",
         "joinKeys": [],
         "conditions": [
-          "orders.o_custkey=aggView3272554285779179098.v1",
+          "orders.o_custkey=aggView1820322496372080313.v1",
           "(o_orderdate < DATE '1995-03-14')"
         ]
       }
     },
     {
-      "operator": "GroupBy",
+      "operator": "SemiJoin",
       "properties": {
-        "viewName": "aggView3359376727042368148",
-        "columns": [
-          "",
-          "",
-          "",
-          "COUNT(*)"
-        ],
-        "columnAliases": [
-          "v18",
-          "v16",
-          "v13",
-          "annot"
-        ],
-        "inputView": "aggJoin921377333193566382",
-        "conditions": [],
-        "groupBy": [
-          "v18",
-          "v16",
-          "v13"
-        ],
-        "terminationPolicy": "ADAPTIVE"
-      }
-    },
-    {
-      "operator": "GroupBy",
-      "properties": {
-        "viewName": "aggView5166120365539875105",
+        "viewName": "semiJoinView1788890078346309104",
         "columns": [
           "l_orderkey",
-          "SUM(l_extendedprice * (1 - l_discount))"
+          "l_extendedprice",
+          "l_discount",
+          "(l_extendedprice * (1 - l_discount))"
         ],
         "columnAliases": [
           "v18",
+          "v23",
+          "v24",
           "v35"
         ],
-        "inputView": "lineitem as lineitem",
-        "conditions": [
-          "(l_shipdate > DATE '1995-03-14')"
-        ],
-        "groupBy": [
+        "probeTable": "lineitem AS lineitem",
+        "buildTable": "aggJoin4253743419602935844",
+        "probeKeys": [
           "l_orderkey"
         ],
+        "buildKeys": [
+          "v18"
+        ],
+        "innerConditions": [],
+        "outerConditions": [
+          "(l_shipdate > DATE '1995-03-14')"
+        ],
+        "distinct": true,
         "terminationPolicy": "ADAPTIVE"
       }
     },
     {
       "operator": "Join",
       "properties": {
-        "viewName": "aggJoin2777145145414289628",
+        "viewName": "semiEnum4063335882784554302",
         "columns": [
           "",
           "",
           "",
-          "v35 * aggView3359376727042368148.annot"
+          ""
         ],
         "columnAliases": [
           "v18",
           "v16",
-          "v13",
-          "v35"
+          "v35",
+          "v13"
         ],
-        "probeTable": "aggView3359376727042368148",
-        "buildTable": "aggView5166120365539875105",
+        "probeTable": "semiJoinView1788890078346309104",
+        "buildTable": "aggJoin4253743419602935844",
         "joinKeys": [
           "v18"
         ],
-        "conditions": []
+        "conditions": [],
+        "distinct": false,
+        "joinType": "INNER"
       }
     },
     {
@@ -128,7 +114,7 @@
           "v13",
           "v16"
         ],
-        "inputView": "aggJoin2777145145414289628",
+        "inputView": "semiEnum4063335882784554302",
         "groupBy": [
           "v18",
           "v13",

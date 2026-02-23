@@ -1,0 +1,18 @@
+create or replace TEMP view semiUp3176887457634706952 as select movie_id as v15, company_type_id as v1 from movie_companies AS mc where (company_type_id) in (select id from company_type AS ct where (kind = 'production companies')) and (note LIKE '%(theatrical)%') and (note LIKE '%(France)%');
+create or replace TEMP view semiUp7006979201166698896 as select movie_id as v15, info_type_id as v3 from movie_info AS mi where (info_type_id) in (select id from info_type AS it) and (info IN ('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German'));
+create or replace TEMP view semiUp7192396248041358264 as select v15, v3 from semiUp7006979201166698896 where (v15) in (select v15 from semiUp3176887457634706952);
+create or replace TEMP view semiUp7643704059216202012 as select id as v15, title as v16 from title AS t where (id) in (select v15 from semiUp7192396248041358264) and (production_year > 2005);
+create or replace TEMP view semiDown9182262565010491779 as select v15, v3 from semiUp7192396248041358264 where (v15) in (select v15 from semiUp7643704059216202012);
+create or replace TEMP view semiDown2908815456614493149 as select id as v3 from info_type AS it where (id) in (select v3 from semiDown9182262565010491779);
+create or replace TEMP view semiDown7456443694389234050 as select v15, v1 from semiUp3176887457634706952 where (v15) in (select v15 from semiDown9182262565010491779);
+create or replace TEMP view semiDown6304894341379468595 as select id as v1 from company_type AS ct where (id) in (select v1 from semiDown7456443694389234050) and (kind = 'production companies');
+create or replace TEMP view aggView5126077084752019646 as select v1 from semiDown6304894341379468595;
+create or replace TEMP view aggJoin4590753878878099022 as select v15 from semiDown7456443694389234050 join aggView5126077084752019646 using(v1);
+create or replace TEMP view aggView7163337391551151632 as select v15 from aggJoin4590753878878099022 group by v15;
+create or replace TEMP view aggJoin1616103871638125800 as select v15, v3 from semiDown9182262565010491779 join aggView7163337391551151632 using(v15);
+create or replace TEMP view aggView647431857878328151 as select v3 from semiDown2908815456614493149;
+create or replace TEMP view aggJoin2737382701980728504 as select v15 from aggJoin1616103871638125800 join aggView647431857878328151 using(v3);
+create or replace TEMP view aggView1939198325185746635 as select v15 from aggJoin2737382701980728504 group by v15;
+create or replace TEMP view aggJoin4404412579785897330 as select v16 from semiUp7643704059216202012 join aggView1939198325185746635 using(v15);
+create or replace TEMP view res as select MIN(v16) as v27 from aggJoin4404412579785897330;
+select sum(v27) from res;

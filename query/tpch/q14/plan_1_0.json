@@ -1,45 +1,54 @@
 {
   "plan": [
     {
-      "operator": "Select",
+      "operator": "GroupBy",
       "properties": {
-        "viewName": "aggView4010252079572697857",
+        "viewName": "aggView7692262008086067523",
         "columns": [
-          "p_partkey",
-          "CASE WHEN p_type LIKE 'PROMO%' THEN 1 ELSE 0 END"
+          "l_partkey",
+          "l_extendedprice * (1 - l_discount)",
+          "SUM(l_extendedprice * (1 - l_discount))",
+          "COUNT(*)"
         ],
         "columnAliases": [
           "v2",
-          "caseCond"
+          "caseRes",
+          "v29",
+          "annot"
         ],
-        "inputView": "part as part",
-        "conditions": [],
-        "groupBy": []
+        "inputView": "lineitem as lineitem",
+        "conditions": [
+          "(l_shipdate >= DATE '1995-08-31')",
+          "(l_shipdate < DATE '1995-09-30')"
+        ],
+        "groupBy": [
+          "l_partkey",
+          "caseRes"
+        ],
+        "terminationPolicy": "NONE"
       }
     },
     {
       "operator": "Join",
       "properties": {
-        "viewName": "aggJoin735781941762730849",
+        "viewName": "aggJoin7227171071340478474",
         "columns": [
-          "l_extendedprice",
-          "l_discount",
-          "l_shipdate",
+          "p_type",
+          "",
+          "",
           ""
         ],
         "columnAliases": [
-          "v6",
-          "v7",
-          "v11",
-          "caseCond"
+          "v21",
+          "caseRes",
+          "v29",
+          "annot"
         ],
-        "probeTable": "lineitem as lineitem",
-        "buildTable": "aggView4010252079572697857",
+        "probeTable": "part as part",
+        "buildTable": "aggView7692262008086067523",
         "joinKeys": [],
         "conditions": [
-          "lineitem.l_partkey=aggView4010252079572697857.v2",
-          "(l_shipdate >= DATE '1995-08-31')",
-          "(l_shipdate < DATE '1995-09-30')"
+          "part.p_partkey=aggView7692262008086067523.v2"
         ]
       }
     },
@@ -48,12 +57,12 @@
       "properties": {
         "viewName": "finalResult",
         "columns": [
-          "((100.0 * SUM( CASE WHEN caseCond = 1 THEN v6 * (1 - v7) ELSE 0.0 END)) / SUM((v6 * (1 - v7))))"
+          "((100.0 * SUM( CASE WHEN v21 LIKE 'PROMO%' THEN caseRes * annot ELSE 0.0 END)) / SUM(v30))"
         ],
         "columnAliases": [
           "v30"
         ],
-        "inputView": "aggJoin735781941762730849",
+        "inputView": "aggJoin7227171071340478474",
         "conditions": []
       }
     }

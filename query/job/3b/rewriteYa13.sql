@@ -1,0 +1,14 @@
+create or replace TEMP view semiUp7315802095521227663 as select movie_id as v12, keyword_id as v1 from movie_keyword AS mk where (keyword_id) in (select id from keyword AS k where (keyword LIKE '%sequel%'));
+create or replace TEMP view semiUp7429197385534158969 as select movie_id as v12 from movie_info AS mi where (movie_id) in (select id from title AS t where (production_year > 2010)) and (info = 'Bulgaria');
+create or replace TEMP view semiUp6780891082402241364 as select v12, v1 from semiUp7315802095521227663 where (v12) in (select v12 from semiUp7429197385534158969);
+create or replace TEMP view semiDown5923064791779795609 as select id as v1 from keyword AS k where (id) in (select v1 from semiUp6780891082402241364) and (keyword LIKE '%sequel%');
+create or replace TEMP view semiDown8835785367614434046 as select v12 from semiUp7429197385534158969 where (v12) in (select v12 from semiUp6780891082402241364);
+create or replace TEMP view semiDown8226238946906140154 as select id as v12, title as v13 from title AS t where (id) in (select v12 from semiDown8835785367614434046) and (production_year > 2010);
+create or replace TEMP view aggView8873040731347257692 as select v12, v13 as v24 from semiDown8226238946906140154;
+create or replace TEMP view aggJoin3811174826539802798 as select v12, v24 from semiDown8835785367614434046 join aggView8873040731347257692 using(v12);
+create or replace TEMP view aggView571431482467528949 as select v1 from semiDown5923064791779795609;
+create or replace TEMP view aggJoin3426814632836615637 as select v12 from semiUp6780891082402241364 join aggView571431482467528949 using(v1);
+create or replace TEMP view aggView4038963123134505051 as select v12, MIN(v24) as v24 from aggJoin3811174826539802798 group by v12,v24;
+create or replace TEMP view aggJoin4080804241183783919 as select v24 from aggJoin3426814632836615637 join aggView4038963123134505051 using(v12);
+create or replace TEMP view res as select MIN(v24) as v24 from aggJoin4080804241183783919;
+select sum(v24) from res;

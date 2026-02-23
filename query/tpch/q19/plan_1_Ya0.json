@@ -3,7 +3,40 @@
     {
       "operator": "SemiJoin",
       "properties": {
-        "viewName": "semiUp198850049626106524",
+        "viewName": "semiUp7536428332814666645",
+        "columns": [
+          "p_partkey"
+        ],
+        "columnAliases": [
+          "v17"
+        ],
+        "probeTable": "part AS part",
+        "buildTable": "lineitem AS lineitem",
+        "probeKeys": [
+          "p_partkey"
+        ],
+        "buildKeys": [
+          "l_partkey"
+        ],
+        "innerConditions": [
+          "(l_quantity >= 21)",
+          "(l_shipinstruct = 'DELIVER IN PERSON')",
+          "(l_quantity <= (21 + 10))",
+          "(l_shipmode IN ('AIR','AIR REG'))"
+        ],
+        "outerConditions": [
+          "(p_brand = 'Brand#34')",
+          "(p_size >= 1)",
+          "(p_container IN ('LG CASE','LG BOX','LG PACK','LG PKG'))",
+          "(p_size <= 15)"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiDown8465341731433375269",
         "columns": [
           "l_partkey",
           "l_extendedprice",
@@ -15,19 +48,14 @@
           "v7"
         ],
         "probeTable": "lineitem AS lineitem",
-        "buildTable": "part AS part",
+        "buildTable": "semiUp7536428332814666645",
         "probeKeys": [
           "l_partkey"
         ],
         "buildKeys": [
-          "p_partkey"
+          "v17"
         ],
-        "innerConditions": [
-          "(p_brand = 'Brand#34')",
-          "(p_size >= 1)",
-          "(p_container IN ('LG CASE','LG BOX','LG PACK','LG PKG'))",
-          "(p_size <= 15)"
-        ],
+        "innerConditions": [],
         "outerConditions": [
           "(l_quantity >= 21)",
           "(l_shipinstruct = 'DELIVER IN PERSON')",
@@ -38,62 +66,39 @@
       }
     },
     {
-      "operator": "SemiJoin",
+      "operator": "GroupBy",
       "properties": {
-        "viewName": "semiDown3647816476816364901",
+        "viewName": "aggView6669751267718709967",
         "columns": [
-          "p_partkey"
+          "",
+          "SUM(v6 * (1 - v7))",
+          "COUNT(*)"
         ],
         "columnAliases": [
-          "v17"
+          "v17",
+          "v27",
+          "annot"
         ],
-        "probeTable": "part AS part",
-        "buildTable": "semiUp198850049626106524",
-        "probeKeys": [
-          "p_partkey"
-        ],
-        "buildKeys": [
-          "v17"
-        ],
-        "innerConditions": [],
-        "outerConditions": [
-          "(p_brand = 'Brand#34')",
-          "(p_size >= 1)",
-          "(p_container IN ('LG CASE','LG BOX','LG PACK','LG PKG'))",
-          "(p_size <= 15)"
-        ],
-        "terminationPolicy": "ADAPTIVE"
-      }
-    },
-    {
-      "operator": "Select",
-      "properties": {
-        "viewName": "aggView59556629871414364",
-        "columns": [
-          ""
-        ],
-        "columnAliases": [
-          "v17"
-        ],
-        "inputView": "semiDown3647816476816364901",
+        "inputView": "semiDown8465341731433375269",
         "conditions": [],
-        "groupBy": []
+        "groupBy": [
+          "v17"
+        ],
+        "terminationPolicy": "NONE"
       }
     },
     {
       "operator": "Join",
       "properties": {
-        "viewName": "aggJoin3171072997079735978",
+        "viewName": "aggJoin1966127196724399848",
         "columns": [
-          "",
           ""
         ],
         "columnAliases": [
-          "v6",
-          "v7"
+          "v27"
         ],
-        "probeTable": "semiUp198850049626106524",
-        "buildTable": "aggView59556629871414364",
+        "probeTable": "semiUp7536428332814666645",
+        "buildTable": "aggView6669751267718709967",
         "joinKeys": [
           "v17"
         ],
@@ -110,7 +115,7 @@
         "columnAliases": [
           "v27"
         ],
-        "inputView": "aggJoin3171072997079735978",
+        "inputView": "aggJoin1966127196724399848",
         "conditions": []
       }
     }

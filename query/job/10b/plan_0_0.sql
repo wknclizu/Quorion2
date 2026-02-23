@@ -1,0 +1,14 @@
+create or replace TEMP view aggView6098896968377151106 as select id as v22 from company_type as ct;
+create or replace TEMP view aggJoin1508836703009953296 as select movie_id as v31, company_id as v15 from movie_companies as mc, aggView6098896968377151106 where mc.company_type_id=aggView6098896968377151106.v22;
+create or replace TEMP view aggView2226207000215010754 as select id as v31, title as v44 from title as t where (production_year > 2010);
+create or replace TEMP view aggJoin51515471426646656 as select movie_id as v31, person_role_id as v1, note as v12, role_id as v29, v44 from cast_info as ci, aggView2226207000215010754 where ci.movie_id=aggView2226207000215010754.v31 and (note LIKE '%(producer)%');
+create or replace TEMP view aggView5458762391065244423 as select id as v15 from company_name as cn where (country_code = '[ru]');
+create or replace TEMP view aggJoin4793161579743426899 as select v31 from aggJoin1508836703009953296 join aggView5458762391065244423 using(v15);
+create or replace TEMP view aggView7806358117887182505 as select id as v29 from role_type as rt where (role = 'actor');
+create or replace TEMP view aggJoin6889488528741281716 as select v31, v1, v12, v44 from aggJoin51515471426646656 join aggView7806358117887182505 using(v29);
+create or replace TEMP view aggView8500085179382206328 as select v31, COUNT(*) as annot from aggJoin4793161579743426899 group by v31;
+create or replace TEMP view aggJoin4689520075307985996 as select v1, v12, v44 as v44, annot from aggJoin6889488528741281716 join aggView8500085179382206328 using(v31);
+create or replace TEMP view aggView6164939251529342033 as select v1, MIN(v44) as v44, SUM(annot) as annot from aggJoin4689520075307985996 group by v1;
+create or replace TEMP view aggJoin351097519448551002 as select name as v2, v44, annot from char_name as chn, aggView6164939251529342033 where chn.id=aggView6164939251529342033.v1;
+create or replace TEMP view res as select MIN(v2) as v43, MIN(v44) as v44 from aggJoin351097519448551002;
+select sum(v43+v44) from res;

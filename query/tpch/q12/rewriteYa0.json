@@ -1,0 +1,187 @@
+{
+  "plan": [
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiUp1644920159116927270",
+        "columns": [
+          "l_orderkey",
+          "l_shipmode"
+        ],
+        "columnAliases": [
+          "v1",
+          "v24"
+        ],
+        "probeTable": "lineitem AS lineitem",
+        "buildTable": "orders AS orders",
+        "probeKeys": [
+          "l_orderkey"
+        ],
+        "buildKeys": [
+          "o_orderkey"
+        ],
+        "innerConditions": [],
+        "outerConditions": [
+          "(l_shipmode IN ('MAIL','SHIP'))",
+          "(l_receiptdate >= DATE '1993-12-31')",
+          "(l_shipdate < l_commitdate)",
+          "(l_receiptdate < DATE '1994-12-31')",
+          "(l_commitdate < l_receiptdate)"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "lineitemAux13",
+        "columns": [
+          ""
+        ],
+        "columnAliases": [
+          "v24"
+        ],
+        "inputView": "semiUp1644920159116927270",
+        "conditions": []
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiDown7411382276577383563",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v1",
+          "v24"
+        ],
+        "probeTable": "semiUp1644920159116927270",
+        "buildTable": "lineitemAux13",
+        "probeKeys": [
+          "v24"
+        ],
+        "buildKeys": [
+          "v24"
+        ],
+        "innerConditions": [],
+        "outerConditions": [],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiDown5483989880571129839",
+        "columns": [
+          "o_orderkey",
+          "o_orderpriority"
+        ],
+        "columnAliases": [
+          "v1",
+          "v6"
+        ],
+        "probeTable": "orders AS orders",
+        "buildTable": "semiDown7411382276577383563",
+        "probeKeys": [
+          "o_orderkey"
+        ],
+        "buildKeys": [
+          "v1"
+        ],
+        "innerConditions": [],
+        "outerConditions": [],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView4628787699747382618",
+        "columns": [
+          "",
+          "CASE WHEN (v6 IN ('1-URGENT','2-HIGH')) THEN 1 ELSE 0 END",
+          "CASE WHEN (v6 NOT IN ('1-URGENT','2-HIGH')) THEN 1 ELSE 0 END"
+        ],
+        "columnAliases": [
+          "v1",
+          "v28",
+          "v29"
+        ],
+        "inputView": "semiDown5483989880571129839",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin8647929960432204928",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v24",
+          "v28",
+          "v29"
+        ],
+        "probeTable": "semiDown7411382276577383563",
+        "buildTable": "aggView4628787699747382618",
+        "joinKeys": [
+          "v1"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView5756371452191193675",
+        "columns": [
+          "",
+          "SUM(v28)",
+          "SUM(v29)",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v24",
+          "v28",
+          "v29",
+          "annot"
+        ],
+        "inputView": "aggJoin8647929960432204928",
+        "conditions": [],
+        "groupBy": [
+          "v24",
+          "v29",
+          "v28"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "v24",
+          "v28",
+          "v29"
+        ],
+        "columnAliases": [
+          "v24",
+          "v28",
+          "v29"
+        ],
+        "inputView": "aggView5756371452191193675",
+        "groupBy": [
+          "v24"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    }
+  ]
+}

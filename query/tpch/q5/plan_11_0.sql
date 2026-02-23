@@ -1,0 +1,12 @@
+create or replace TEMP view aggView3966462942261823052 as select c_custkey as v1, c_nationkey as v4 from customer as customer;
+create or replace TEMP view aggJoin8630635912816970540 as select o_orderkey as v18, o_orderdate as v13, v4 from orders as orders, aggView3966462942261823052 where orders.o_custkey=aggView3966462942261823052.v1 and (o_orderdate >= DATE '1993-12-31') and (o_orderdate < DATE '1994-12-31');
+create or replace TEMP view aggView4834670963472979472 as select v18, v4, COUNT(*) as annot from aggJoin8630635912816970540 group by v18,v4;
+create or replace TEMP view aggJoin4996268263625203197 as select l_suppkey as v20, l_extendedprice as v23, l_discount as v24, v4, annot from lineitem as lineitem, aggView4834670963472979472 where lineitem.l_orderkey=aggView4834670963472979472.v18;
+create or replace TEMP view aggView6226082618043426505 as select r_regionkey as v43 from region as region where (r_name = 'ASIA');
+create or replace TEMP view aggJoin7752349139371648571 as select n_nationkey as v4, n_name as v42 from nation as nation, aggView6226082618043426505 where nation.n_regionkey=aggView6226082618043426505.v43;
+create or replace TEMP view aggView3086815376791394399 as select v20, v4, SUM((v23 * (1 - v24)) * annot) as v49, SUM(annot) as annot from aggJoin4996268263625203197 group by v20,v4;
+create or replace TEMP view aggJoin4979505535585455721 as select s_nationkey as v4, v49, annot from supplier as supplier, aggView3086815376791394399 where supplier.s_suppkey=aggView3086815376791394399.v20 and supplier.s_nationkey=aggView3086815376791394399.v4;
+create or replace TEMP view semiJoinView2161604775522880167 as select distinct v4, v49, annot from aggJoin4979505535585455721 where (v4) in (select v4 from aggJoin7752349139371648571);
+create or replace TEMP view semiEnum1022247295093722614 as select annot, v42, v49 from semiJoinView2161604775522880167 join aggJoin7752349139371648571 using(v4);
+create or replace TEMP view res as select v42, SUM(v49) as v49 from semiEnum1022247295093722614 group by v42;
+select sum(v42+v49) from res;

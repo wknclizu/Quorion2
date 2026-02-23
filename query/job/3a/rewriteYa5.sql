@@ -1,0 +1,14 @@
+create or replace TEMP view semiUp5182000974543956588 as select movie_id as v12 from movie_info AS mi where (movie_id) in (select id from title AS t where (production_year > 2005)) and (info IN ('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German'));
+create or replace TEMP view semiUp7135673113664735463 as select movie_id as v12, keyword_id as v1 from movie_keyword AS mk where (keyword_id) in (select id from keyword AS k where (keyword LIKE '%sequel%'));
+create or replace TEMP view semiUp7177123044455464574 as select v12, v1 from semiUp7135673113664735463 where (v12) in (select v12 from semiUp5182000974543956588);
+create or replace TEMP view semiDown3562078683018490548 as select id as v1 from keyword AS k where (id) in (select v1 from semiUp7177123044455464574) and (keyword LIKE '%sequel%');
+create or replace TEMP view semiDown2143440458506559755 as select v12 from semiUp5182000974543956588 where (v12) in (select v12 from semiUp7177123044455464574);
+create or replace TEMP view semiDown3305882048597622138 as select id as v12, title as v13 from title AS t where (id) in (select v12 from semiDown2143440458506559755) and (production_year > 2005);
+create or replace TEMP view aggView6515373183449713168 as select v12, v13 as v24 from semiDown3305882048597622138;
+create or replace TEMP view aggJoin5873095986601593027 as select v12, v24 from semiDown2143440458506559755 join aggView6515373183449713168 using(v12);
+create or replace TEMP view aggView5978861640333883339 as select v1 from semiDown3562078683018490548;
+create or replace TEMP view aggJoin2931265058954090262 as select v12 from semiUp7177123044455464574 join aggView5978861640333883339 using(v1);
+create or replace TEMP view aggView857736405571902641 as select v12, MIN(v24) as v24 from aggJoin5873095986601593027 group by v12,v24;
+create or replace TEMP view aggJoin8068957831106850447 as select v24 from aggJoin2931265058954090262 join aggView857736405571902641 using(v12);
+create or replace TEMP view res as select MIN(v24) as v24 from aggJoin8068957831106850447;
+select sum(v24) from res;

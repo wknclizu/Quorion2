@@ -3,7 +3,7 @@
     {
       "operator": "GroupBy",
       "properties": {
-        "viewName": "aggView3398140446830478659",
+        "viewName": "aggView4998296802288938869",
         "columns": [
           "l_partkey",
           "SUM(l_extendedprice)",
@@ -22,60 +22,70 @@
           "l_partkey",
           "l_quantity"
         ],
-        "terminationPolicy": "NONE"
+        "terminationPolicy": "ADAPTIVE"
       }
     },
     {
       "operator": "Join",
       "properties": {
-        "viewName": "aggJoin580063609030702955",
+        "viewName": "aggJoin3524287422543944461",
         "columns": [
-          "v1_partkey",
-          "v1_quantity_avg",
+          "p_partkey",
+          "p_brand",
+          "p_container",
           "",
           "",
           ""
         ],
         "columnAliases": [
           "v17",
-          "v27",
+          "v20",
+          "v23",
           "v28",
           "v5",
           "annot"
         ],
-        "probeTable": "q17_inner as q17_inner",
-        "buildTable": "aggView3398140446830478659",
+        "probeTable": "part as part",
+        "buildTable": "aggView4998296802288938869",
         "joinKeys": [],
         "conditions": [
-          "q17_inner.v1_partkey=aggView3398140446830478659.v17",
-          "v5>v1_quantity_avg"
+          "part.p_partkey=aggView4998296802288938869.v17",
+          "(p_brand = 'Brand#23')",
+          "(p_container = 'MED BOX')"
         ]
       }
     },
     {
-      "operator": "Select",
+      "operator": "GroupBy",
       "properties": {
-        "viewName": "aggView8176876514301935194",
+        "viewName": "aggView5728446265900577022",
         "columns": [
-          "p_partkey"
+          "",
+          "SUM(v28)",
+          "SUM(annot)",
+          ""
         ],
         "columnAliases": [
-          "v17"
+          "v17",
+          "v28",
+          "annot",
+          "v5"
         ],
-        "inputView": "part as part",
-        "conditions": [
-          "(p_brand = 'Brand#23')",
-          "(p_container = 'MED BOX')"
+        "inputView": "aggJoin3524287422543944461",
+        "conditions": [],
+        "groupBy": [
+          "v17",
+          "v5"
         ],
-        "groupBy": []
+        "terminationPolicy": "NONE"
       }
     },
     {
       "operator": "Join",
       "properties": {
-        "viewName": "aggJoin6897847007116206793",
+        "viewName": "aggJoin244730874212007914",
         "columns": [
-          "",
+          "v1_quantity_avg",
           "",
           "",
           ""
@@ -86,12 +96,13 @@
           "v5",
           "annot"
         ],
-        "probeTable": "aggJoin580063609030702955",
-        "buildTable": "aggView8176876514301935194",
-        "joinKeys": [
-          "v17"
-        ],
-        "conditions": []
+        "probeTable": "q17_inner as q17_inner",
+        "buildTable": "aggView5728446265900577022",
+        "joinKeys": [],
+        "conditions": [
+          "q17_inner.v1_partkey=aggView5728446265900577022.v17",
+          "v5>v1_quantity_avg"
+        ]
       }
     },
     {
@@ -104,7 +115,7 @@
         "columnAliases": [
           "v29"
         ],
-        "inputView": "aggJoin6897847007116206793",
+        "inputView": "aggJoin244730874212007914",
         "conditions": []
       }
     }

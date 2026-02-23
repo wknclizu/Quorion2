@@ -1,0 +1,247 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView1515591149607542499",
+        "columns": [
+          "o_orderkey",
+          "o_custkey"
+        ],
+        "columnAliases": [
+          "v18",
+          "v1"
+        ],
+        "inputView": "orders as orders",
+        "conditions": [
+          "(o_orderdate >= DATE '1993-12-31')",
+          "(o_orderdate < DATE '1994-12-31')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin5342049492027281909",
+        "columns": [
+          "l_suppkey",
+          "l_extendedprice",
+          "l_discount",
+          ""
+        ],
+        "columnAliases": [
+          "v20",
+          "v23",
+          "v24",
+          "v1"
+        ],
+        "probeTable": "lineitem as lineitem",
+        "buildTable": "aggView1515591149607542499",
+        "joinKeys": [],
+        "conditions": [
+          "lineitem.l_orderkey=aggView1515591149607542499.v18"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView2704088035000285495",
+        "columns": [
+          "",
+          "",
+          "SUM(v23 * (1 - v24))",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v20",
+          "v1",
+          "v49",
+          "annot"
+        ],
+        "inputView": "aggJoin5342049492027281909",
+        "conditions": [],
+        "groupBy": [
+          "v20",
+          "v1"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin4664438467261376795",
+        "columns": [
+          "s_nationkey",
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v4",
+          "v1",
+          "v49",
+          "annot"
+        ],
+        "probeTable": "supplier as supplier",
+        "buildTable": "aggView2704088035000285495",
+        "joinKeys": [],
+        "conditions": [
+          "supplier.s_suppkey=aggView2704088035000285495.v20"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView4352834363239712341",
+        "columns": [
+          "c_custkey",
+          "c_nationkey",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v1",
+          "v4",
+          "annot"
+        ],
+        "inputView": "customer as customer",
+        "conditions": [],
+        "groupBy": [
+          "c_custkey",
+          "c_nationkey"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin4878787476450129328",
+        "columns": [
+          "",
+          "",
+          "v49*aggView4352834363239712341.annot",
+          "aggJoin4664438467261376795.annot * aggView4352834363239712341.annot"
+        ],
+        "columnAliases": [
+          "v4",
+          "v1",
+          "v49",
+          "annot"
+        ],
+        "probeTable": "aggJoin4664438467261376795",
+        "buildTable": "aggView4352834363239712341",
+        "joinKeys": [
+          "v1",
+          "v4"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView6970474081283458851",
+        "columns": [
+          "",
+          "SUM(v49)",
+          "SUM(annot)"
+        ],
+        "columnAliases": [
+          "v4",
+          "v49",
+          "annot"
+        ],
+        "inputView": "aggJoin4878787476450129328",
+        "conditions": [],
+        "groupBy": [
+          "v4"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin1375146217247836457",
+        "columns": [
+          "n_name",
+          "n_regionkey",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v42",
+          "v43",
+          "v49",
+          "annot"
+        ],
+        "probeTable": "nation as nation",
+        "buildTable": "aggView6970474081283458851",
+        "joinKeys": [],
+        "conditions": [
+          "nation.n_nationkey=aggView6970474081283458851.v4"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView660987784503661145",
+        "columns": [
+          "r_regionkey"
+        ],
+        "columnAliases": [
+          "v43"
+        ],
+        "inputView": "region as region",
+        "conditions": [
+          "(r_name = 'ASIA')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin3070315516678176285",
+        "columns": [
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v42",
+          "v49"
+        ],
+        "probeTable": "aggJoin1375146217247836457",
+        "buildTable": "aggView660987784503661145",
+        "joinKeys": [
+          "v43"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "v42",
+          "SUM(v49)"
+        ],
+        "columnAliases": [
+          "v42",
+          "v49"
+        ],
+        "inputView": "aggJoin3070315516678176285",
+        "groupBy": [
+          "v42"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    }
+  ]
+}

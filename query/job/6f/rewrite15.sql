@@ -1,0 +1,10 @@
+create or replace TEMP view aggView3563165070541028478 as select id as v23, title as v37 from title as t where (production_year > 2000);
+create or replace TEMP view aggJoin532241003810298494 as select movie_id as v23, keyword_id as v8, v37 from movie_keyword as mk, aggView3563165070541028478 where mk.movie_id=aggView3563165070541028478.v23;
+create or replace TEMP view aggView2486278219134827766 as select id as v8, keyword as v35 from keyword as k where (keyword IN ('superhero','sequel','second-part','marvel-comics','based-on-comic','tv-special','fight','violence'));
+create or replace TEMP view aggJoin5125558057976567904 as select v23, v37, v35 from aggJoin532241003810298494 join aggView2486278219134827766 using(v8);
+create or replace TEMP view aggView4944227061047984383 as select v23, MIN(v37) as v37, MIN(v35) as v35, COUNT(*) as annot from aggJoin5125558057976567904 group by v23,v35,v37;
+create or replace TEMP view aggJoin5007292410704661605 as select person_id as v14, v37, v35, annot from cast_info as ci, aggView4944227061047984383 where ci.movie_id=aggView4944227061047984383.v23;
+create or replace TEMP view aggView8822221896456221439 as select v14, MIN(v37) as v37, MIN(v35) as v35 from aggJoin5007292410704661605 group by v14,v35,v37;
+create or replace TEMP view aggJoin3041647525519811630 as select name as v15, v37, v35 from name as n, aggView8822221896456221439 where n.id=aggView8822221896456221439.v14;
+create or replace TEMP view res as select MIN(v35) as v35, MIN(v15) as v36, MIN(v37) as v37 from aggJoin3041647525519811630;
+select sum(v35+v36+v37) from res;

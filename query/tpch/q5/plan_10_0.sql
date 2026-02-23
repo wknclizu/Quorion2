@@ -1,0 +1,12 @@
+create or replace TEMP view aggView3108156297752461804 as select c_custkey as v1, c_nationkey as v4 from customer as customer;
+create or replace TEMP view aggJoin764290174891741804 as select o_orderkey as v18, o_orderdate as v13, v4 from orders as orders, aggView3108156297752461804 where orders.o_custkey=aggView3108156297752461804.v1 and (o_orderdate >= DATE '1993-12-31') and (o_orderdate < DATE '1994-12-31');
+create or replace TEMP view aggView6682906209248270352 as select v18, v4, COUNT(*) as annot from aggJoin764290174891741804 group by v18,v4;
+create or replace TEMP view aggJoin1685642258806424563 as select l_suppkey as v20, l_extendedprice as v23, l_discount as v24, v4, annot from lineitem as lineitem, aggView6682906209248270352 where lineitem.l_orderkey=aggView6682906209248270352.v18;
+create or replace TEMP view aggView9068613736064967445 as select v20, v4, SUM((v23 * (1 - v24)) * annot) as v49, SUM(annot) as annot from aggJoin1685642258806424563 group by v20,v4;
+create or replace TEMP view aggJoin2590546445663658818 as select s_nationkey as v4, v49, annot from supplier as supplier, aggView9068613736064967445 where supplier.s_suppkey=aggView9068613736064967445.v20 and supplier.s_nationkey=aggView9068613736064967445.v4;
+create or replace TEMP view aggView7382024095486016957 as select v4, SUM(v49) as v49, SUM(annot) as annot from aggJoin2590546445663658818 group by v4;
+create or replace TEMP view aggJoin1198400855160972703 as select n_nationkey as v4, n_name as v42, n_regionkey as v43, v49, annot from nation as nation, aggView7382024095486016957 where nation.n_nationkey=aggView7382024095486016957.v4;
+create or replace TEMP view semiJoinView1696227919363519448 as select distinct r_regionkey as v43 from region AS region where (r_regionkey) in (select v43 from aggJoin1198400855160972703) and (r_name = 'ASIA');
+create or replace TEMP view semiEnum8483278319537078957 as select v49, annot, v42 from semiJoinView1696227919363519448 join aggJoin1198400855160972703 using(v43);
+create or replace TEMP view res as select v42, SUM(v49) as v49 from semiEnum8483278319537078957 group by v42;
+select sum(v42+v49) from res;

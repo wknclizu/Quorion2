@@ -1,0 +1,14 @@
+create or replace TEMP view semiUp9158162649727180904 as select movie_id as v12, keyword_id as v1 from movie_keyword AS mk where (keyword_id) in (select id from keyword AS k where (keyword LIKE '%sequel%'));
+create or replace TEMP view semiUp5193303082229729927 as select movie_id as v12 from movie_info AS mi where (movie_id) in (select v12 from semiUp9158162649727180904) and (info IN ('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German','USA','American'));
+create or replace TEMP view semiUp4933487318197047168 as select id as v12, title as v13 from title AS t where (id) in (select v12 from semiUp5193303082229729927) and (production_year > 1990);
+create or replace TEMP view semiDown2609958754982382044 as select v12 from semiUp5193303082229729927 where (v12) in (select v12 from semiUp4933487318197047168);
+create or replace TEMP view semiDown8676612068621262930 as select v12, v1 from semiUp9158162649727180904 where (v12) in (select v12 from semiDown2609958754982382044);
+create or replace TEMP view semiDown8098186131608634735 as select id as v1 from keyword AS k where (id) in (select v1 from semiDown8676612068621262930) and (keyword LIKE '%sequel%');
+create or replace TEMP view aggView557600955666003073 as select v1 from semiDown8098186131608634735;
+create or replace TEMP view aggJoin6289829989794034300 as select v12 from semiDown8676612068621262930 join aggView557600955666003073 using(v1);
+create or replace TEMP view aggView6425825590484173376 as select v12 from aggJoin6289829989794034300 group by v12;
+create or replace TEMP view aggJoin1677989015760251420 as select v12 from semiDown2609958754982382044 join aggView6425825590484173376 using(v12);
+create or replace TEMP view aggView6562495609062681422 as select v12 from aggJoin1677989015760251420 group by v12;
+create or replace TEMP view aggJoin4683364174746798927 as select v13 from semiUp4933487318197047168 join aggView6562495609062681422 using(v12);
+create or replace TEMP view res as select MIN(v13) as v24 from aggJoin4683364174746798927;
+select sum(v24) from res;

@@ -1,0 +1,10 @@
+create or replace TEMP view aggView6001402615160654855 as select id as v12, title as v31 from title as t;
+create or replace TEMP view aggJoin6911940181882952506 as select movie_id as v12, company_id as v1, v31 from movie_companies as mc, aggView6001402615160654855 where mc.movie_id=aggView6001402615160654855.v12;
+create or replace TEMP view aggView3151423356231504313 as select id as v1 from company_name as cn where (country_code = '[us]');
+create or replace TEMP view aggJoin7369800985729865798 as select v12, v31 from aggJoin6911940181882952506 join aggView3151423356231504313 using(v1);
+create or replace TEMP view aggView2124972845262917798 as select id as v18 from keyword as k where (keyword = 'character-name-in-title');
+create or replace TEMP view aggJoin6009259297179014399 as select movie_id as v12 from movie_keyword as mk, aggView2124972845262917798 where mk.keyword_id=aggView2124972845262917798.v18;
+create or replace TEMP view aggView5748524982046683530 as select v12, MIN(v31) as v31 from aggJoin7369800985729865798 group by v12,v31;
+create or replace TEMP view aggJoin7759253864867020912 as select v31 from aggJoin6009259297179014399 join aggView5748524982046683530 using(v12);
+create or replace TEMP view res as select MIN(v31) as v31 from aggJoin7759253864867020912;
+select sum(v31) from res;

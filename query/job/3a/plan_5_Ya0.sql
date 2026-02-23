@@ -1,0 +1,14 @@
+create or replace TEMP view semiUp5950377465042091293 as select movie_id as v12, keyword_id as v1 from movie_keyword AS mk where (keyword_id) in (select id from keyword AS k where (keyword LIKE '%sequel%'));
+create or replace TEMP view semiUp934870923428404015 as select movie_id as v12 from movie_info AS mi where (movie_id) in (select id from title AS t where (production_year > 2005)) and (info IN ('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German'));
+create or replace TEMP view semiUp8919492709443017003 as select v12 from semiUp934870923428404015 where (v12) in (select v12 from semiUp5950377465042091293);
+create or replace TEMP view semiDown1836115508382844223 as select id as v12, title as v13 from title AS t where (id) in (select v12 from semiUp8919492709443017003) and (production_year > 2005);
+create or replace TEMP view semiDown6047318364669639748 as select v12, v1 from semiUp5950377465042091293 where (v12) in (select v12 from semiUp8919492709443017003);
+create or replace TEMP view semiDown9196427779318651521 as select id as v1 from keyword AS k where (id) in (select v1 from semiDown6047318364669639748) and (keyword LIKE '%sequel%');
+create or replace TEMP view aggView103458968588398559 as select v1 from semiDown9196427779318651521;
+create or replace TEMP view aggJoin5394765523610307306 as select v12 from semiDown6047318364669639748 join aggView103458968588398559 using(v1);
+create or replace TEMP view aggView6542057609810880499 as select v12, v13 as v24 from semiDown1836115508382844223;
+create or replace TEMP view aggJoin3453013259403546449 as select v12, v24 from semiUp8919492709443017003 join aggView6542057609810880499 using(v12);
+create or replace TEMP view aggView8377724479249542266 as select v12 from aggJoin5394765523610307306 group by v12;
+create or replace TEMP view aggJoin1373691417187973467 as select v24 as v24 from aggJoin3453013259403546449 join aggView8377724479249542266 using(v12);
+create or replace TEMP view res as select MIN(v24) as v24 from aggJoin1373691417187973467;
+select sum(v24) from res;

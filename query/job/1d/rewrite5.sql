@@ -1,0 +1,10 @@
+create or replace TEMP view aggView2315186226142878568 as select id as v15, title as v28, production_year as v29 from title as t where (production_year > 2000);
+create or replace TEMP view aggJoin2183102530236177539 as select movie_id as v15, info_type_id as v3, v28, v29 from movie_info_idx as mi_idx, aggView2315186226142878568 where mi_idx.movie_id=aggView2315186226142878568.v15;
+create or replace TEMP view aggView3669217799126103892 as select id as v3 from info_type as it where (info = 'bottom 10 rank');
+create or replace TEMP view aggJoin393144936314990285 as select v15, v28, v29 from aggJoin2183102530236177539 join aggView3669217799126103892 using(v3);
+create or replace TEMP view aggView7046059734077570766 as select id as v1 from company_type as ct where (kind = 'production companies');
+create or replace TEMP view aggJoin5777997687704355996 as select movie_id as v15, note as v9 from movie_companies as mc, aggView7046059734077570766 where mc.company_type_id=aggView7046059734077570766.v1 and (note NOT LIKE '%(as Metro-Goldwyn-Mayer Pictures)%');
+create or replace TEMP view aggView8468389599911968659 as select v15, MIN(v28) as v28, MIN(v29) as v29, COUNT(*) as annot from aggJoin393144936314990285 group by v15;
+create or replace TEMP view aggJoin2775455678224745688 as select v9, v28, v29, annot from aggJoin5777997687704355996 join aggView8468389599911968659 using(v15);
+create or replace TEMP view res as select MIN(v9) as v27, MIN(v28) as v28, MIN(v29) as v29 from aggJoin2775455678224745688;
+select sum(v27+v28+v29) from res;

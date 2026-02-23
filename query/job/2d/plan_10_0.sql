@@ -1,0 +1,10 @@
+create or replace TEMP view aggView1379860937725745032 as select id as v18 from keyword as k where (keyword = 'character-name-in-title');
+create or replace TEMP view aggJoin5497261128203099987 as select movie_id as v12 from movie_keyword as mk, aggView1379860937725745032 where mk.keyword_id=aggView1379860937725745032.v18;
+create or replace TEMP view aggView5515350568195293921 as select v12, COUNT(*) as annot from aggJoin5497261128203099987 group by v12;
+create or replace TEMP view aggJoin5675971248841554812 as select id as v12, title as v20, annot from title as t, aggView5515350568195293921 where t.id=aggView5515350568195293921.v12;
+create or replace TEMP view aggView8820307748387509869 as select v12, MIN(v20) as v31, SUM(annot) as annot from aggJoin5675971248841554812 group by v12;
+create or replace TEMP view aggJoin205868938788630349 as select company_id as v1, v31, annot from movie_companies as mc, aggView8820307748387509869 where mc.movie_id=aggView8820307748387509869.v12;
+create or replace TEMP view aggView3902661748954042964 as select v1, MIN(v31) as v31, SUM(annot) as annot from aggJoin205868938788630349 group by v1;
+create or replace TEMP view aggJoin6971760578539815441 as select country_code as v3, v31, annot from company_name as cn, aggView3902661748954042964 where cn.id=aggView3902661748954042964.v1 and (country_code = '[us]');
+create or replace TEMP view res as select MIN(v31) as v31 from aggJoin6971760578539815441;
+select sum(v31) from res;

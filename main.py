@@ -11,6 +11,7 @@ Options:
   -g, --genType type    Set generate code mode D(DuckDB)/M(MySql) [default: D]
   -y, --yanna yanna     Set Y for yannakakis generation; N for our rewrite [default: N]
   -p, --plan plan       Set plan file name [default: ]
+  -H, --hint-mode hm    F: force use plan hint; A: auto (parser generates plans) [default: F]
 """
 from pandas import reset_option
 from treenode import *
@@ -212,17 +213,20 @@ def connectJava(Java: bool = False):
     query_file = open(BASE_PATH + QUERY_NAME)
     body['query'] = query_file.read()
     query_file.close()
+    hint_mode = globalVar.get_value('HINT_MODE')
+    if hint_mode != 'A':
+        try:
+            json_file = open(BASE_PATH + globalVar.get_value('PLAN_NAME'))
+            plan = json.load(json_file)
+            body['plan'] = plan
+        except IOError:
+            pass
     try:
-        json_file = open(BASE_PATH + globalVar.get_value('PLAN_NAME'))
-        plan = json.load(json_file)
-        # FIXME: Only for testing
-        body['plan'] = plan
-    except IOError:
-        pass
-    try:
-        # print(json.dumps(body, indent=2, ensure_ascii=False))
-        # http://localhost:8848/api/v1/parse?orderBy=fanout&sample=true&sampleSize=5000&limit=5000, http://localhost:8848/api/v1/parse?orderBy=fanout&fixRootEnable=true
-        response = requests.post(url="http://localhost:8848/api/v1/parse?timeout=200", headers=headers, json=body).json()
+        if 'plan' in body:
+            url_params = "timeout=0&fixRootEnable=true"
+        else:
+            url_params = "timeout=200"
+        response = requests.post(url="http://localhost:8848/api/v1/parse?" + url_params, headers=headers, json=body).json()
         res_data, res_message = response['data'], response['message']
         return res_data, res_message, body['query']
     except:
@@ -552,7 +556,7 @@ def pass2Java():
     return jsonify(response_data)
 
 
-def init_global_vars(base=2, mode=0, gen_type="DuckDB", yanna=False, plan_name=""):
+def init_global_vars(base=2, mode=0, gen_type="DuckDB", yanna=False, plan_name="", hint_mode="F"):
     globalVar._init()
     globalVar.set_value('QUERY_NAME', 'query.sql')
     globalVar.set_value('COST_NAME', 'cost.csv')
@@ -560,15 +564,22 @@ def init_global_vars(base=2, mode=0, gen_type="DuckDB", yanna=False, plan_name="
     globalVar.set_value('YANNA', yanna)
     globalVar.set_value('BASE', base)
     globalVar.set_value('MODE', mode)
+    globalVar.set_value('HINT_MODE', hint_mode)
 
     # NOTE: single query keeps here
     globalVar.set_value('BASE_PATH', 'query/lsqb/q1/')
     globalVar.set_value('DDL_NAME', "lsqb.ddl")
     globalVar.set_value('ANNOT_ELIMINATION', True)
 
-    if plan_name:
+    if hint_mode == 'A':
+        globalVar.set_value('OUT_NAME', 'rewrite.sql')
+        globalVar.set_value('OUT_YA_NAME', 'rewriteYa.sql')
+        if gen_type != 'PG':
+            globalVar.set_value('PLAN_NAME', 'plan.json')
+        else:
+            globalVar.set_value('PLAN_NAME', 'plan_pg.json')
+    elif plan_name:
         globalVar.set_value('PLAN_NAME', plan_name)
-        # e.g. plan_0.json -> stem="plan_0" -> OUT_NAME="plan_0_.sql", OUT_YA_NAME="plan_0_Ya.sql"
         stem = plan_name.rsplit('.', 1)[0]
         globalVar.set_value('OUT_NAME', stem + '_.sql')
         globalVar.set_value('OUT_YA_NAME', stem + '_Ya.sql')
@@ -579,7 +590,6 @@ def init_global_vars(base=2, mode=0, gen_type="DuckDB", yanna=False, plan_name="
             globalVar.set_value('PLAN_NAME', 'plan.json')
         else:
             globalVar.set_value('PLAN_NAME', 'plan_pg.json')
-    # 固定路径
     globalVar.set_value('REWRITE_TIME', 'rewrite_time.txt')
 
 # Method1: Web-UI 
@@ -596,7 +606,8 @@ def command_line():
     arguments = docopt(__doc__)
 
     plan_name = arguments['--plan'] if arguments['--plan'] else ""
-    init_global_vars(base=2, mode=0, gen_type="DuckDB", yanna=False, plan_name=plan_name)
+    hint_mode = arguments['--hint-mode'] if arguments['--hint-mode'] else "F"
+    init_global_vars(base=2, mode=0, gen_type="DuckDB", yanna=False, plan_name=plan_name, hint_mode=hint_mode)
     base = globalVar.get_value('BASE')
     mode = globalVar.get_value('MODE')
 

@@ -1,0 +1,14 @@
+create or replace TEMP view semiUp4739525257773219499 as select movie_id as v12, keyword_id as v1 from movie_keyword AS mk where (keyword_id) in (select id from keyword AS k where (keyword LIKE '%sequel%'));
+create or replace TEMP view semiUp1893855003178756828 as select movie_id as v12 from movie_info AS mi where (movie_id) in (select id from title AS t where (production_year > 1990)) and (info IN ('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German','USA','American'));
+create or replace TEMP view semiUp8474210841451108547 as select v12, v1 from semiUp4739525257773219499 where (v12) in (select v12 from semiUp1893855003178756828);
+create or replace TEMP view semiDown3495953908524470796 as select id as v1 from keyword AS k where (id) in (select v1 from semiUp8474210841451108547) and (keyword LIKE '%sequel%');
+create or replace TEMP view semiDown3567731456317171170 as select v12 from semiUp1893855003178756828 where (v12) in (select v12 from semiUp8474210841451108547);
+create or replace TEMP view semiDown3841755346400132717 as select id as v12, title as v13 from title AS t where (id) in (select v12 from semiDown3567731456317171170) and (production_year > 1990);
+create or replace TEMP view aggView6378827718945519245 as select v12, v13 as v24 from semiDown3841755346400132717;
+create or replace TEMP view aggJoin4822672075279660617 as select v12, v24 from semiDown3567731456317171170 join aggView6378827718945519245 using(v12);
+create or replace TEMP view aggView8010897887632457854 as select v1 from semiDown3495953908524470796;
+create or replace TEMP view aggJoin8430050707596645399 as select v12 from semiUp8474210841451108547 join aggView8010897887632457854 using(v1);
+create or replace TEMP view aggView5200428782545436344 as select v12, MIN(v24) as v24 from aggJoin4822672075279660617 group by v12,v24;
+create or replace TEMP view aggJoin1911185130205422953 as select v24 from aggJoin8430050707596645399 join aggView5200428782545436344 using(v12);
+create or replace TEMP view res as select MIN(v24) as v24 from aggJoin1911185130205422953;
+select sum(v24) from res;

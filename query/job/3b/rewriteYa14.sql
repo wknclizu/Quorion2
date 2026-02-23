@@ -1,0 +1,14 @@
+create or replace TEMP view semiUp2053084984677810306 as select movie_id as v12, keyword_id as v1 from movie_keyword AS mk where (keyword_id) in (select id from keyword AS k where (keyword LIKE '%sequel%'));
+create or replace TEMP view semiUp6578706898432016618 as select id as v12, title as v13 from title AS t where (id) in (select movie_id from movie_info AS mi where (info = 'Bulgaria')) and (production_year > 2010);
+create or replace TEMP view semiUp3536225338859833962 as select v12, v1 from semiUp2053084984677810306 where (v12) in (select v12 from semiUp6578706898432016618);
+create or replace TEMP view semiDown2590304639119638556 as select id as v1 from keyword AS k where (id) in (select v1 from semiUp3536225338859833962) and (keyword LIKE '%sequel%');
+create or replace TEMP view semiDown4663039413883539678 as select v12, v13 from semiUp6578706898432016618 where (v12) in (select v12 from semiUp3536225338859833962);
+create or replace TEMP view semiDown7708739891900968165 as select movie_id as v12 from movie_info AS mi where (movie_id) in (select v12 from semiDown4663039413883539678) and (info = 'Bulgaria');
+create or replace TEMP view aggView3620427783463328511 as select v12 from semiDown7708739891900968165 group by v12;
+create or replace TEMP view aggJoin2800702395976812627 as select v12, v13 from semiDown4663039413883539678 join aggView3620427783463328511 using(v12);
+create or replace TEMP view aggView591760504931396738 as select v1 from semiDown2590304639119638556;
+create or replace TEMP view aggJoin5340247487111583784 as select v12 from semiUp3536225338859833962 join aggView591760504931396738 using(v1);
+create or replace TEMP view aggView9074307857279640425 as select v12, MIN(v13) as v24 from aggJoin2800702395976812627 group by v12;
+create or replace TEMP view aggJoin6074609442899666633 as select v24 from aggJoin5340247487111583784 join aggView9074307857279640425 using(v12);
+create or replace TEMP view res as select MIN(v24) as v24 from aggJoin6074609442899666633;
+select sum(v24) from res;

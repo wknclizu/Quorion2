@@ -1,0 +1,76 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView5268426890326478968",
+        "columns": [
+          "p_partkey",
+          "p_type",
+          "p_brand",
+          "p_size"
+        ],
+        "columnAliases": [
+          "v6",
+          "v10",
+          "v9",
+          "v11"
+        ],
+        "inputView": "part as part",
+        "conditions": [
+          "(p_brand <> 'Brand#45')",
+          "(p_type NOT LIKE 'MEDIUM POLISHED%')",
+          "(p_size IN (49,14,23,45,19,3,36,9))"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin7893024216127133685",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v10",
+          "v9",
+          "v11"
+        ],
+        "probeTable": "partsupp as partsupp",
+        "buildTable": "aggView5268426890326478968",
+        "joinKeys": [],
+        "conditions": [
+          "partsupp.ps_partkey=aggView5268426890326478968.v6"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "v9",
+          "v10",
+          "v11",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v9",
+          "v10",
+          "v11",
+          "v15"
+        ],
+        "inputView": "aggJoin7893024216127133685",
+        "groupBy": [
+          "v9",
+          "v10",
+          "v11"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    }
+  ]
+}

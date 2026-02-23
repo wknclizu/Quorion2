@@ -1,0 +1,229 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView4694975763585146600",
+        "columns": [
+          "id",
+          "title"
+        ],
+        "columnAliases": [
+          "v13",
+          "v38"
+        ],
+        "inputView": "title as t1",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin8711073170844591745",
+        "columns": [
+          "movie_id",
+          "linked_movie_id",
+          "link_type_id",
+          ""
+        ],
+        "columnAliases": [
+          "v13",
+          "v11",
+          "v4",
+          "v38"
+        ],
+        "probeTable": "movie_link as ml",
+        "buildTable": "aggView4694975763585146600",
+        "joinKeys": [],
+        "conditions": [
+          "ml.movie_id=aggView4694975763585146600.v13"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView6965204146830129726",
+        "columns": [
+          "id",
+          "title"
+        ],
+        "columnAliases": [
+          "v11",
+          "v39"
+        ],
+        "inputView": "title as t2",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin4354120080245401333",
+        "columns": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v13",
+          "v4",
+          "v38",
+          "v39"
+        ],
+        "probeTable": "aggJoin8711073170844591745",
+        "buildTable": "aggView6965204146830129726",
+        "joinKeys": [
+          "v11"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView1076116859682086460",
+        "columns": [
+          "id",
+          "link"
+        ],
+        "columnAliases": [
+          "v4",
+          "v37"
+        ],
+        "inputView": "link_type as lt",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin5597234614978038044",
+        "columns": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v13",
+          "v38",
+          "v39",
+          "v37"
+        ],
+        "probeTable": "aggJoin4354120080245401333",
+        "buildTable": "aggView1076116859682086460",
+        "joinKeys": [
+          "v4"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView5419845216691267318",
+        "columns": [
+          "id"
+        ],
+        "columnAliases": [
+          "v8"
+        ],
+        "inputView": "keyword as k",
+        "conditions": [
+          "(keyword = '10,000-mile-club')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin9069847890346662443",
+        "columns": [
+          "movie_id"
+        ],
+        "columnAliases": [
+          "v13"
+        ],
+        "probeTable": "movie_keyword as mk",
+        "buildTable": "aggView5419845216691267318",
+        "joinKeys": [],
+        "conditions": [
+          "mk.keyword_id=aggView5419845216691267318.v8"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView3551891790653573634",
+        "columns": [
+          "",
+          "MIN(v38)",
+          "MIN(v39)",
+          "MIN(v37)"
+        ],
+        "columnAliases": [
+          "v13",
+          "v38",
+          "v39",
+          "v37"
+        ],
+        "inputView": "aggJoin5597234614978038044",
+        "conditions": [],
+        "groupBy": [
+          "v13",
+          "v38",
+          "v37",
+          "v39"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin6442513696166630148",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v38",
+          "v39",
+          "v37"
+        ],
+        "probeTable": "aggJoin9069847890346662443",
+        "buildTable": "aggView3551891790653573634",
+        "joinKeys": [
+          "v13"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "MIN(v37)",
+          "MIN(v38)",
+          "MIN(v39)"
+        ],
+        "columnAliases": [
+          "v37",
+          "v38",
+          "v39"
+        ],
+        "inputView": "aggJoin6442513696166630148",
+        "conditions": []
+      }
+    }
+  ]
+}

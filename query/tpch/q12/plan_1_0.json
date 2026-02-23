@@ -1,77 +1,54 @@
 {
   "plan": [
     {
-      "operator": "Select",
+      "operator": "GroupBy",
       "properties": {
-        "viewName": "aggView2303191663377936090",
+        "viewName": "aggView821477116638265701",
         "columns": [
-          "o_orderkey",
-          "CASE WHEN (o_orderpriority IN ('1-URGENT','2-HIGH')) THEN 1 ELSE 0 END",
-          "CASE WHEN (o_orderpriority NOT IN ('1-URGENT','2-HIGH')) THEN 1 ELSE 0 END"
+          "l_orderkey",
+          "l_shipmode",
+          "COUNT(*)"
         ],
         "columnAliases": [
           "v1",
-          "v28",
-          "v29"
-        ],
-        "inputView": "orders as orders",
-        "conditions": [],
-        "groupBy": []
-      }
-    },
-    {
-      "operator": "Join",
-      "properties": {
-        "viewName": "aggJoin7687982457943349644",
-        "columns": [
-          "l_shipdate",
-          "l_commitdate",
-          "l_receiptdate",
-          "l_shipmode",
-          "",
-          ""
-        ],
-        "columnAliases": [
-          "v20",
-          "v21",
-          "v22",
           "v24",
-          "v28",
-          "v29"
+          "annot"
         ],
-        "probeTable": "lineitem as lineitem",
-        "buildTable": "aggView2303191663377936090",
-        "joinKeys": [],
+        "inputView": "lineitem as lineitem",
         "conditions": [
-          "lineitem.l_orderkey=aggView2303191663377936090.v1",
           "(l_shipmode IN ('MAIL','SHIP'))",
           "(l_receiptdate >= DATE '1993-12-31')",
           "(l_shipdate < l_commitdate)",
           "(l_receiptdate < DATE '1994-12-31')",
           "(l_commitdate < l_receiptdate)"
-        ]
-      }
-    },
-    {
-      "operator": "GroupBy",
-      "properties": {
-        "viewName": "aggView40391268040382714",
-        "columns": [
-          "",
-          "SUM(v28)",
-          "SUM(v29)"
         ],
-        "columnAliases": [
-          "v24",
-          "v28",
-          "v29"
-        ],
-        "inputView": "aggJoin7687982457943349644",
-        "conditions": [],
         "groupBy": [
+          "l_orderkey",
           "v24"
         ],
         "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin2005852303026106889",
+        "columns": [
+          "o_orderpriority",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v6",
+          "v24",
+          "annot"
+        ],
+        "probeTable": "orders as orders",
+        "buildTable": "aggView821477116638265701",
+        "joinKeys": [],
+        "conditions": [
+          "orders.o_orderkey=aggView821477116638265701.v1"
+        ]
       }
     },
     {
@@ -80,15 +57,15 @@
         "viewName": "finalResult",
         "columns": [
           "v24",
-          "SUM(v28)",
-          "SUM(v29)"
+          "SUM(CASE WHEN (v6 IN ('1-URGENT','2-HIGH')) THEN 1 ELSE 0 END*annot)",
+          "SUM(CASE WHEN (v6 NOT IN ('1-URGENT','2-HIGH')) THEN 1 ELSE 0 END*annot)"
         ],
         "columnAliases": [
           "v24",
           "v28",
           "v29"
         ],
-        "inputView": "aggView40391268040382714",
+        "inputView": "aggJoin2005852303026106889",
         "groupBy": [
           "v24"
         ],

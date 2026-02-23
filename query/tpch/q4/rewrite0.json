@@ -1,0 +1,89 @@
+{
+  "plan": [
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView7049719846443673858",
+        "columns": [
+          "l_orderkey",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v10",
+          "annot"
+        ],
+        "inputView": "lineitem as lineitem",
+        "conditions": [
+          "(l_commitdate < l_receiptdate)"
+        ],
+        "groupBy": [
+          "l_orderkey"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin5323078247259838310",
+        "columns": [
+          "o_orderdate",
+          "o_orderpriority",
+          ""
+        ],
+        "columnAliases": [
+          "v5",
+          "v6",
+          "annot"
+        ],
+        "probeTable": "orders as orders",
+        "buildTable": "aggView7049719846443673858",
+        "joinKeys": [],
+        "conditions": [
+          "orders.o_orderkey=aggView7049719846443673858.v10",
+          "(o_orderdate >= DATE '1993-06-30')",
+          "(o_orderdate < DATE '1993-09-30')"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView8819919940915184622",
+        "columns": [
+          "",
+          "SUM(annot)"
+        ],
+        "columnAliases": [
+          "v6",
+          "annot"
+        ],
+        "inputView": "aggJoin5323078247259838310",
+        "conditions": [],
+        "groupBy": [
+          "v6"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "v6",
+          "SUM(annot)"
+        ],
+        "columnAliases": [
+          "v6",
+          "v26"
+        ],
+        "inputView": "aggView8819919940915184622",
+        "groupBy": [
+          "v6"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    }
+  ]
+}

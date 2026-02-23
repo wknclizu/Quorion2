@@ -1,0 +1,12 @@
+create or replace TEMP view aggView2526897309621247592 as select id as v11, title as v39 from title as t2;
+create or replace TEMP view aggJoin5253619616281669775 as select movie_id as v13, link_type_id as v4, v39 from movie_link as ml, aggView2526897309621247592 where ml.linked_movie_id=aggView2526897309621247592.v11;
+create or replace TEMP view aggView9219609778135929041 as select id as v4, link as v37 from link_type as lt;
+create or replace TEMP view aggJoin6761798777771780178 as select v13, v39, v37 from aggJoin5253619616281669775 join aggView9219609778135929041 using(v4);
+create or replace TEMP view aggView8152149688034190299 as select v13, MIN(v39) as v39, MIN(v37) as v37, COUNT(*) as annot from aggJoin6761798777771780178 group by v13;
+create or replace TEMP view aggJoin3228805132489809648 as select id as v13, title as v14, v39, v37, annot from title as t1, aggView8152149688034190299 where t1.id=aggView8152149688034190299.v13;
+create or replace TEMP view aggView3940329394679810669 as select v13, MIN(v39) as v39, MIN(v37) as v37, MIN(v14) as v38, SUM(annot) as annot from aggJoin3228805132489809648 group by v13;
+create or replace TEMP view aggJoin7795861892511507003 as select keyword_id as v8, v39, v37, v38, annot from movie_keyword as mk, aggView3940329394679810669 where mk.movie_id=aggView3940329394679810669.v13;
+create or replace TEMP view aggView3277039897339718089 as select id as v8 from keyword as k where (keyword = '10,000-mile-club');
+create or replace TEMP view aggJoin7714828252762034133 as select v39, v37, v38, annot from aggJoin7795861892511507003 join aggView3277039897339718089 using(v8);
+create or replace TEMP view res as select MIN(v37) as v37, MIN(v38) as v38, MIN(v39) as v39 from aggJoin7714828252762034133;
+select sum(v37+v38+v39) from res;

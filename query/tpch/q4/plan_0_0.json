@@ -1,69 +1,46 @@
 {
   "plan": [
     {
-      "operator": "GroupBy",
+      "operator": "Select",
       "properties": {
-        "viewName": "aggView1409073238611758541",
+        "viewName": "aggView7854736185596326095",
         "columns": [
-          "l_orderkey",
-          "COUNT(*)"
+          "o_orderkey",
+          "o_orderpriority"
         ],
         "columnAliases": [
           "v10",
-          "annot"
+          "v6"
         ],
-        "inputView": "lineitem as lineitem",
+        "inputView": "orders as orders",
         "conditions": [
-          "(l_commitdate < l_receiptdate)"
+          "(o_orderdate >= DATE '1993-06-30')",
+          "(o_orderdate < DATE '1993-09-30')"
         ],
-        "groupBy": [
-          "l_orderkey"
-        ],
-        "terminationPolicy": "ADAPTIVE"
+        "groupBy": []
       }
     },
     {
       "operator": "Join",
       "properties": {
-        "viewName": "aggJoin4551005261919149238",
+        "viewName": "aggJoin1139297413737168705",
         "columns": [
-          "o_orderdate",
-          "o_orderpriority",
+          "l_commitdate",
+          "l_receiptdate",
           ""
         ],
         "columnAliases": [
-          "v5",
-          "v6",
-          "annot"
-        ],
-        "probeTable": "orders as orders",
-        "buildTable": "aggView1409073238611758541",
-        "joinKeys": [],
-        "conditions": [
-          "orders.o_orderkey=aggView1409073238611758541.v10",
-          "(o_orderdate >= DATE '1993-06-30')",
-          "(o_orderdate < DATE '1993-09-30')"
-        ]
-      }
-    },
-    {
-      "operator": "GroupBy",
-      "properties": {
-        "viewName": "aggView1036722058618854333",
-        "columns": [
-          "",
-          "SUM(annot)"
-        ],
-        "columnAliases": [
-          "v6",
-          "annot"
-        ],
-        "inputView": "aggJoin4551005261919149238",
-        "conditions": [],
-        "groupBy": [
+          "v21",
+          "v22",
           "v6"
         ],
-        "terminationPolicy": "ADAPTIVE"
+        "probeTable": "lineitem as lineitem",
+        "buildTable": "aggView7854736185596326095",
+        "joinKeys": [],
+        "conditions": [
+          "lineitem.l_orderkey=aggView7854736185596326095.v10",
+          "(l_commitdate < l_receiptdate)"
+        ]
       }
     },
     {
@@ -72,13 +49,13 @@
         "viewName": "finalResult",
         "columns": [
           "v6",
-          "SUM(annot)"
+          "COUNT(*)"
         ],
         "columnAliases": [
           "v6",
           "v26"
         ],
-        "inputView": "aggView1036722058618854333",
+        "inputView": "aggJoin1139297413737168705",
         "groupBy": [
           "v6"
         ],

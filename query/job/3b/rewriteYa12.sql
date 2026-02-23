@@ -1,0 +1,14 @@
+create or replace TEMP view semiUp8397909559570769342 as select movie_id as v12, keyword_id as v1 from movie_keyword AS mk where (movie_id) in (select movie_id from movie_info AS mi where (info = 'Bulgaria'));
+create or replace TEMP view semiUp4009518743432922446 as select v12, v1 from semiUp8397909559570769342 where (v1) in (select id from keyword AS k where (keyword LIKE '%sequel%'));
+create or replace TEMP view semiUp7358197050226721467 as select v12, v1 from semiUp4009518743432922446 where (v12) in (select id from title AS t where (production_year > 2010));
+create or replace TEMP view semiDown4503560434610137513 as select id as v1 from keyword AS k where (id) in (select v1 from semiUp7358197050226721467) and (keyword LIKE '%sequel%');
+create or replace TEMP view semiDown3014544204793440108 as select movie_id as v12 from movie_info AS mi where (movie_id) in (select v12 from semiUp7358197050226721467) and (info = 'Bulgaria');
+create or replace TEMP view semiDown2626873171540673736 as select id as v12, title as v13 from title AS t where (id) in (select v12 from semiUp7358197050226721467) and (production_year > 2010);
+create or replace TEMP view aggView5606352912847537995 as select v1 from semiDown4503560434610137513;
+create or replace TEMP view aggJoin4468160944990654698 as select v12 from semiUp7358197050226721467 join aggView5606352912847537995 using(v1);
+create or replace TEMP view aggView2961649711916405609 as select v12 from semiDown3014544204793440108 group by v12;
+create or replace TEMP view aggJoin4935983474844065820 as select v12 from aggJoin4468160944990654698 join aggView2961649711916405609 using(v12);
+create or replace TEMP view aggView4861765891666055880 as select v12, v13 as v24 from semiDown2626873171540673736;
+create or replace TEMP view aggJoin6303429423299083696 as select v24 from aggJoin4935983474844065820 join aggView4861765891666055880 using(v12);
+create or replace TEMP view res as select MIN(v24) as v24 from aggJoin6303429423299083696;
+select sum(v24) from res;

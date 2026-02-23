@@ -1,0 +1,14 @@
+create or replace TEMP view aggView7999929235125563722 as select id as v22 from company_type as ct;
+create or replace TEMP view aggJoin1562520842879415253 as select movie_id as v31, company_id as v15 from movie_companies as mc, aggView7999929235125563722 where mc.company_type_id=aggView7999929235125563722.v22;
+create or replace TEMP view aggView3426062731050681320 as select id as v15 from company_name as cn where (country_code = '[ru]');
+create or replace TEMP view aggJoin714481295622234877 as select v31 from aggJoin1562520842879415253 join aggView3426062731050681320 using(v15);
+create or replace TEMP view aggView8977069185415439932 as select v31, COUNT(*) as annot from aggJoin714481295622234877 group by v31;
+create or replace TEMP view aggJoin1868843809425306026 as select id as v31, title as v32, production_year as v35, annot from title as t, aggView8977069185415439932 where t.id=aggView8977069185415439932.v31 and (production_year > 2005);
+create or replace TEMP view aggView4119216723894632801 as select v31, MIN(v32) as v44, SUM(annot) as annot from aggJoin1868843809425306026 group by v31;
+create or replace TEMP view aggJoin7702528662144785725 as select person_role_id as v1, note as v12, role_id as v29, v44, annot from cast_info as ci, aggView4119216723894632801 where ci.movie_id=aggView4119216723894632801.v31 and (note LIKE '%(voice)%') and (note LIKE '%(uncredited)%');
+create or replace TEMP view aggView1462080109291325152 as select id as v1, name as v43 from char_name as chn;
+create or replace TEMP view aggJoin6718838734508919620 as select v12, v29, v44, annot, v43 as v43 from aggJoin7702528662144785725 join aggView1462080109291325152 using(v1);
+create or replace TEMP view aggView6991365625912540811 as select v29, MIN(v44) as v44, MIN(v43) as v43, SUM(annot) as annot from aggJoin6718838734508919620 group by v29;
+create or replace TEMP view aggJoin6721148373700471892 as select role as v30, v44, v43, annot from role_type as rt, aggView6991365625912540811 where rt.id=aggView6991365625912540811.v29 and (role = 'actor');
+create or replace TEMP view res as select MIN(v43) as v43, MIN(v44) as v44 from aggJoin6721148373700471892;
+select sum(v43+v44) from res;

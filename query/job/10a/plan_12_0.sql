@@ -1,0 +1,14 @@
+create or replace TEMP view aggView8627951833508943235 as select id as v22 from company_type as ct;
+create or replace TEMP view aggJoin8039894210167176198 as select movie_id as v31, company_id as v15 from movie_companies as mc, aggView8627951833508943235 where mc.company_type_id=aggView8627951833508943235.v22;
+create or replace TEMP view aggView3592944077087819348 as select id as v31, title as v44 from title as t where (production_year > 2005);
+create or replace TEMP view aggJoin8679310354822531943 as select movie_id as v31, person_role_id as v1, note as v12, role_id as v29, v44 from cast_info as ci, aggView3592944077087819348 where ci.movie_id=aggView3592944077087819348.v31 and (note LIKE '%(voice)%') and (note LIKE '%(uncredited)%');
+create or replace TEMP view aggView5581182925795955719 as select id as v15 from company_name as cn where (country_code = '[ru]');
+create or replace TEMP view aggJoin5835367239352429816 as select v31 from aggJoin8039894210167176198 join aggView5581182925795955719 using(v15);
+create or replace TEMP view aggView8743303445108209710 as select v31, COUNT(*) as annot from aggJoin5835367239352429816 group by v31;
+create or replace TEMP view aggJoin270429226089261541 as select v1, v12, v29, v44 as v44, annot from aggJoin8679310354822531943 join aggView8743303445108209710 using(v31);
+create or replace TEMP view aggView6422917692341541408 as select id as v1, name as v43 from char_name as chn;
+create or replace TEMP view aggJoin8031036540079213067 as select v12, v29, v44, annot, v43 as v43 from aggJoin270429226089261541 join aggView6422917692341541408 using(v1);
+create or replace TEMP view aggView7269819771521566541 as select v29, MIN(v44) as v44, MIN(v43) as v43, SUM(annot) as annot from aggJoin8031036540079213067 group by v29;
+create or replace TEMP view aggJoin1526922040486243409 as select role as v30, v44, v43, annot from role_type as rt, aggView7269819771521566541 where rt.id=aggView7269819771521566541.v29 and (role = 'actor');
+create or replace TEMP view res as select MIN(v43) as v43, MIN(v44) as v44 from aggJoin1526922040486243409;
+select sum(v43+v44) from res;
