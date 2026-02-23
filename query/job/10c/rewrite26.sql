@@ -1,0 +1,14 @@
+create or replace TEMP view aggView8315895390106545064 as select id as v22 from company_type as ct;
+create or replace TEMP view aggJoin1281413067281173243 as select movie_id as v31, company_id as v15 from movie_companies as mc, aggView8315895390106545064 where mc.company_type_id=aggView8315895390106545064.v22;
+create or replace TEMP view aggView8937370121533296603 as select id as v15 from company_name as cn where (country_code = '[us]');
+create or replace TEMP view aggJoin2071520042037042867 as select v31 from aggJoin1281413067281173243 join aggView8937370121533296603 using(v15);
+create or replace TEMP view aggView1493771545649858371 as select v31, COUNT(*) as annot from aggJoin2071520042037042867 group by v31;
+create or replace TEMP view aggJoin3364918750893697115 as select id as v31, title as v32, production_year as v35, annot from title as t, aggView1493771545649858371 where t.id=aggView1493771545649858371.v31 and (production_year > 1990);
+create or replace TEMP view aggView7925504607758056137 as select v31, MIN(v32) as v44, SUM(annot) as annot from aggJoin3364918750893697115 group by v31;
+create or replace TEMP view aggJoin7541289212067745702 as select person_role_id as v1, note as v12, role_id as v29, v44, annot from cast_info as ci, aggView7925504607758056137 where ci.movie_id=aggView7925504607758056137.v31 and (note LIKE '%(producer)%');
+create or replace TEMP view aggView1495090551021809453 as select id as v29 from role_type as rt;
+create or replace TEMP view aggJoin1481526274264061959 as select v1, v12, v44, annot from aggJoin7541289212067745702 join aggView1495090551021809453 using(v29);
+create or replace TEMP view aggView4287618544072327712 as select v1, MIN(v44) as v44 from aggJoin1481526274264061959 group by v1,v44;
+create or replace TEMP view aggJoin1348435425713805197 as select name as v2, v44 from char_name as chn, aggView4287618544072327712 where chn.id=aggView4287618544072327712.v1;
+create or replace TEMP view res as select MIN(v2) as v43, MIN(v44) as v44 from aggJoin1348435425713805197;
+select sum(v43+v44) from res;

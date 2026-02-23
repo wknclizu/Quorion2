@@ -1,0 +1,99 @@
+{
+  "plan": [
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView3094153895455100637",
+        "columns": [
+          "p_partkey"
+        ],
+        "columnAliases": [
+          "v17"
+        ],
+        "inputView": "part as part",
+        "conditions": [
+          "(p_brand = 'Brand#23')",
+          "(p_container = 'MED BOX')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin9081763081914960214",
+        "columns": [
+          "l_partkey",
+          "l_quantity",
+          "l_extendedprice"
+        ],
+        "columnAliases": [
+          "v17",
+          "v5",
+          "v6"
+        ],
+        "probeTable": "lineitem as lineitem",
+        "buildTable": "aggView3094153895455100637",
+        "joinKeys": [],
+        "conditions": [
+          "lineitem.l_partkey=aggView3094153895455100637.v17"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView6813138031638221138",
+        "columns": [
+          "v1_partkey",
+          "v1_quantity_avg"
+        ],
+        "columnAliases": [
+          "v17",
+          "v27"
+        ],
+        "inputView": "q17_inner as q17_inner",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin6697152150646143525",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v5",
+          "v6",
+          "v27"
+        ],
+        "probeTable": "aggJoin9081763081914960214",
+        "buildTable": "aggView6813138031638221138",
+        "joinKeys": [
+          "v17"
+        ],
+        "conditions": [
+          "(v5 > v27)"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "finalResult",
+        "columns": [
+          "(SUM((v6)) / 7.0)"
+        ],
+        "columnAliases": [
+          "v29"
+        ],
+        "inputView": "aggJoin6697152150646143525",
+        "conditions": []
+      }
+    }
+  ]
+}

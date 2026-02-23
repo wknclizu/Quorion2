@@ -1,0 +1,14 @@
+create or replace TEMP view aggView4197765644892639368 as select id as v22 from company_type as ct;
+create or replace TEMP view aggJoin1069862791321721479 as select movie_id as v31, company_id as v15 from movie_companies as mc, aggView4197765644892639368 where mc.company_type_id=aggView4197765644892639368.v22;
+create or replace TEMP view aggView8321127436254691889 as select id as v15 from company_name as cn where (country_code = '[ru]');
+create or replace TEMP view aggJoin2540016136999554856 as select v31 from aggJoin1069862791321721479 join aggView8321127436254691889 using(v15);
+create or replace TEMP view aggView5733854459110127645 as select id as v31, title as v44 from title as t where (production_year > 2005);
+create or replace TEMP view aggJoin6182835301396877961 as select movie_id as v31, person_role_id as v1, note as v12, role_id as v29, v44 from cast_info as ci, aggView5733854459110127645 where ci.movie_id=aggView5733854459110127645.v31 and (note LIKE '%(voice)%') and (note LIKE '%(uncredited)%');
+create or replace TEMP view aggView2189116469141129833 as select v31, COUNT(*) as annot from aggJoin2540016136999554856 group by v31;
+create or replace TEMP view aggJoin1110273718196895313 as select v1, v12, v29, v44 as v44, annot from aggJoin6182835301396877961 join aggView2189116469141129833 using(v31);
+create or replace TEMP view aggView6462861408469427610 as select id as v29 from role_type as rt where (role = 'actor');
+create or replace TEMP view aggJoin8716008140260541071 as select v1, v12, v44, annot from aggJoin1110273718196895313 join aggView6462861408469427610 using(v29);
+create or replace TEMP view aggView7805852239243417267 as select id as v1, name as v43 from char_name as chn;
+create or replace TEMP view aggJoin962140068679944344 as select v12, v44, annot, v43 as v43 from aggJoin8716008140260541071 join aggView7805852239243417267 using(v1);
+create or replace TEMP view res as select MIN(v43) as v43, MIN(v44) as v44 from aggJoin962140068679944344;
+select sum(v43+v44) from res;

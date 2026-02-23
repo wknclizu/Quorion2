@@ -3,14 +3,16 @@
     {
       "operator": "SemiJoin",
       "properties": {
-        "viewName": "semiUp5182000974543956588",
+        "viewName": "semiUp2720177902862920382",
         "columns": [
-          "movie_id"
+          "movie_id",
+          "keyword_id"
         ],
         "columnAliases": [
-          "v12"
+          "v12",
+          "v1"
         ],
-        "probeTable": "movie_info AS mi",
+        "probeTable": "movie_keyword AS mk",
         "buildTable": "title AS t",
         "probeKeys": [
           "movie_id"
@@ -21,28 +23,26 @@
         "innerConditions": [
           "(production_year > 2005)"
         ],
-        "outerConditions": [
-          "(info IN ('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German'))"
-        ],
+        "outerConditions": [],
         "terminationPolicy": "ADAPTIVE"
       }
     },
     {
       "operator": "SemiJoin",
       "properties": {
-        "viewName": "semiUp7135673113664735463",
+        "viewName": "semiUp6092450486842743789",
         "columns": [
-          "movie_id",
-          "keyword_id"
+          "",
+          ""
         ],
         "columnAliases": [
           "v12",
           "v1"
         ],
-        "probeTable": "movie_keyword AS mk",
+        "probeTable": "semiUp2720177902862920382",
         "buildTable": "keyword AS k",
         "probeKeys": [
-          "keyword_id"
+          "v1"
         ],
         "buildKeys": [
           "id"
@@ -57,7 +57,32 @@
     {
       "operator": "SemiJoin",
       "properties": {
-        "viewName": "semiUp7177123044455464574",
+        "viewName": "semiUp8396790634995465964",
+        "columns": [
+          "movie_id"
+        ],
+        "columnAliases": [
+          "v12"
+        ],
+        "probeTable": "movie_info AS mi",
+        "buildTable": "semiUp6092450486842743789",
+        "probeKeys": [
+          "movie_id"
+        ],
+        "buildKeys": [
+          "v12"
+        ],
+        "innerConditions": [],
+        "outerConditions": [
+          "(info IN ('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German'))"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "SemiJoin",
+      "properties": {
+        "viewName": "semiDown8922220897530842564",
         "columns": [
           "",
           ""
@@ -66,8 +91,8 @@
           "v12",
           "v1"
         ],
-        "probeTable": "semiUp7135673113664735463",
-        "buildTable": "semiUp5182000974543956588",
+        "probeTable": "semiUp6092450486842743789",
+        "buildTable": "semiUp8396790634995465964",
         "probeKeys": [
           "v12"
         ],
@@ -82,7 +107,7 @@
     {
       "operator": "SemiJoin",
       "properties": {
-        "viewName": "semiDown3562078683018490548",
+        "viewName": "semiDown181388670995042930",
         "columns": [
           "id"
         ],
@@ -90,7 +115,7 @@
           "v1"
         ],
         "probeTable": "keyword AS k",
-        "buildTable": "semiUp7177123044455464574",
+        "buildTable": "semiDown8922220897530842564",
         "probeKeys": [
           "id"
         ],
@@ -107,30 +132,7 @@
     {
       "operator": "SemiJoin",
       "properties": {
-        "viewName": "semiDown2143440458506559755",
-        "columns": [
-          ""
-        ],
-        "columnAliases": [
-          "v12"
-        ],
-        "probeTable": "semiUp5182000974543956588",
-        "buildTable": "semiUp7177123044455464574",
-        "probeKeys": [
-          "v12"
-        ],
-        "buildKeys": [
-          "v12"
-        ],
-        "innerConditions": [],
-        "outerConditions": [],
-        "terminationPolicy": "ADAPTIVE"
-      }
-    },
-    {
-      "operator": "SemiJoin",
-      "properties": {
-        "viewName": "semiDown3305882048597622138",
+        "viewName": "semiDown2756749199538079510",
         "columns": [
           "id",
           "title"
@@ -140,7 +142,7 @@
           "v13"
         ],
         "probeTable": "title AS t",
-        "buildTable": "semiDown2143440458506559755",
+        "buildTable": "semiDown8922220897530842564",
         "probeKeys": [
           "id"
         ],
@@ -157,7 +159,40 @@
     {
       "operator": "Select",
       "properties": {
-        "viewName": "aggView6515373183449713168",
+        "viewName": "aggView5859132555473670381",
+        "columns": [
+          ""
+        ],
+        "columnAliases": [
+          "v1"
+        ],
+        "inputView": "semiDown181388670995042930",
+        "conditions": [],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin8730962376525122424",
+        "columns": [
+          ""
+        ],
+        "columnAliases": [
+          "v12"
+        ],
+        "probeTable": "semiDown8922220897530842564",
+        "buildTable": "aggView5859132555473670381",
+        "joinKeys": [
+          "v1"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView717499050834457275",
         "columns": [
           "",
           "v13"
@@ -166,7 +201,7 @@
           "v12",
           "v24"
         ],
-        "inputView": "semiDown3305882048597622138",
+        "inputView": "semiDown2756749199538079510",
         "conditions": [],
         "groupBy": []
       }
@@ -174,7 +209,7 @@
     {
       "operator": "Join",
       "properties": {
-        "viewName": "aggJoin5873095986601593027",
+        "viewName": "aggJoin3290007572459610097",
         "columns": [
           "",
           ""
@@ -183,43 +218,10 @@
           "v12",
           "v24"
         ],
-        "probeTable": "semiDown2143440458506559755",
-        "buildTable": "aggView6515373183449713168",
+        "probeTable": "aggJoin8730962376525122424",
+        "buildTable": "aggView717499050834457275",
         "joinKeys": [
           "v12"
-        ],
-        "conditions": []
-      }
-    },
-    {
-      "operator": "Select",
-      "properties": {
-        "viewName": "aggView5978861640333883339",
-        "columns": [
-          ""
-        ],
-        "columnAliases": [
-          "v1"
-        ],
-        "inputView": "semiDown3562078683018490548",
-        "conditions": [],
-        "groupBy": []
-      }
-    },
-    {
-      "operator": "Join",
-      "properties": {
-        "viewName": "aggJoin2931265058954090262",
-        "columns": [
-          ""
-        ],
-        "columnAliases": [
-          "v12"
-        ],
-        "probeTable": "semiUp7177123044455464574",
-        "buildTable": "aggView5978861640333883339",
-        "joinKeys": [
-          "v1"
         ],
         "conditions": []
       }
@@ -227,7 +229,7 @@
     {
       "operator": "GroupBy",
       "properties": {
-        "viewName": "aggView857736405571902641",
+        "viewName": "aggView8381834011706151158",
         "columns": [
           "",
           "MIN(v24)"
@@ -236,7 +238,7 @@
           "v12",
           "v24"
         ],
-        "inputView": "aggJoin5873095986601593027",
+        "inputView": "aggJoin3290007572459610097",
         "conditions": [],
         "groupBy": [
           "v12",
@@ -248,15 +250,15 @@
     {
       "operator": "Join",
       "properties": {
-        "viewName": "aggJoin8068957831106850447",
+        "viewName": "aggJoin6240430420278071380",
         "columns": [
           ""
         ],
         "columnAliases": [
           "v24"
         ],
-        "probeTable": "aggJoin2931265058954090262",
-        "buildTable": "aggView857736405571902641",
+        "probeTable": "semiUp8396790634995465964",
+        "buildTable": "aggView8381834011706151158",
         "joinKeys": [
           "v12"
         ],
@@ -268,12 +270,12 @@
       "properties": {
         "viewName": "finalResult",
         "columns": [
-          "v24"
+          "MIN(v24)"
         ],
         "columnAliases": [
           "v24"
         ],
-        "inputView": "aggJoin8068957831106850447",
+        "inputView": "aggJoin6240430420278071380",
         "conditions": []
       }
     }

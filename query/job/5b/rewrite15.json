@@ -3,53 +3,7 @@
     {
       "operator": "Select",
       "properties": {
-        "viewName": "aggView5094355072852927935",
-        "columns": [
-          "id",
-          "title"
-        ],
-        "columnAliases": [
-          "v15",
-          "v27"
-        ],
-        "inputView": "title as t",
-        "conditions": [
-          "(production_year > 2010)"
-        ],
-        "groupBy": []
-      }
-    },
-    {
-      "operator": "Join",
-      "properties": {
-        "viewName": "aggJoin8789853335070714754",
-        "columns": [
-          "movie_id",
-          "company_type_id",
-          "note",
-          ""
-        ],
-        "columnAliases": [
-          "v15",
-          "v1",
-          "v9",
-          "v27"
-        ],
-        "probeTable": "movie_companies as mc",
-        "buildTable": "aggView5094355072852927935",
-        "joinKeys": [],
-        "conditions": [
-          "mc.movie_id=aggView5094355072852927935.v15",
-          "(note LIKE '%(USA)%')",
-          "(note LIKE '%(VHS)%')",
-          "(note LIKE '%(1994)%')"
-        ]
-      }
-    },
-    {
-      "operator": "Select",
-      "properties": {
-        "viewName": "aggView1654605235685409234",
+        "viewName": "aggView6645948379155019071",
         "columns": [
           "id"
         ],
@@ -66,29 +20,75 @@
     {
       "operator": "Join",
       "properties": {
-        "viewName": "aggJoin1716649751444487652",
+        "viewName": "aggJoin8083992952292472721",
+        "columns": [
+          "movie_id",
+          "note"
+        ],
+        "columnAliases": [
+          "v15",
+          "v9"
+        ],
+        "probeTable": "movie_companies as mc",
+        "buildTable": "aggView6645948379155019071",
+        "joinKeys": [],
+        "conditions": [
+          "mc.company_type_id=aggView6645948379155019071.v1",
+          "(note LIKE '%(USA)%')",
+          "(note LIKE '%(VHS)%')",
+          "(note LIKE '%(1994)%')"
+        ]
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView8338288975347628991",
         "columns": [
           "",
-          "",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v15",
+          "annot"
+        ],
+        "inputView": "aggJoin8083992952292472721",
+        "conditions": [],
+        "groupBy": [
+          "v15"
+        ],
+        "terminationPolicy": "ADAPTIVE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin1837832161036386787",
+        "columns": [
+          "id",
+          "title",
+          "production_year",
           ""
         ],
         "columnAliases": [
           "v15",
-          "v9",
-          "v27"
+          "v16",
+          "v19",
+          "annot"
         ],
-        "probeTable": "aggJoin8789853335070714754",
-        "buildTable": "aggView1654605235685409234",
-        "joinKeys": [
-          "v1"
-        ],
-        "conditions": []
+        "probeTable": "title as t",
+        "buildTable": "aggView8338288975347628991",
+        "joinKeys": [],
+        "conditions": [
+          "t.id=aggView8338288975347628991.v15",
+          "(production_year > 2010)"
+        ]
       }
     },
     {
       "operator": "Select",
       "properties": {
-        "viewName": "aggView1915771950452266594",
+        "viewName": "aggView1538370271804873971",
         "columns": [
           "id"
         ],
@@ -103,7 +103,7 @@
     {
       "operator": "Join",
       "properties": {
-        "viewName": "aggJoin2391298195311473457",
+        "viewName": "aggJoin4258159011558244536",
         "columns": [
           "movie_id",
           "info"
@@ -113,10 +113,10 @@
           "v13"
         ],
         "probeTable": "movie_info as mi",
-        "buildTable": "aggView1915771950452266594",
+        "buildTable": "aggView1538370271804873971",
         "joinKeys": [],
         "conditions": [
-          "mi.info_type_id=aggView1915771950452266594.v3",
+          "mi.info_type_id=aggView1538370271804873971.v3",
           "(info IN ('USA','America'))"
         ]
       }
@@ -124,20 +124,19 @@
     {
       "operator": "GroupBy",
       "properties": {
-        "viewName": "aggView2947705847330604030",
+        "viewName": "aggView7383261762879260759",
         "columns": [
           "",
-          "MIN(v27)"
+          "MIN(v16)"
         ],
         "columnAliases": [
           "v15",
           "v27"
         ],
-        "inputView": "aggJoin1716649751444487652",
+        "inputView": "aggJoin1837832161036386787",
         "conditions": [],
         "groupBy": [
-          "v15",
-          "v27"
+          "v15"
         ],
         "terminationPolicy": "NONE"
       }
@@ -145,7 +144,7 @@
     {
       "operator": "Join",
       "properties": {
-        "viewName": "aggJoin8114987918007188829",
+        "viewName": "aggJoin6125826321046715141",
         "columns": [
           "",
           ""
@@ -154,8 +153,8 @@
           "v13",
           "v27"
         ],
-        "probeTable": "aggJoin2391298195311473457",
-        "buildTable": "aggView2947705847330604030",
+        "probeTable": "aggJoin4258159011558244536",
+        "buildTable": "aggView7383261762879260759",
         "joinKeys": [
           "v15"
         ],
@@ -172,7 +171,7 @@
         "columnAliases": [
           "v27"
         ],
-        "inputView": "aggJoin8114987918007188829",
+        "inputView": "aggJoin6125826321046715141",
         "conditions": []
       }
     }

@@ -1,0 +1,14 @@
+create or replace TEMP view semiUp6396058043329052263 as select id as v12, title as v13 from title AS t where (id) in (select movie_id from movie_info AS mi where (info = 'Bulgaria')) and (production_year > 2010);
+create or replace TEMP view semiUp4821133595189446923 as select movie_id as v12, keyword_id as v1 from movie_keyword AS mk where (movie_id) in (select v12 from semiUp6396058043329052263);
+create or replace TEMP view semiUp4235736667228039853 as select v12, v1 from semiUp4821133595189446923 where (v1) in (select id from keyword AS k where (keyword LIKE '%sequel%'));
+create or replace TEMP view semiDown7288497104368725781 as select id as v1 from keyword AS k where (id) in (select v1 from semiUp4235736667228039853) and (keyword LIKE '%sequel%');
+create or replace TEMP view semiDown8942234827325667831 as select v12, v13 from semiUp6396058043329052263 where (v12) in (select v12 from semiUp4235736667228039853);
+create or replace TEMP view semiDown6054277094192234123 as select movie_id as v12 from movie_info AS mi where (movie_id) in (select v12 from semiDown8942234827325667831) and (info = 'Bulgaria');
+create or replace TEMP view aggView5658341514031121804 as select v12 from semiDown6054277094192234123 group by v12;
+create or replace TEMP view aggJoin401301602370422726 as select v12, v13 from semiDown8942234827325667831 join aggView5658341514031121804 using(v12);
+create or replace TEMP view aggView2266073482517412324 as select v1 from semiDown7288497104368725781;
+create or replace TEMP view aggJoin2311084126709375521 as select v12 from semiUp4235736667228039853 join aggView2266073482517412324 using(v1);
+create or replace TEMP view aggView8606405376467288286 as select v12, MIN(v13) as v24 from aggJoin401301602370422726 group by v12;
+create or replace TEMP view aggJoin2185730226860519678 as select v24 from aggJoin2311084126709375521 join aggView8606405376467288286 using(v12);
+create or replace TEMP view res as select MIN(v24) as v24 from aggJoin2185730226860519678;
+select sum(v24) from res;

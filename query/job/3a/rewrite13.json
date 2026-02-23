@@ -1,56 +1,9 @@
 {
   "plan": [
     {
-      "operator": "GroupBy",
-      "properties": {
-        "viewName": "aggView8559692558915398179",
-        "columns": [
-          "movie_id",
-          "COUNT(*)"
-        ],
-        "columnAliases": [
-          "v12",
-          "annot"
-        ],
-        "inputView": "movie_info as mi",
-        "conditions": [
-          "(info IN ('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German'))"
-        ],
-        "groupBy": [
-          "movie_id"
-        ],
-        "terminationPolicy": "ADAPTIVE"
-      }
-    },
-    {
-      "operator": "Join",
-      "properties": {
-        "viewName": "aggJoin3208902701351854586",
-        "columns": [
-          "id",
-          "title",
-          "production_year",
-          ""
-        ],
-        "columnAliases": [
-          "v12",
-          "v13",
-          "v16",
-          "annot"
-        ],
-        "probeTable": "title as t",
-        "buildTable": "aggView8559692558915398179",
-        "joinKeys": [],
-        "conditions": [
-          "t.id=aggView8559692558915398179.v12",
-          "(production_year > 2005)"
-        ]
-      }
-    },
-    {
       "operator": "Select",
       "properties": {
-        "viewName": "aggView2978914313025393189",
+        "viewName": "aggView2913529523487471275",
         "columns": [
           "id"
         ],
@@ -67,7 +20,7 @@
     {
       "operator": "Join",
       "properties": {
-        "viewName": "aggJoin2925926486105992602",
+        "viewName": "aggJoin578085170479949151",
         "columns": [
           "movie_id"
         ],
@@ -75,29 +28,31 @@
           "v12"
         ],
         "probeTable": "movie_keyword as mk",
-        "buildTable": "aggView2978914313025393189",
+        "buildTable": "aggView2913529523487471275",
         "joinKeys": [],
         "conditions": [
-          "mk.keyword_id=aggView2978914313025393189.v1"
+          "mk.keyword_id=aggView2913529523487471275.v1"
         ]
       }
     },
     {
       "operator": "GroupBy",
       "properties": {
-        "viewName": "aggView3009826294751049369",
+        "viewName": "aggView8494507283908281261",
         "columns": [
-          "",
-          "MIN(v13)"
+          "movie_id",
+          "COUNT(*)"
         ],
         "columnAliases": [
           "v12",
-          "v24"
+          "annot"
         ],
-        "inputView": "aggJoin3208902701351854586",
-        "conditions": [],
+        "inputView": "movie_info as mi",
+        "conditions": [
+          "(info IN ('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German'))"
+        ],
         "groupBy": [
-          "v12"
+          "movie_id"
         ],
         "terminationPolicy": "NONE"
       }
@@ -105,15 +60,54 @@
     {
       "operator": "Join",
       "properties": {
-        "viewName": "aggJoin3489097599623562021",
+        "viewName": "aggJoin2328739548777827066",
         "columns": [
+          "",
           ""
+        ],
+        "columnAliases": [
+          "v12",
+          "annot"
+        ],
+        "probeTable": "aggJoin578085170479949151",
+        "buildTable": "aggView8494507283908281261",
+        "joinKeys": [
+          "v12"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView8430433994693095479",
+        "columns": [
+          "id",
+          "title"
+        ],
+        "columnAliases": [
+          "v12",
+          "v24"
+        ],
+        "inputView": "title as t",
+        "conditions": [
+          "(production_year > 2005)"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin6670057517665181610",
+        "columns": [
+          "v24"
         ],
         "columnAliases": [
           "v24"
         ],
-        "probeTable": "aggJoin2925926486105992602",
-        "buildTable": "aggView3009826294751049369",
+        "probeTable": "aggJoin2328739548777827066",
+        "buildTable": "aggView8430433994693095479",
         "joinKeys": [
           "v12"
         ],
@@ -130,7 +124,7 @@
         "columnAliases": [
           "v24"
         ],
-        "inputView": "aggJoin3489097599623562021",
+        "inputView": "aggJoin6670057517665181610",
         "conditions": []
       }
     }

@@ -896,7 +896,7 @@ def yaGenerateIR(JT: JoinTree, COMP: dict[int, Comparison], outputVariables: lis
                                         selectName.extend(['COUNT(*) as ' + out for _ in range(outputVariables.count(out))])
                                 elif func.funcName == AggFuncType.AVG:
                                     selectName.extend(['AVG(' + func.originForm + '/annot' * finalAnnotFlag + ') as ' + out for _ in range(outputVariables.count(out))])
-                                elif func.funcName == AggFuncType.MIN and func.funcName == AggFuncType.MAX:
+                                elif func.funcName == AggFuncType.MIN or func.funcName == AggFuncType.MAX:
                                     selectName.extend([func.funcName.name + '(' + func.originForm + ') as ' + out for _ in range(outputVariables.count(out))])
                                 else:
                                     selectName.extend([func.funcName.name + '(' + func.originForm + '* annot' * finalAnnotFlag + ') as ' + out for _ in range(outputVariables.count(out))])
@@ -919,7 +919,7 @@ def yaGenerateIR(JT: JoinTree, COMP: dict[int, Comparison], outputVariables: lis
                                     selectName.extend(['SUM(annot) as ' + out for _ in range(outputVariables.count(out))])
                                 else:
                                     selectName.extend(['COUNT(*) as ' + out for _ in range(outputVariables.count(out))])
-                            elif func.funcName == AggFuncType.MIN and func.funcName == AggFuncType.MAX:
+                            elif func.funcName == AggFuncType.MIN or func.funcName == AggFuncType.MAX:
                                     selectName.extend([func.funcName.name + '(' + func.originForm + ') as ' + out for _ in range(outputVariables.count(out))])
                             else:
                                 selectName.extend([func.funcName.name + '(' + func.originForm + '*annot' * finalAnnotFlag + ') as ' + out for _ in range(outputVariables.count(out))])
@@ -1024,7 +1024,7 @@ def yaGenerateIR(JT: JoinTree, COMP: dict[int, Comparison], outputVariables: lis
                                             newForm = newForm.replace(var, 'SUM(annot) as ' + out)
                                         else:
                                             newForm = newForm.replace(var, 'COUNT(*) as ' + out)
-                                    elif func.funcName == AggFuncType.MIN and func.funcName == AggFuncType.MAX:
+                                    elif func.funcName == AggFuncType.MIN or func.funcName == AggFuncType.MAX:
                                             newForm = newForm.replace(var, func.funcName.name + '(' + func.originForm + ') as ' + out)
                                     else:
                                         newForm = newForm.replace(var, func.funcName.name + '(' + func.originForm + '*annot' * finalAnnotFlag + ') as ' + out)
@@ -1032,14 +1032,6 @@ def yaGenerateIR(JT: JoinTree, COMP: dict[int, Comparison], outputVariables: lis
                 else:
                     raise NotImplementedError("Other output variables exists! ")
                 
-        if globalVar.get_value('GEN_TYPE') == 'Mysql':
-            finalResult = 'create or replace TEMP view res as select ' + ', '.join(selectName) + ' from ' + fromTable + (' group by ' + ', '.join(Agg.groupByVars) if not JT.isFreeConnex and len(Agg.groupByVars) else '') + ';\n'
-            for id, alias in enumerate(selectName):
-                if 'as' in alias:
-                    selectName[id] = alias.split(' as ')[1]
-            finalResult += 'select sum(' + '+'.join(selectName) +') from res;\n'
-        else:
-            finalResult = 'select ' + ','.join(selectName) + ' from ' + fromTable + (' group by ' + ', '.join(Agg.groupByVars) if not JT.isFreeConnex and len(Agg.groupByVars) else '') + ';\n'
         if not JT.isFreeConnex and len(Agg.groupByVars):
             # Group by operation
             groupByPlan = {
@@ -1053,7 +1045,13 @@ def yaGenerateIR(JT: JoinTree, COMP: dict[int, Comparison], outputVariables: lis
                 }
             }
             planFinalResult.append(groupByPlan)
+        if globalVar.get_value('GEN_TYPE') == 'Mysql':
+            finalResult = 'create or replace TEMP view res as select ' + ', '.join(selectName) + ' from ' + fromTable + (' group by ' + ', '.join(Agg.groupByVars) if not JT.isFreeConnex and len(Agg.groupByVars) else '') + ';\n'
+            selectNameForSum = [alias.split(' as ')[1] if ' as ' in alias else alias for alias in selectName]
+            finalResult += 'select sum(' + '+'.join(selectNameForSum) +') from res;\n'
         else:
+            finalResult = 'select ' + ','.join(selectName) + ' from ' + fromTable + (' group by ' + ', '.join(Agg.groupByVars) if not JT.isFreeConnex and len(Agg.groupByVars) else '') + ';\n'
+        if not (not JT.isFreeConnex and len(Agg.groupByVars)):
             # Select operation
             selectPlan = {
                 "operator": "Select",

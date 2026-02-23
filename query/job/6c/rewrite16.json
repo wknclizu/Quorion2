@@ -3,132 +3,7 @@
     {
       "operator": "Select",
       "properties": {
-        "viewName": "aggView6196676079547333506",
-        "columns": [
-          "id",
-          "keyword"
-        ],
-        "columnAliases": [
-          "v8",
-          "v35"
-        ],
-        "inputView": "keyword as k",
-        "conditions": [
-          "(keyword = 'marvel-cinematic-universe')"
-        ],
-        "groupBy": []
-      }
-    },
-    {
-      "operator": "Join",
-      "properties": {
-        "viewName": "aggJoin2412313800610436071",
-        "columns": [
-          "movie_id",
-          ""
-        ],
-        "columnAliases": [
-          "v23",
-          "v35"
-        ],
-        "probeTable": "movie_keyword as mk",
-        "buildTable": "aggView6196676079547333506",
-        "joinKeys": [],
-        "conditions": [
-          "mk.keyword_id=aggView6196676079547333506.v8"
-        ]
-      }
-    },
-    {
-      "operator": "Select",
-      "properties": {
-        "viewName": "aggView3495795716780242389",
-        "columns": [
-          "id",
-          "name"
-        ],
-        "columnAliases": [
-          "v14",
-          "v36"
-        ],
-        "inputView": "name as n",
-        "conditions": [
-          "(name LIKE '%Downey%Robert%')"
-        ],
-        "groupBy": []
-      }
-    },
-    {
-      "operator": "Join",
-      "properties": {
-        "viewName": "aggJoin6800729620179756057",
-        "columns": [
-          "movie_id",
-          ""
-        ],
-        "columnAliases": [
-          "v23",
-          "v36"
-        ],
-        "probeTable": "cast_info as ci",
-        "buildTable": "aggView3495795716780242389",
-        "joinKeys": [],
-        "conditions": [
-          "ci.person_id=aggView3495795716780242389.v14"
-        ]
-      }
-    },
-    {
-      "operator": "GroupBy",
-      "properties": {
-        "viewName": "aggView8676038384833459989",
-        "columns": [
-          "",
-          "MIN(v35)",
-          "COUNT(*)"
-        ],
-        "columnAliases": [
-          "v23",
-          "v35",
-          "annot"
-        ],
-        "inputView": "aggJoin2412313800610436071",
-        "conditions": [],
-        "groupBy": [
-          "v23",
-          "v35"
-        ],
-        "terminationPolicy": "NONE"
-      }
-    },
-    {
-      "operator": "Join",
-      "properties": {
-        "viewName": "aggJoin5933781081189732796",
-        "columns": [
-          "",
-          "v36",
-          "",
-          ""
-        ],
-        "columnAliases": [
-          "v23",
-          "v36",
-          "v35",
-          "annot"
-        ],
-        "probeTable": "aggJoin6800729620179756057",
-        "buildTable": "aggView8676038384833459989",
-        "joinKeys": [
-          "v23"
-        ],
-        "conditions": []
-      }
-    },
-    {
-      "operator": "Select",
-      "properties": {
-        "viewName": "aggView915501007146318338",
+        "viewName": "aggView4078611491201404350",
         "columns": [
           "id",
           "title"
@@ -147,21 +22,153 @@
     {
       "operator": "Join",
       "properties": {
-        "viewName": "aggJoin8566372827531809249",
+        "viewName": "aggJoin2953523434551510979",
+        "columns": [
+          "movie_id",
+          "keyword_id",
+          ""
+        ],
+        "columnAliases": [
+          "v23",
+          "v8",
+          "v37"
+        ],
+        "probeTable": "movie_keyword as mk",
+        "buildTable": "aggView4078611491201404350",
+        "joinKeys": [],
+        "conditions": [
+          "mk.movie_id=aggView4078611491201404350.v23"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView3276489400022524146",
+        "columns": [
+          "id",
+          "keyword"
+        ],
+        "columnAliases": [
+          "v8",
+          "v35"
+        ],
+        "inputView": "keyword as k",
+        "conditions": [
+          "(keyword = 'marvel-cinematic-universe')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin8033623725898282832",
         "columns": [
           "",
           "",
-          "v37"
+          ""
         ],
         "columnAliases": [
-          "v36",
+          "v23",
+          "v37",
+          "v35"
+        ],
+        "probeTable": "aggJoin2953523434551510979",
+        "buildTable": "aggView3276489400022524146",
+        "joinKeys": [
+          "v8"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView1484151139195313681",
+        "columns": [
+          "",
+          "MIN(v37)",
+          "MIN(v35)",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v23",
+          "v37",
+          "v35",
+          "annot"
+        ],
+        "inputView": "aggJoin8033623725898282832",
+        "conditions": [],
+        "groupBy": [
+          "v23",
           "v35",
           "v37"
         ],
-        "probeTable": "aggJoin5933781081189732796",
-        "buildTable": "aggView915501007146318338",
+        "terminationPolicy": "NONE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin7343517326577646791",
+        "columns": [
+          "person_id",
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v14",
+          "v37",
+          "v35",
+          "annot"
+        ],
+        "probeTable": "cast_info as ci",
+        "buildTable": "aggView1484151139195313681",
+        "joinKeys": [],
+        "conditions": [
+          "ci.movie_id=aggView1484151139195313681.v23"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView1626074986300930238",
+        "columns": [
+          "id",
+          "name"
+        ],
+        "columnAliases": [
+          "v14",
+          "v36"
+        ],
+        "inputView": "name as n",
+        "conditions": [
+          "(name LIKE '%Downey%Robert%')"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin8992326286583017066",
+        "columns": [
+          "",
+          "",
+          "v36"
+        ],
+        "columnAliases": [
+          "v37",
+          "v35",
+          "v36"
+        ],
+        "probeTable": "aggJoin7343517326577646791",
+        "buildTable": "aggView1626074986300930238",
         "joinKeys": [
-          "v23"
+          "v14"
         ],
         "conditions": []
       }
@@ -180,7 +187,7 @@
           "v36",
           "v37"
         ],
-        "inputView": "aggJoin8566372827531809249",
+        "inputView": "aggJoin8992326286583017066",
         "conditions": []
       }
     }

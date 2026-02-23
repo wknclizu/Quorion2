@@ -3,7 +3,7 @@
     {
       "operator": "Select",
       "properties": {
-        "viewName": "aggView5368844645115231868",
+        "viewName": "aggView4191962554671130150",
         "columns": [
           "id",
           "keyword"
@@ -22,7 +22,7 @@
     {
       "operator": "Join",
       "properties": {
-        "viewName": "aggJoin6193471203817302972",
+        "viewName": "aggJoin8437743654668260455",
         "columns": [
           "movie_id",
           ""
@@ -32,67 +32,108 @@
           "v35"
         ],
         "probeTable": "movie_keyword as mk",
-        "buildTable": "aggView5368844645115231868",
+        "buildTable": "aggView4191962554671130150",
         "joinKeys": [],
         "conditions": [
-          "mk.keyword_id=aggView5368844645115231868.v8"
-        ]
-      }
-    },
-    {
-      "operator": "GroupBy",
-      "properties": {
-        "viewName": "aggView6757883593900258322",
-        "columns": [
-          "",
-          "MIN(v35)",
-          "COUNT(*)"
-        ],
-        "columnAliases": [
-          "v23",
-          "v35",
-          "annot"
-        ],
-        "inputView": "aggJoin6193471203817302972",
-        "conditions": [],
-        "groupBy": [
-          "v23",
-          "v35"
-        ],
-        "terminationPolicy": "ADAPTIVE"
-      }
-    },
-    {
-      "operator": "Join",
-      "properties": {
-        "viewName": "aggJoin7789086382680972368",
-        "columns": [
-          "id",
-          "title",
-          "production_year",
-          "",
-          ""
-        ],
-        "columnAliases": [
-          "v23",
-          "v24",
-          "v27",
-          "v35",
-          "annot"
-        ],
-        "probeTable": "title as t",
-        "buildTable": "aggView6757883593900258322",
-        "joinKeys": [],
-        "conditions": [
-          "t.id=aggView6757883593900258322.v23",
-          "(production_year > 2014)"
+          "mk.keyword_id=aggView4191962554671130150.v8"
         ]
       }
     },
     {
       "operator": "Select",
       "properties": {
-        "viewName": "aggView3461170172903541720",
+        "viewName": "aggView3603168623927521372",
+        "columns": [
+          "id",
+          "title"
+        ],
+        "columnAliases": [
+          "v23",
+          "v37"
+        ],
+        "inputView": "title as t",
+        "conditions": [
+          "(production_year > 2014)"
+        ],
+        "groupBy": []
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin7578212918621185326",
+        "columns": [
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v23",
+          "v35",
+          "v37"
+        ],
+        "probeTable": "aggJoin8437743654668260455",
+        "buildTable": "aggView3603168623927521372",
+        "joinKeys": [
+          "v23"
+        ],
+        "conditions": []
+      }
+    },
+    {
+      "operator": "GroupBy",
+      "properties": {
+        "viewName": "aggView9041460924928499661",
+        "columns": [
+          "",
+          "MIN(v35)",
+          "MIN(v37)",
+          "COUNT(*)"
+        ],
+        "columnAliases": [
+          "v23",
+          "v35",
+          "v37",
+          "annot"
+        ],
+        "inputView": "aggJoin7578212918621185326",
+        "conditions": [],
+        "groupBy": [
+          "v23",
+          "v35",
+          "v37"
+        ],
+        "terminationPolicy": "NONE"
+      }
+    },
+    {
+      "operator": "Join",
+      "properties": {
+        "viewName": "aggJoin2203005988201887604",
+        "columns": [
+          "person_id",
+          "",
+          "",
+          ""
+        ],
+        "columnAliases": [
+          "v14",
+          "v35",
+          "v37",
+          "annot"
+        ],
+        "probeTable": "cast_info as ci",
+        "buildTable": "aggView9041460924928499661",
+        "joinKeys": [],
+        "conditions": [
+          "ci.movie_id=aggView9041460924928499661.v23"
+        ]
+      }
+    },
+    {
+      "operator": "Select",
+      "properties": {
+        "viewName": "aggView7919295767962880339",
         "columns": [
           "id",
           "name"
@@ -111,64 +152,21 @@
     {
       "operator": "Join",
       "properties": {
-        "viewName": "aggJoin6709716974393062801",
+        "viewName": "aggJoin4181492640331324011",
         "columns": [
-          "movie_id",
-          ""
-        ],
-        "columnAliases": [
-          "v23",
+          "",
+          "",
           "v36"
         ],
-        "probeTable": "cast_info as ci",
-        "buildTable": "aggView3461170172903541720",
-        "joinKeys": [],
-        "conditions": [
-          "ci.person_id=aggView3461170172903541720.v14"
-        ]
-      }
-    },
-    {
-      "operator": "GroupBy",
-      "properties": {
-        "viewName": "aggView1691179038839565087",
-        "columns": [
-          "",
-          "MIN(v35)",
-          "MIN(v24)"
-        ],
         "columnAliases": [
-          "v23",
           "v35",
-          "v37"
+          "v37",
+          "v36"
         ],
-        "inputView": "aggJoin7789086382680972368",
-        "conditions": [],
-        "groupBy": [
-          "v23",
-          "v35"
-        ],
-        "terminationPolicy": "NONE"
-      }
-    },
-    {
-      "operator": "Join",
-      "properties": {
-        "viewName": "aggJoin5422362977100129376",
-        "columns": [
-          "v36",
-          "",
-          ""
-        ],
-        "columnAliases": [
-          "v36",
-          "v35",
-          "v37"
-        ],
-        "probeTable": "aggJoin6709716974393062801",
-        "buildTable": "aggView1691179038839565087",
+        "probeTable": "aggJoin2203005988201887604",
+        "buildTable": "aggView7919295767962880339",
         "joinKeys": [
-          "v23"
+          "v14"
         ],
         "conditions": []
       }
@@ -187,7 +185,7 @@
           "v36",
           "v37"
         ],
-        "inputView": "aggJoin5422362977100129376",
+        "inputView": "aggJoin4181492640331324011",
         "conditions": []
       }
     }

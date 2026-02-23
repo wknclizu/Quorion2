@@ -1,0 +1,14 @@
+create or replace TEMP view aggView313392461534306117 as select id as v22 from company_type as ct;
+create or replace TEMP view aggJoin7993056322957996381 as select movie_id as v31, company_id as v15 from movie_companies as mc, aggView313392461534306117 where mc.company_type_id=aggView313392461534306117.v22;
+create or replace TEMP view aggView4364833154677032833 as select id as v15 from company_name as cn where (country_code = '[ru]');
+create or replace TEMP view aggJoin3116618949114473996 as select v31 from aggJoin7993056322957996381 join aggView4364833154677032833 using(v15);
+create or replace TEMP view aggView2438377473912309603 as select id as v31, title as v44 from title as t where (production_year > 2010);
+create or replace TEMP view aggJoin2515320158803872775 as select movie_id as v31, person_role_id as v1, note as v12, role_id as v29, v44 from cast_info as ci, aggView2438377473912309603 where ci.movie_id=aggView2438377473912309603.v31 and (note LIKE '%(producer)%');
+create or replace TEMP view aggView1837303322331040925 as select id as v29 from role_type as rt where (role = 'actor');
+create or replace TEMP view aggJoin923917084408105669 as select v31, v1, v12, v44 from aggJoin2515320158803872775 join aggView1837303322331040925 using(v29);
+create or replace TEMP view aggView4633131932238943440 as select id as v1, name as v43 from char_name as chn;
+create or replace TEMP view aggJoin2442759004198011330 as select v31, v12, v44, v43 from aggJoin923917084408105669 join aggView4633131932238943440 using(v1);
+create or replace TEMP view aggView8345107028111431932 as select v31, COUNT(*) as annot from aggJoin3116618949114473996 group by v31;
+create or replace TEMP view aggJoin5828431523086682300 as select v12, v44 as v44, v43 as v43, annot from aggJoin2442759004198011330 join aggView8345107028111431932 using(v31);
+create or replace TEMP view res as select MIN(v43) as v43, MIN(v44) as v44 from aggJoin5828431523086682300;
+select sum(v43+v44) from res;
